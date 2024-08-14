@@ -1,34 +1,19 @@
 import 'package:dalgeurak/screens/home/home_bottomsheet.dart';
 import 'package:dalgeurak/screens/home/register_notice.dart';
 import 'package:dalgeurak/screens/home/widgets/live_meal_sequence.dart';
-import 'package:dalgeurak/screens/studentManage/convenience_food.dart';
-import 'package:dalgeurak/screens/studentManage/meal_exception.dart';
-import 'package:dalgeurak_meal_application/pages/teacher_meal_cancel/teacher_meal_cancel.dart';
-import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-
-import 'package:dalgeurak_widget_package/widgets/window_title.dart';
 import '../../controllers/meal_controller.dart';
-import '../../controllers/qrcode_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../themes/color_theme.dart';
 import '../../themes/text_theme.dart';
-import '../studentManage/meal_cancel_confirm.dart';
-import '../widgets/big_menu_button.dart';
-import '../studentManage/student_search.dart';
-import '../studentManage/qrcode_scan.dart';
 
 class Home extends StatelessWidget {
   Home({Key? key}) : super(key: key);
 
   late MealController mealController;
   late UserController userController;
-  late QrCodeController qrCodeController;
-  late HomeBottomSheet _homeBottomSheet;
   late double _height, _width;
 
   @override
@@ -38,12 +23,6 @@ class Home extends StatelessWidget {
 
     mealController = Get.find<MealController>();
     userController = Get.find<UserController>();
-    qrCodeController = Get.find<QrCodeController>();
-    _homeBottomSheet = HomeBottomSheet();
-
-    if (!mealController.isCreateRefreshTimer) { mealController.refreshTimer(); mealController.isCreateRefreshTimer = true; }
-
-
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -54,41 +33,109 @@ class Home extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    SizedBox(width: Get.width, height: 140),
-                    Positioned(
-                      top: _height * 0.05,
-                      left: _width * 0.1,
-                      child: Obx(() {
-                        if (userController.user?.userType != DimigoinUserType.teacher && userController.user?.userType != DimigoinUserType.dormitoryTeacher) {
-                          mealController.getMealTime();
-
-                          return WindowTitle(
-                            subTitle: "${Get.find<UserController>().user?.classNum}반 " + mealController.dalgeurakService.getMealKind(false).convertKorStr,
-                            title: mealController.userMealTime.value,
-                          );
-                        } else {
-                          return WindowTitle(
-                            subTitle: userController.user?.userType != DimigoinUserType.teacher ? "안녕하세요!" : "${userController.user?.teacherRole ?? "등록 부서 없음"}",
-                            title: "${userController.user?.name}${userController.user?.userType != DimigoinUserType.teacher ? "님" : " 선생님"}",
-                          );
-                        }
-                      }),
-                    ),
-                    Positioned(
-                      right: -(_width * 0.125),
-                      child: Image.asset(
-                        "assets/images/home_flowerpot.png",
-                        height: 124,
+                // 상단 섹션
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "오늘의 할 일 ${3}개가 있어요.",
+                            style: TextStyle(fontSize: 18, color: Colors.black87),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "담당 선생님: 조용준",
+                            style: TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage('assets/profile_image.png'), // 학생 프로필 이미지
+                      ),
+                    ],
+                  ),
                 ),
+
+                // 중앙 섹션
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      // 왼쪽의 오늘 시간표 공간
+                      Container(
+                        width: _width * 0.3,
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(0), // 모서리를 없앰
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "오늘 시간표",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 16),
+                            // 시간표 내용이 많지 않으므로 Expanded를 제거합니다.
+                            ListView(
+                              shrinkWrap: true, // 리스트뷰의 높이를 내용에 맞게 조절
+                              physics: NeverScrollableScrollPhysics(), // 스크롤 비활성화
+                              children: [
+                                // 예시 시간표 항목들
+                                Text("1교시: 수학", style: TextStyle(fontSize: 16)),
+                                Text("2교시: 영어", style: TextStyle(fontSize: 16)),
+                                Text("3교시: 과학", style: TextStyle(fontSize: 16)),
+                                Text("4교시: 체육", style: TextStyle(fontSize: 16)),
+                                Text("5교시: 국어", style: TextStyle(fontSize: 16)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // 오른쪽의 바로가기 버튼들
+                      Expanded(
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          shrinkWrap: true, // GridView의 높이를 내용에 맞게 조절
+                          physics: NeverScrollableScrollPhysics(), // 스크롤 비활성화
+                          children: [
+                            _buildShortcutButton("마일리지 상점", Colors.pinkAccent),
+                            _buildShortcutButton("교육 기록 보기", Colors.lightGreen),
+                            _buildShortcutButton("이번 주 시간표 보기", Colors.lightBlue),
+                            _buildShortcutButton("지난 교육 해설 보기", Colors.orangeAccent),
+                            _buildShortcutButton("선생님께 문의하기", Colors.purpleAccent),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 하단 섹션
                 Obx(() {
-                  bool? isDienen = userController.user?.permissions?.contains(DimigoinPermissionType.dalgeurak); isDienen ??= false;
-                  bool isStudent = userController.user?.userType != DimigoinUserType.teacher;
+                  // 임시로 모든 사용자를 학생으로 간주
+                  bool isStudent = true;
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -110,375 +157,270 @@ class Home extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-
                                   Text("공지사항", style: homeMealSequenceTitle.copyWith(color: Colors.black)),
-                                  (
-                                      userController.user?.userType == DimigoinUserType.teacher ?
-                                          GestureDetector(onTap: () => Get.to(RegisterNotice()), child: SvgPicture.asset("assets/images/icons/signDocu.svg", color: Colors.black, width: 20)) : SizedBox()
-                                  ),
+                                  SizedBox(), // 기능을 제거하므로 빈 위젯
                                 ],
                               ),
                             ),
                             const SizedBox(height: 12),
                             SizedBox(
-                                width: 280,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Obx(() => Flexible(
-                                      child: RichText(
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                        strutStyle: StrutStyle(fontSize: 16.0),
-                                        text: TextSpan(
-                                            text: mealController.noticeText.value,
-                                            style: homeNotice
-                                        ),
+                              width: 280,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Obx(() => Flexible(
+                                    child: RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      strutStyle: StrutStyle(fontSize: 16.0),
+                                      text: TextSpan(
+                                        text: mealController.noticeText.value,
+                                        style: homeNotice,
                                       ),
-                                    ))
-                                  ],
-                                )
+                                    ),
+                                  ))
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 8),
                           ],
                         ),
                       ),
-                      (isStudent ? (isDienen ? getDienenMenuBtnWidget(context) : SizedBox()) : getTeacherMenuBtnWidget(context)),
-                      (
-                          isStudent ?
-                          LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue)
-                              : Column(children: [
-                            LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.white, checkGradeNum: 2),
-                            LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue, checkGradeNum: 1),
-                          ]
-                          )
-                      )
+                      (isStudent
+                          ? _buildDienenMenuBtnWidget(context)
+                          : _buildTeacherMenuBtnWidget(context)),
+                      (isStudent
+                          ? LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue)
+                          : Column(
+                        children: [
+                          LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.white, checkGradeNum: 2),
+                          LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue, checkGradeNum: 1),
+                        ],
+                      )),
                     ],
                   );
                 }),
               ],
             ),
           ),
-        )
+        ),
       ),
     );
   }
 
-  getQrCodeShowWidget(bool isDialog) => Obx(() {
-    String qrCodeData = qrCodeController.qrImageData.value;
-    dynamic userStatusInfo;
-    if (mealController.userMealException.value == MealExceptionType.normal) {
-      String leftTime = mealController.getUserLeftMealTime();
-
-      userStatusInfo = Text(leftTime.isEmpty ? "내일 급식을 기대해주세요!" : "급식 입장까지 남은 시간은 $leftTime입니다.", style: homeQrCheckInStatusInfo);
-    } else {
-      userStatusInfo = Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(
-              text: "오늘 ${mealController.dalgeurakService.getMealKind(false).convertKorStr} ",
-            ),
-            TextSpan(
-                text: mealController.userMealException.value == MealExceptionType.first ? "선밥" : "후밥",
-                style: homeQrCheckInStatusInfo.copyWith(color: greenOne)
-            ),
-            TextSpan(
-              text: " 입니다.",
-            ),
-          ],
-        ),
-        textAlign: TextAlign.center,
-        style: homeQrCheckInStatusInfo,
-      );
-    }
-
+  // 추가된 _buildShortcutButton 메서드
+  Widget _buildShortcutButton(String title, Color color) {
     return Container(
-      width: 350,
-      height: _height * 0.45,
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15)
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            top: _width * 0.05,
-            right: _width * (isDialog ? 0.125 : 0.05),
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: dalgeurakGrayTwo,
-                      width: 1
-                  )
-              ),
-              child: Center(
-                child: Text(
-                  "${mealController.refreshTime.value}",
-                  style: homeQrRefreshTime,
-                ),
-              ),
-            ),
+        color: color,
+        borderRadius: BorderRadius.circular(8), // 모서리를 약간 둥글게 설정
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("급식 QR 체크인", style: homeQrCheckInTitle),
-              (qrCodeData == "initData") ?
-              CircularProgressIndicator() :
-              QrImage(
-                data: qrCodeController.qrImageData.value,
-                version: QrVersions.auto,
-                size: 200,
-              ),
-              Text("${userController.user?.gradeNum}학년 ${userController.user?.classNum}반 ${userController.user?.name}", style: homeQrCheckInStudentInfo),
-              SizedBox(height: _height * 0.005),
-              Text(mealController.userMealStatus.value == MealStatusType.onTime ? "입장 가능" : "입장 불가능", style: homeQrCheckInStatus),
-              SizedBox(height: _height * 0.01),
-              userStatusInfo,
-            ],
-          )
         ],
       ),
-    );
-  });
-  
-  getDienenMenuBtnWidget(BuildContext context) => Column(
-    children: [
-      SizedBox(
-        width: 350,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              onTap: () => _homeBottomSheet.showMealDelay(context),
-              child: BigMenuButton(
-                title: "급식 지연",
-                iconName: "clock",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: false,
-                backgroundType: BigMenuButtonBackgroundType.image,
-                background: ExtendedImage.asset("assets/images/homeMenu_clock.png"),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Get.to(MealExceptionPage(pageMode: MealExceptionPageMode.list)),
-              child: BigMenuButton(
-                title: "선후밥 명단",
-                iconName: "twoPeople",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: true,
-                backgroundType: BigMenuButtonBackgroundType.gradient,
-                background: blueLinearGradientOne,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Get.to(MealExceptionPage(pageMode: MealExceptionPageMode.confirm)),
-              child: BigMenuButton(
-                title: "선밥 컨펌",
-                iconName: "checkCircle_round",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: false,
-                backgroundType: BigMenuButtonBackgroundType.gradient,
-                background: pinkLinearGradientOne,
-              ),
-            )
-          ],
-        ),
-      ),
-      SizedBox(height: _height * 0.0175),
-      SizedBox(
-        width: 350,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              onTap: () => _homeBottomSheet.showChooseModifyMealInfoKind(),
-              child: BigMenuButton(
-                title: "급식 순서･장소",
-                iconName: "table",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: true,
-                backgroundType: BigMenuButtonBackgroundType.gradient,
-                background: purpleGreenLinearGradientOne,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => showSearch(context: context, delegate: StudentSearch()),
-              child: BigMenuButton(
-                title: "학생 검색",
-                iconName: "peopleSearch",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: false,
-                backgroundType: BigMenuButtonBackgroundType.color,
-                background: blueNine,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Get.to(QrCodeScan()),
-              child: BigMenuButton(
-                title: "QR 입장 스캐너",
-                iconName: "qrCode",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: false,
-                backgroundType: BigMenuButtonBackgroundType.image,
-                background: ExtendedImage.asset("assets/images/homeMenu_qrCode.png"),
-              ),
-            )
-          ],
-        ),
-      ),
-      GestureDetector(
-        onTap: () => Get.dialog(
-            Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15))
-              ),
-              child: Container(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(width: _width * 0.925, height: _height * 0.625),
-                    getQrCodeShowWidget(true),
-                    Positioned(
-                      top: _width * 0.075,
-                      right: _width * 0.075,
-                      child: GestureDetector(onTap: () => Get.back(), child: Icon(Icons.close_rounded, color: dalgeurakGrayThree, size: 20)),
-                    )
-                  ],
-                ),
-              ),
-            )
-        ),
-        child: Container(
-          height: _height * 0.1,
-          width: 350,
-          margin: EdgeInsets.only(top: _height * 0.02),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                    color: dalgeurakBlueOne.withAlpha(20),
-                    blurRadius: 10
-                )
-              ]
+      child: Center(
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-          child: Column(
-            children: [
-              SizedBox(height: _height * 0.02),
-              SvgPicture.asset(
-                "assets/images/icons/entrance.svg",
-                width: 39,
+        ),
+      ),
+    );
+  }
+
+  // _buildDienenMenuBtnWidget 메서드
+  Widget _buildDienenMenuBtnWidget(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.blueAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
               ),
-              Text("급식실 입장", style: homeEntranceCafeteriaWidgetTitle)
             ],
           ),
+          child: Center(
+            child: Text(
+              "학생 편의식 관리",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
-      ),
-    ],
-  );
+        SizedBox(height: 10),
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.greenAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "학생 식사예외 관리",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.purpleAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "식권 QR 스캔",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  getTeacherMenuBtnWidget(BuildContext context) => Column(
-    children: [
-      SizedBox(
-        width: 350,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              onTap: () => Get.to(ConvenienceFoodCheckInPage()),
-              child: BigMenuButton(
-                title: "간편식 체크인",
-                iconName: "foodBucket",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: false,
-                backgroundType: BigMenuButtonBackgroundType.gradient,
-                background: greenLinearGradientOne,
+  // _buildTeacherMenuBtnWidget 메서드
+  Widget _buildTeacherMenuBtnWidget(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.orangeAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "QR 코드로 검색",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-            GestureDetector(
-              onTap: () => Get.to(MealExceptionPage(pageMode: MealExceptionPageMode.list)),
-              child: BigMenuButton(
-                title: "선후밥 명단",
-                iconName: "twoPeople",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: true,
-                backgroundType: BigMenuButtonBackgroundType.color,
-                background: blueNine,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => _homeBottomSheet.showExcelDownload(),
-              child: BigMenuButton(
-                title: "엑셀 다운",
-                iconName: "excel",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: true,
-                backgroundType: BigMenuButtonBackgroundType.gradient,
-                background: blueLinearGradientOne,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
-      SizedBox(height: _height * 0.0175),
-      SizedBox(
-        width: 350,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              onTap: () => _homeBottomSheet.showModifyMealPrice(),
-              child: BigMenuButton(
-                title: "급식 단가 수정",
-                iconName: "signDocu",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: false,
-                backgroundType: BigMenuButtonBackgroundType.color,
-                background: dalgeurakYellowOne,
+        SizedBox(height: 10),
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.redAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "학생 검색",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-            GestureDetector(
-              onTap: () => Get.to(MealCancelConfirm()),
-              child: BigMenuButton(
-                title: "급식 취소 컨펌",
-                iconName: "checkCircle_round",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: true,
-                backgroundType: BigMenuButtonBackgroundType.color,
-                background: purpleTwo,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => TeacherMealCancel().showStudentChoicePage(),
-              child: BigMenuButton(
-                title: "급식 취소 신청",
-                iconName: "cancelCircle",
-                isHome: true,
-                containerSize: 110,
-                includeInnerShadow: true,
-                backgroundType: BigMenuButtonBackgroundType.gradient,
-                background: pinkLinearGradientOne,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
-    ],
-  );
+        SizedBox(height: 10),
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.lightBlueAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "배식 취소",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          width: 350,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.tealAccent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "급식 취소 확인",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
