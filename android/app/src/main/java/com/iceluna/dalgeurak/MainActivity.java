@@ -1,4 +1,4 @@
-package com.iceluna.dalgeurak;
+package com.smhrd.gtc;
 
 import io.flutter.embedding.android.FlutterActivity;
 

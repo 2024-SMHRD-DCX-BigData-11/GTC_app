@@ -38,7 +38,7 @@ class Login extends GetWidget<AuthController> {
             SizedBox(height: _height * 0.022),
             GestureDetector(
               onTap: () => Get.to(MealPlanner()),
-              child: Text("로그인 없이 급식표 확인하기", style: loginPageMealPlanner),
+              child: Text("처음이신가요? 회원가입", style: loginPageMealPlanner),
             ),
             SizedBox(height: _height * 0.145),
             Obx(() {

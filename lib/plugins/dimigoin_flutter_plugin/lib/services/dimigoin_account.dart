@@ -24,8 +24,8 @@ class DimigoinAccount {
 
 
       _accessToken = authResponse.data['accessToken'];
-      // await _storage.write(key: "dimigoinAccount_accessToken", value: authResponse.data['accessToken']);
-      // await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
+      await _storage.write(key: "dimigoinAccount_accessToken", value: authResponse.data['accessToken']);
+      await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
       await storeUserData();
 
       return {
