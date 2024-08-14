@@ -1,4 +1,5 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
+import 'package:dalgeurak/screens/auth/join.dart';
 import 'package:dalgeurak/screens/meal_planner/meal_planner.dart';
 import 'package:dalgeurak/themes/color_theme.dart';
 import 'package:dalgeurak/themes/text_theme.dart';
@@ -37,7 +38,7 @@ class Login extends GetWidget<AuthController> {
             getInputTextField("디미고인 비밀번호", controller.passwordTextController),
             SizedBox(height: _height * 0.022),
             GestureDetector(
-              onTap: () => Get.to(MealPlanner()),
+              onTap: () => Get.to(UserDataScreen()),
               child: Text("처음이신가요? 회원가입", style: loginPageMealPlanner),
             ),
             SizedBox(height: _height * 0.145),
