@@ -1,5 +1,6 @@
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/screens/calendar/calendar_page.dart';
+import 'package:dalgeurak/screens/game/game.dart';
 import 'package:dalgeurak/screens/meal_planner/meal_planner.dart';
 import 'package:dalgeurak/screens/profile/my_profile.dart';
 import 'package:dalgeurak/screens/home/home.dart';
@@ -38,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
 
     List pages = [
       Home(),
+      Game(),
       MealPlanner(),
       MyProfile()
     ];
@@ -46,6 +48,10 @@ class _MainScreenState extends State<MainScreen> {
       BottomNavigationBarItem(
         label: "홈",
         icon: SvgPicture.asset('assets/images/icons/home_select.svg'),
+      ),
+      BottomNavigationBarItem(
+        label: "게임",
+        icon: SvgPicture.asset('assets/images/icons/gaming.svg'),
       ),
       BottomNavigationBarItem(
         label: "급식표",
