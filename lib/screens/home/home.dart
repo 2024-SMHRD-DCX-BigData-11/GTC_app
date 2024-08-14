@@ -1,6 +1,3 @@
-import 'package:dalgeurak/screens/home/home_bottomsheet.dart';
-import 'package:dalgeurak/screens/home/register_notice.dart';
-import 'package:dalgeurak/screens/home/widgets/live_meal_sequence.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
@@ -29,191 +26,218 @@ class Home extends StatelessWidget {
       backgroundColor: dalgeurakGrayOne,
       body: Center(
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // 상단 섹션
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "오늘의 할 일 ${3}개가 있어요.",
-                            style: TextStyle(fontSize: 18, color: Colors.black87),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "담당 선생님: 조용준",
-                            style: TextStyle(fontSize: 16, color: Colors.black54),
-                          ),
-                        ],
-                      ),
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('assets/profile_image.png'), // 학생 프로필 이미지
-                      ),
-                    ],
-                  ),
+          child: Column(
+            children: [
+              // 상단 섹션
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: AssetImage('assets/profile_image.png'), // 학생 프로필 이미지
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          "신상현님 환영합니다",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "오늘의 할 일 ${3}개가 있어요.",
+                          style: TextStyle(fontSize: 18, color: Colors.black87),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "담당 선생님: 정진용",
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+              ),
 
-                // 중앙 섹션
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              // 중앙 섹션
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
                       // 왼쪽의 오늘 시간표 공간
-                      Container(
-                        width: _width * 0.3,
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(0), // 모서리를 없앰
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 8,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "오늘 시간표",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 16),
-                            // 시간표 내용이 많지 않으므로 Expanded를 제거합니다.
-                            ListView(
-                              shrinkWrap: true, // 리스트뷰의 높이를 내용에 맞게 조절
-                              physics: NeverScrollableScrollPhysics(), // 스크롤 비활성화
-                              children: [
-                                // 예시 시간표 항목들
-                                Text("1교시: 수학", style: TextStyle(fontSize: 16)),
-                                Text("2교시: 영어", style: TextStyle(fontSize: 16)),
-                                Text("3교시: 과학", style: TextStyle(fontSize: 16)),
-                                Text("4교시: 체육", style: TextStyle(fontSize: 16)),
-                                Text("5교시: 국어", style: TextStyle(fontSize: 16)),
-                              ],
-                            ),
-                          ],
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[50],
+                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "오늘 시간표",
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 16),
+                              Expanded(
+                                child: ListView(
+                                  children: [
+                                    _buildTimetableItem("1교시: 수학", Icons.calculate),
+                                    _buildTimetableItem("2교시: 영어", Icons.language),
+                                    _buildTimetableItem("3교시: 과학", Icons.science),
+                                    _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
+                                    _buildTimetableItem("5교시: 국어", Icons.book),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "현재 마일리지",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "150점", // 하드코딩된 마일리지 값
+                                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
+
                       // 오른쪽의 바로가기 버튼들
                       Expanded(
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          shrinkWrap: true, // GridView의 높이를 내용에 맞게 조절
-                          physics: NeverScrollableScrollPhysics(), // 스크롤 비활성화
-                          children: [
-                            _buildShortcutButton("마일리지 상점", Colors.pinkAccent),
-                            _buildShortcutButton("교육 기록 보기", Colors.lightGreen),
-                            _buildShortcutButton("이번 주 시간표 보기", Colors.lightBlue),
-                            _buildShortcutButton("지난 교육 해설 보기", Colors.orangeAccent),
-                            _buildShortcutButton("선생님께 문의하기", Colors.purpleAccent),
-                          ],
+                        flex: 7,
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white, // 배경색
+                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              // 버튼 정사각형 유지
+                              double buttonSize = (constraints.maxWidth - 64) / 3; // 간격 조정 및 버튼 크기 축소
+
+                              return GridView.count(
+                                crossAxisCount: 3, // 세로로 3개의 버튼을 배치하도록 설정
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                shrinkWrap: true,
+                                childAspectRatio: 1, // 정사각형 유지
+                                children: [
+                                  _buildShortcutButton("마일리지 상점", Colors.pinkAccent, Icons.shopping_cart, buttonSize),
+                                  _buildShortcutButton("이번 주 랭킹", Colors.cyanAccent, Icons.bar_chart, buttonSize),
+                                  _buildShortcutButton("교육 기록 보기", Colors.lightGreen, Icons.history, buttonSize),
+                                  _buildShortcutButton("이번 주 시간표 보기", Colors.lightBlue, Icons.calendar_today, buttonSize),
+                                  _buildShortcutButton("지난 교육 해설 보기", Colors.orangeAccent, Icons.book, buttonSize),
+                                  _buildShortcutButton("선생님께 문의하기", Colors.purpleAccent, Icons.contact_support, buttonSize),
+                                ],
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                // 하단 섹션
-                Obx(() {
-                  // 임시로 모든 사용자를 학생으로 간주
-                  bool isStudent = true;
-
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: 350,
-                        margin: EdgeInsets.only(bottom: Get.height * 0.02),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            SizedBox(
-                              width: 280,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("공지사항", style: homeMealSequenceTitle.copyWith(color: Colors.black)),
-                                  SizedBox(), // 기능을 제거하므로 빈 위젯
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: 280,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Obx(() => Flexible(
-                                    child: RichText(
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      strutStyle: StrutStyle(fontSize: 16.0),
-                                      text: TextSpan(
-                                        text: mealController.noticeText.value,
-                                        style: homeNotice,
-                                      ),
-                                    ),
-                                  ))
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                        ),
-                      ),
-                      (isStudent
-                          ? _buildDienenMenuBtnWidget(context)
-                          : _buildTeacherMenuBtnWidget(context)),
-                      (isStudent
-                          ? LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue)
-                          : Column(
-                        children: [
-                          LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.white, checkGradeNum: 2),
-                          LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue, checkGradeNum: 1),
-                        ],
-                      )),
-                    ],
-                  );
-                }),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // 추가된 _buildShortcutButton 메서드
-  Widget _buildShortcutButton(String title, Color color) {
+  // 시간표 항목 생성 메서드
+  Widget _buildTimetableItem(String subject, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 24, color: Colors.black54),
+            const SizedBox(width: 8),
+            Text(
+              subject,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 버튼 생성 메서드
+  Widget _buildShortcutButton(String title, Color color, IconData icon, double size) {
     return Container(
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(8), // 모서리를 약간 둥글게 설정
+        borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -221,206 +245,22 @@ class Home extends StatelessWidget {
           ),
         ],
       ),
-      child: Center(
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 30, color: Colors.white), // 아이콘 크기 축소
+          const SizedBox(height: 8),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12, // 폰트 크기 축소
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  // _buildDienenMenuBtnWidget 메서드
-  Widget _buildDienenMenuBtnWidget(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.blueAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "학생 편의식 관리",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.greenAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "학생 식사예외 관리",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.purpleAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "식권 QR 스캔",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // _buildTeacherMenuBtnWidget 메서드
-  Widget _buildTeacherMenuBtnWidget(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.orangeAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "QR 코드로 검색",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.redAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "학생 검색",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.lightBlueAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "배식 취소",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          width: 350,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.tealAccent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              "급식 취소 확인",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
