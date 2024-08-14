@@ -404,7 +404,7 @@ class DalgeurakService {
 
   getMyWarningList() async {
     try {
-      Response response = await _dio.get(
+      Response response = await _dio.post(
         "$apiUrl/dalgeurak/warning",
         options: Options(contentType: "application/json"),
       );
