@@ -92,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
         extendBody: true,
         bottomNavigationBar: ClipRRect(
-          borderRadius: BorderRadius.only(topRight: Radius.circular(10),
+          borderRadius: const BorderRadius.only(topRight: Radius.circular(10),
               topLeft: Radius.circular(10)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,

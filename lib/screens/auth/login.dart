@@ -1,6 +1,5 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
 import 'package:dalgeurak/screens/auth/join.dart';
-import 'package:dalgeurak/screens/meal_planner/meal_planner.dart';
 import 'package:dalgeurak/themes/color_theme.dart';
 import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +37,7 @@ class Login extends GetWidget<AuthController> {
             getInputTextField("디미고인 비밀번호", controller.passwordTextController),
             SizedBox(height: _height * 0.022),
             GestureDetector(
-              onTap: () => Get.to(UserDataScreen()),
+              onTap: () => Get.to(Join()),
               child: Text("처음이신가요? 회원가입", style: loginPageMealPlanner),
             ),
             SizedBox(height: _height * 0.145),
@@ -48,7 +47,7 @@ class Login extends GetWidget<AuthController> {
               return GestureDetector(
                 onTap: () => {controller.logInWithDimigoinAccount()},
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   width: _width * 0.858,
                   height: _height * 0.06,
                   decoration: BoxDecoration(
@@ -82,7 +81,7 @@ class Login extends GetWidget<AuthController> {
         obscureText: hintText.contains("비밀번호"),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: _height * 0.02),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(width: 0, style: BorderStyle.none,)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(width: 0, style: BorderStyle.none,)),
           fillColor: dalgeurakGrayOne,
           filled: true,
           hintText: hintText,

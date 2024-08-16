@@ -30,8 +30,13 @@ class AuthController extends GetxController {
 
   @override
   onInit() async {
+    super.onInit();
     _firebaseUser.bindStream(authInstance.authStateChanges());
     _firebaseUser.value = authInstance.currentUser;
+  }
+
+  void showToast(String msg) {
+    _dalgeurakToast.show(msg);
   }
 
   void logInWithDimigoinAccount() async {
@@ -52,6 +57,23 @@ class AuthController extends GetxController {
     await _dimigoinAccount.logout();
 
     _dalgeurakToast.show("로그아웃 되었습니다.");
+  }
+
+  void join(String id, String password) async {
+    print("id : " + id);
+    print("pw : " + password);
+    Map joinResult = await _dimigoinAccount.join(id, password);
+
+    if (joinResult['success']) {
+      // await _dalgeurakService.registerFCMToken(await _notificationController.getFCMToken());
+
+      if (joinResult['content']['dalgeurakFirstLogin'] ?? true) {
+        Get.back();
+        Get.to(LoginSuccess());
+      }
+    } else {
+      _dalgeurakToast.show("회원가입에 실패하였습니다. 다시 시도해주세요.");
+    }
   }
 
   logOutFirebaseAccount() async => await authInstance.signOut();

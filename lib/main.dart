@@ -19,7 +19,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:dalgeurak/controllers/bindings/main_binding.dart'; // MainBinding 클래스를 임포트합니다.
 
 // Firebase 설정 옵션 (웹에서 사용)
-const FirebaseOptions FIREBASEOPTION = FirebaseOptions(
+const FirebaseOptions firebaseOption = FirebaseOptions(
   apiKey: "your-api-key",
   appId: "your-app-id",
   messagingSenderId: "your-messaging-sender-id",
@@ -27,19 +27,19 @@ const FirebaseOptions FIREBASEOPTION = FirebaseOptions(
 );
 
 // Dimigoin API 인증 토큰
-const String DIMIGO_STUDENTAPI_AUTHTOKEN = "your-auth-token";
+const String dimigoStudentAPIAuthToken = "your-auth-token";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    await Firebase.initializeApp(options: FIREBASEOPTION);
+    await Firebase.initializeApp(options: firebaseOption);
   } else {
     await Firebase.initializeApp();
   }
 
   Get.put<RemoteConfigService>(RemoteConfigService());
-  await DimigoinFlutterPlugin().initializeApp(dimigoStudentAPIAuthToken: DIMIGO_STUDENTAPI_AUTHTOKEN);
+  await DimigoinFlutterPlugin().initializeApp(dimigoStudentAPIAuthToken: dimigoStudentAPIAuthToken);
   DalgeurakWidgetPackage().initializeApp();
   SharedPreference();
   await Jiffy.locale("ko");
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ));
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
               isAlwaysShown: true,
               thickness: MaterialStateProperty.all(6),
               thumbColor: MaterialStateProperty.all(yellowOne.withOpacity(0.8)),
-              radius: Radius.circular(10),
+              radius: const Radius.circular(10),
               minThumbLength: 60,
             ),
           ),
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
           home: Root(notiController: notiController),
         ),
       ),
-      maximumSize: Size(475.0, 812.0),
+      maximumSize: const Size(475.0, 812.0),
       enabled: false,
       backgroundColor: Colors.white,
     );
