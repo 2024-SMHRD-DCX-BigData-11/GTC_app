@@ -1,16 +1,15 @@
+import 'package:dalgeurak/controllers/auth_controller.dart';
+import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/widgets/toast.dart';
 import 'package:dalgeurak/screens/main_screen.dart';
 import 'package:dalgeurak/screens/widgets/custum_button.dart';
 import 'package:dalgeurak/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class UserDataScreen extends StatefulWidget {
-  const UserDataScreen({Key? key}) : super(key: key);
+class Join extends GetWidget<AuthController> {
+  Join({Key? key}) : super(key: key);
 
-  @override
-  State<UserDataScreen> createState() => _UserDataScreenState();
-}
-
-class _UserDataScreenState extends State<UserDataScreen> {
+  late double _height, _width;
   //form Key for the form validations
   final _formKey = GlobalKey<FormState>();
 
@@ -18,10 +17,8 @@ class _UserDataScreenState extends State<UserDataScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordContorller = TextEditingController();
-  final TextEditingController _confirmPasswordContorller =
-  TextEditingController();
-
-  bool _rememberMe = false;
+  final TextEditingController _confirmPasswordContorller = TextEditingController();
+  final DalgeurakToast _dalgeurakToast = DalgeurakToast();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Enter your \nPersonal Details",
+                  "회원가입",
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w500,
@@ -53,13 +50,13 @@ class _UserDataScreenState extends State<UserDataScreen> {
                         validator: (value) {
                           //check weather the username is entered
                           if (value!.isEmpty) {
-                            return "Please Enter Your Name";
+                            return "아이디를 입력하세요";
                           } else {
                             return null;
                           }
                         },
                         decoration: InputDecoration(
-                          hintText: "Name",
+                          hintText: "아이디",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -76,13 +73,13 @@ class _UserDataScreenState extends State<UserDataScreen> {
                         controller: _emailController,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Please Enter Your Email";
+                            return "이메일을 입력하세요";
                           } else {
                             return null;
                           }
                         },
                         decoration: InputDecoration(
-                          hintText: "Email",
+                          hintText: "이메일",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -100,13 +97,13 @@ class _UserDataScreenState extends State<UserDataScreen> {
                         obscureText: true,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Please Enter A Valid Password";
+                            return "비밀번호를 입력하세요";
                           } else {
                             return null;
                           }
                         },
                         decoration: InputDecoration(
-                          hintText: "Password",
+                          hintText: "비밀번호",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -123,14 +120,16 @@ class _UserDataScreenState extends State<UserDataScreen> {
                         controller: _confirmPasswordContorller,
                         obscureText: true,
                         validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Please Enter A Valid Password";
+                          if (value!.isEmpty)  {
+                            return "비밀번호를 입력하세요";
+                          } else if (value != _passwordContorller.text) {
+                            return "비밀번호가 일치하지 않습니다.";
                           } else {
                             return null;
                           }
                         },
                         decoration: InputDecoration(
-                          hintText: "Confirm Password",
+                          hintText: "비밀번호 확인",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -143,29 +142,6 @@ class _UserDataScreenState extends State<UserDataScreen> {
                       const SizedBox(
                         height: 30,
                       ),
-                      Row(
-                        children: [
-                          const Text(
-                            "Remember Me for the next time",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: kGrey,
-                            ),
-                          ),
-                          Expanded(
-                            child: CheckboxListTile(
-                              activeColor: kMainColor,
-                              value: _rememberMe,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberMe = value!;
-                                });
-                              },
-                            ),
-                          )
-                        ],
-                      ),
                       const SizedBox(
                         height: 30,
                       ),
@@ -176,23 +152,17 @@ class _UserDataScreenState extends State<UserDataScreen> {
                             String username = _usernameController.text;
                             String email = _emailController.text;
                             String password = _passwordContorller.text;
-                            String confirmPassword =
-                                _confirmPasswordContorller.text;
-                            //store the user details in shared preferences
-                            // await UserService.storeUserDetails(username, email,
-                            //     password, confirmPassword, context);
+                            String confirmPassword = _confirmPasswordContorller.text;
 
-                            //Navigate to the Home screen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MainScreen(),
-                              ),
-                            );
+                            if (password != confirmPassword) {
+                              controller.showToast("비밀번호가 일치하지 않습니다.");
+                              return;
+                            }
+                            controller.join(_usernameController.text, _passwordContorller.text);
                           }
                         },
                         child: const CustumButton(
-                          buttonName: "Next",
+                          buttonName: "회원가입",
                           buttonColor: kMainColor,
                         ),
                       ),

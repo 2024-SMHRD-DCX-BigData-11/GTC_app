@@ -1,7 +1,7 @@
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/screens/calendar/calendar_page.dart';
 import 'package:dalgeurak/screens/game/game.dart';
-import 'package:dalgeurak/screens/chatting/chat_screen.dart';  // 수정된 경로
+import 'package:dalgeurak/screens/meal_planner/meal_planner.dart';
 import 'package:dalgeurak/screens/profile/my_profile.dart';
 import 'package:dalgeurak/screens/home/home.dart';
 import 'package:dalgeurak/screens/studentManage/admin_page.dart';
@@ -10,6 +10,7 @@ import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
 import '../themes/text_theme.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class MainScreen extends StatefulWidget {
 
   @override
   _MainScreenState createState() => _MainScreenState();
+
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -29,17 +31,16 @@ class _MainScreenState extends State<MainScreen> {
 
     Map pageIcon = {
       '홈': 'home',
-      '게임': 'gaming',
-      '채팅': 'calendar',  // 아이콘 이름은 실제 사용된 아이콘에 맞게 수정
-      '내 정보': 'user',
+      '급식표': 'calendar',
       '관리': 'signDocu',
       '일정': 'calendar2',
+      '내 정보': 'user'
     };
 
     List pages = [
       Home(),
       Game(),
-      ChatScreen(),
+      MealPlanner(),
       MyProfile()
     ];
 
@@ -53,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
         icon: SvgPicture.asset('assets/images/icons/gaming.svg'),
       ),
       BottomNavigationBarItem(
-        label: "채팅",
+        label: "급식표",
         icon: SvgPicture.asset('assets/images/icons/calendar_unselect.svg'),
       ),
       BottomNavigationBarItem(
@@ -66,8 +67,8 @@ class _MainScreenState extends State<MainScreen> {
       pages.insert(2, AdminPage());
 
       bottomNavigatorItem.insert(2, BottomNavigationBarItem(
-        label: "관리",
-        icon: SvgPicture.asset('assets/images/icons/signDocu_unselect.svg'),
+          label: "관리",
+          icon: SvgPicture.asset('assets/images/icons/signDocu_unselect.svg'),
       ));
     }
 
@@ -80,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
       ));
     }
 
-    for (int i = 0; i < pages.length; i++) {
+    for (int i=0; i<pages.length; i++) {
       String? label = bottomNavigatorItem[i].label;
       bottomNavigatorItem[i] = BottomNavigationBarItem(
         label: label,
@@ -91,7 +92,8 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
         extendBody: true,
         bottomNavigationBar: ClipRRect(
-          borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
+          borderRadius: const BorderRadius.only(topRight: Radius.circular(10),
+              topLeft: Radius.circular(10)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.white,

@@ -59,6 +59,38 @@ class DimigoinAccount {
     }
   }
 
+  /// 디미고인 계정에 로그인을 진행하는 함수입니다.
+  /// OAuth 방식을 사용하여, 로그인에 성공할 경우 반환되는 AccessToken과 RefreshToken을 Secure Storage에 저장합니다.
+  ///
+  /// @param [username] 사용자의 디미고인 계정 아이디 string형 변수입니다.
+  /// @param [password] 사용자의 디미고인 계정 비밀번호 string형 변수입니다.
+  /// @returns 로그인에 성공할 경우 true, 실패할 경우 false를 반환합니다.
+  Future<Map> join(String userName, String password) async {
+    try {
+      Response authResponse = await _dio.post(
+        '$apiUrl/join',
+        options: Options(contentType: "application/json"),
+        data: {"username": userName, "password": password},
+      );
+
+
+      _accessToken = authResponse.data['accessToken'];
+      await _storage.write(key: "dimigoinAccount_accessToken", value: authResponse.data['accessToken']);
+      await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
+      await storeUserData();
+
+      return {
+        "success": true,
+        "content": authResponse.data
+      };
+    } catch (e) {
+      return {
+        "success": false,
+        "content": "로그인 중 오류가 발생 하였습니다.\n계정 정보를 정확히 입력했는지, 인터넷 연결이 불안정하지 않은지 등을 확인해주세요."
+      };
+    }
+  }
+
   /// 현재 저장되어있는 AccessToken이 유효기간이 남아있는지를 확인합니다.
   ///
   /// @returns 유효기간이 남아있을 경우 true, 기간이 만료되었을 경우 false를 반환합니다.

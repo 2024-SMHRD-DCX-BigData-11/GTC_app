@@ -1,3 +1,4 @@
+import 'package:dalgeurak/screens/home/home.dart';
 import 'package:dalgeurak_widget_package/widgets/blue_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class LoginSuccess extends GetWidget<AuthController> {
             SizedBox(width: _width, height: _height),
             AnimatedPositioned(
               top: controller.helloTextPositioned.value,
-              duration: Duration(milliseconds: 600),
+              duration: const Duration(milliseconds: 600),
               curve: Curves.fastOutSlowIn,
               child: Text(
                 "${controller.userController.user?.name}님,\n반갑습니다!",
@@ -57,7 +58,7 @@ class LoginSuccess extends GetWidget<AuthController> {
             ),
             AnimatedPositioned(
               bottom: controller.btnContainerPositioned.value,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.fastOutSlowIn,
               child: GestureDetector(
                 onTap: () => Get.back(),
