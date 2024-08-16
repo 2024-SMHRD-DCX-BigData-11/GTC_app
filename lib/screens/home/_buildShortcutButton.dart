@@ -210,7 +210,8 @@ class Home extends StatelessWidget {
                           ],
                         ),
                       ),
-                      (isStudent ? (isDienen ? getDienenMenuBtnWidget(context) : SizedBox()) : getTeacherMenuBtnWidget(context)),
+                      // getDienenMenuBtnWidget 호출 제거
+                      (isStudent ? SizedBox() : getTeacherMenuBtnWidget(context)),
                       (isStudent ?
                       LiveMealSequence(mealSequenceMode: LiveMealSequenceMode.blue)
                           : Column(
@@ -232,14 +233,32 @@ class Home extends StatelessWidget {
   // _buildShortcutButton 메서드 추가
   Widget _buildShortcutButton(String title, Color color) {
     return GestureDetector(
-        onTap: () {
-      // 해당 버튼 클릭 시의 동작을 정의할 수 있습니다.
-    },
-    child: Container(
-    decoration: BoxDecoration(
-    color: color,
-    borderRadius: BorderRadius.circular(0), // 모서리를 없앰
-    boxShadow: [
-    BoxShadow(
-    color: Colors.black12,
-    blurRadius: 8
+      onTap: () {
+        // 해당 버튼 클릭 시의 동작을 정의할 수 있습니다.
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(0), // 모서리를 없앰
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+}

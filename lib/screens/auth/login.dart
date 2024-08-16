@@ -1,6 +1,6 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
 import 'package:dalgeurak/screens/auth/join.dart';
-import 'package:dalgeurak/screens/meal_planner/meal_planner.dart';
+import 'package:dalgeurak/screens/chatting/chat_screen.dart';
 import 'package:dalgeurak/themes/color_theme.dart';
 import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
