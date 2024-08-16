@@ -23,7 +23,7 @@ part 'models/stream_socket.dart';
 final _dio = Dio();
 final _storage = const FlutterSecureStorage();
 
-String apiUrl = "http://172.30.1.30:8080";
+String apiUrl = "http://172.30.1.41:8080"; // 임시
 const socketApiUrl = "http://oci.dimigo.in:4999";
 const dimigoStudentApiUrl = "https://api.dimigo.hs.kr/v1";
 
