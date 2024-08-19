@@ -226,7 +226,7 @@ class MyProfile extends GetWidget<UserController> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ...getTeacherMenu(),
-                              SimpleListButton(title: "교육 기록 보기", iconName: "page", clickAction: () => _launchURL(Get.find<RemoteConfigService>().getDienenManualFileUrl())),
+                              SimpleListButton(title: "선생님께 문의하기", iconName: "page", clickAction: () => _launchURL(Get.find<RemoteConfigService>().getDienenManualFileUrl())),
                               SimpleListButton(title: "문의하기", iconName: "headset", clickAction: () => dalgeurakDialog.showInquiry()),
                               SimpleListButton(title: "이번 주 랭킹", iconName: "instagram", clickAction: () => _launchURL("https://www.instagram.com/ara__dmigo/")),
                               SimpleListButton(title: "앱 정보", iconName: "info", clickAction: () => myProfileBottomSheet.showApplicationInfo()),

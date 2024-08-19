@@ -219,7 +219,7 @@ class DalgeurakDialog {
                 children: [
                   Text("E-mail", style: inquiryDialog_emailTitle),
                   SizedBox(width: 4),
-                  Text("dimigoin2022@dimigo.hs.kr", style: inquiryDialog_emailAddress)
+                  Text("범훈@건열.용민", style: inquiryDialog_emailAddress)
                 ],
               ),
             ),

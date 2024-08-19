@@ -4,7 +4,12 @@ import 'package:get/get.dart';
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../themes/color_theme.dart';
-import '../../themes/text_theme.dart';
+import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
+import 'package:dalgeurak/screens/studentManage/student_meal_plan.dart';
+import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
+import 'package:dalgeurak/screens/studentManage/student_ranking.dart';
+import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
+import 'package:dalgeurak/screens/studentManage/contact_teacher.dart';
 
 class Home extends StatelessWidget {
   Home({Key? key}) : super(key: key);
@@ -90,7 +95,6 @@ class Home extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.blue[50],
                             borderRadius: BorderRadius.circular(16),
-                            // 모서리를 둥글게 설정
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black12,
@@ -166,9 +170,7 @@ class Home extends StatelessWidget {
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            // 배경색
                             borderRadius: BorderRadius.circular(16),
-                            // 모서리를 둥글게 설정
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black12,
@@ -178,49 +180,51 @@ class Home extends StatelessWidget {
                           ),
                           child: LayoutBuilder(
                             builder: (context, constraints) {
-                              // 버튼 정사각형 유지
-                              double buttonSize = (constraints.maxWidth - 64) /
-                                  3; // 간격 조정 및 버튼 크기 축소
+                              double buttonSize = (constraints.maxWidth - 64) / 3;
 
                               return GridView.count(
                                 crossAxisCount: 3,
-                                // 세로로 3개의 버튼을 배치하도록 설정
                                 crossAxisSpacing: 16,
                                 mainAxisSpacing: 16,
                                 shrinkWrap: true,
                                 childAspectRatio: 1,
-                                // 정사각형 유지
                                 children: [
                                   _buildShortcutButton(
                                       "마일리지 상점",
                                       Colors.pinkAccent,
                                       Icons.shopping_cart,
-                                      buttonSize),
+                                      buttonSize,
+                                          () => Get.to(StudentMileageStorePage())),
                                   _buildShortcutButton(
                                       "이번 주 랭킹",
                                       Colors.cyanAccent,
                                       Icons.bar_chart,
-                                      buttonSize),
+                                      buttonSize,
+                                          () => Get.to(StudentRankingPage())),
                                   _buildShortcutButton(
                                       "교육 기록 보기",
                                       Colors.lightGreen,
                                       Icons.history,
-                                      buttonSize),
+                                      buttonSize,
+                                          () => Get.to(StudentEducationRecordPage())),
                                   _buildShortcutButton(
                                       "이번 주 시간표 보기",
                                       Colors.lightBlue,
                                       Icons.calendar_today,
-                                      buttonSize),
+                                      buttonSize,
+                                          () => Get.to(StudentSchedulePage())),
                                   _buildShortcutButton(
-                                      "지난 교육 해설 보기",
+                                      "이번주 급식표",
                                       Colors.orangeAccent,
-                                      Icons.book,
-                                      buttonSize),
+                                      Icons.restaurant_menu,
+                                      buttonSize,
+                                          () => Get.to(StudentMealPlanPage())),
                                   _buildShortcutButton(
                                       "선생님께 문의하기",
                                       Colors.purpleAccent,
                                       Icons.contact_support,
-                                      buttonSize),
+                                      buttonSize,
+                                          () => Get.to(ContactTeacherPage())),
                                 ],
                               );
                             },
@@ -274,35 +278,38 @@ class Home extends StatelessWidget {
 
   // 버튼 생성 메서드
   Widget _buildShortcutButton(
-      String title, Color color, IconData icon, double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 30, color: Colors.white), // 아이콘 크기 축소
-          const SizedBox(height: 8),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12, // 폰트 크기 축소
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+      String title, Color color, IconData icon, double size, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: Colors.white),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
