@@ -53,9 +53,11 @@ class DimigoinFlutterPlugin {
 
         if (options.uri.toString().contains('/auth/refresh')) {
           String? refreshToken = await _storage.read(key: "dimigoinAccount_refreshToken");
-          options.headers['Authorization'] = 'Bearer $refreshToken';
+          // options.headers['Authorization'] = 'Bearer $refreshToken';
+          options.headers['Authorization'] = _accessToken;
         } else {
-          options.headers['Authorization'] = 'Bearer $_accessToken';
+          // options.headers['Authorization'] = 'Bearer $_accessToken';
+          options.headers['Authorization'] = _accessToken;
         }
 
         return handler.next(options);
