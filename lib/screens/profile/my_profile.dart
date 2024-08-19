@@ -4,9 +4,12 @@ import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
 import 'package:dalgeurak/screens/studentManage/student_manage_dialog.dart';
+import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
+import 'package:dalgeurak/screens/studentManage/student_meal_plan.dart';
+import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
+import 'package:dalgeurak/screens/studentManage/student_ranking.dart';
+import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
 import 'package:dalgeurak/services/remote_config.dart';
-import 'package:dalgeurak_meal_application/pages/meal_cancel/page.dart';
-import 'package:dalgeurak_meal_application/routes/routes.dart';
 import 'package:dalgeurak_widget_package/widgets/dialog.dart';
 import 'package:dalgeurak_widget_package/widgets/toast.dart';
 import 'package:dalgeurak_widget_package/widgets/window_title.dart';
@@ -19,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyProfile extends GetWidget<UserController> {
@@ -39,7 +41,6 @@ class MyProfile extends GetWidget<UserController> {
     StudentManageDialog studentManageDialog = StudentManageDialog();
 
     controller.getUserWarningList();
-
 
     return Scaffold(
       backgroundColor: dalgeurakGrayOne,
@@ -152,13 +153,17 @@ class MyProfile extends GetWidget<UserController> {
                                               int warningAmount = controller.warningList.length;
 
                                               return MediumMenuButton(
-                                                  iconName: "noticeCircle", title: "프로필 수정", subTitle: "개인 정보 변경",
-                                                  clickAction: () => studentManageDialog.showWarningDialog(controller.warningList)
+                                                iconName: "noticeCircle",
+                                                title: "프로필 수정",
+                                                subTitle: "개인 정보 변경",
+                                                clickAction: () => studentManageDialog.showProfileEditDialog(controller),
                                               );
                                             }),
                                             MediumMenuButton(
-                                              iconName: "foodBucket", title: "이번주 시간표", subTitle: "확인하기",
-                                              clickAction: () => Get.toNamed(DalgeurakMealApplicationRoutes.CONVENIENCEFOOD),
+                                              iconName: "foodBucket",
+                                              title: "이번주 시간표",
+                                              subTitle: "확인하기",
+                                              clickAction: () => Get.to(StudentSchedulePage()),
                                             ),
                                           ],
                                         ),
@@ -169,12 +174,16 @@ class MyProfile extends GetWidget<UserController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             MediumMenuButton(
-                                              iconName: "checkCircle_round", title: "이번주 급식표", subTitle: "확인하기",
-                                              clickAction: () => studentManageDialog.showCheckInRecordDialog(controller.user!.name!),
+                                              iconName: "checkCircle_round",
+                                              title: "이번주 급식표",
+                                              subTitle: "확인하기",
+                                              clickAction: () => Get.to(StudentMealPlanPage()),
                                             ),
                                             MediumMenuButton(
-                                              iconName: "signDocu", title: "마일리지 상점", subTitle: "이용하기",
-                                              clickAction: () => Get.toNamed(DalgeurakMealApplicationRoutes.MEALEXCEPTION),
+                                              iconName: "signDocu",
+                                              title: "마일리지 상점",
+                                              subTitle: "이용하기",
+                                              clickAction: () => Get.to(StudentMileageStorePage()),
                                             ),
                                           ],
                                         ),
@@ -185,12 +194,16 @@ class MyProfile extends GetWidget<UserController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             MediumMenuButton(
-                                              iconName: "twoTicket", title: "이번 주 랭킹", subTitle: "친구 추가/삭제",
-                                              clickAction: () => DalgeurakToast().show("선밥권 기능은 현재 지원하지 않습니다."),
+                                              iconName: "twoTicket",
+                                              title: "이번 주 랭킹",
+                                              subTitle: "친구 추가/삭제",
+                                              clickAction: () => Get.to(StudentRankingPage()),
                                             ),
                                             MediumMenuButton(
-                                              iconName: "cancel", title: "교육 기록 보기", subTitle: "조회하기",
-                                              clickAction: () => controller.dalgeurakToast.show("현재 공개된 기능이 아닙니다. 추후 공개 예정입니다."),//Get.toNamed(DalgeurakMealApplicationRoutes.MEALCANCEL, arguments: {"pageMode": MealCancelPageMode.application}),
+                                              iconName: "cancel",
+                                              title: "교육 기록 보기",
+                                              subTitle: "조회하기",
+                                              clickAction: () => Get.to(StudentEducationRecordPage()),
                                             ),
                                           ],
                                         ),

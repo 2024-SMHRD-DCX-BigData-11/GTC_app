@@ -4,6 +4,7 @@ import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore를 사용하기 위해 추가
 
 class UserController extends GetxController {
   DalgeurakToast dalgeurakToast = DalgeurakToast();
@@ -20,6 +21,7 @@ class UserController extends GetxController {
 
   @override
   onInit() async {
+    super.onInit(); // 반드시 super.onInit()을 호출해야 합니다.
     _dimigoinUser.bindStream(_dimigoinAccount.userChangeStream);
   }
 
@@ -56,5 +58,16 @@ class UserController extends GetxController {
   setUserAllowAlert(bool isAllow) {
     SharedPreference().saveAllowAlert(isAllow);
     isAllowAlert.value = isAllow;
+  }
+
+
+  void updateProfile(String name, int grade, int _class) async {
+    Map joinResult = await _dimigoinAccount.update(name, grade, _class);
+
+    if (joinResult['success']) {
+      dalgeurakToast.show("프로필 정보가 업데이트되었습니다.");
+    } else {
+      dalgeurakToast.show("프로필 업데이트에 실패했습니다.");
+    }
   }
 }

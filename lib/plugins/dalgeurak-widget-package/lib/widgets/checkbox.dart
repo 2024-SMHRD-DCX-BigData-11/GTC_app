@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../themes/color_theme.dart';
-import '../../themes/text_theme.dart';
+import '../themes/color_theme.dart';
+import '../themes/text_theme.dart';
 
 enum DalgeurakCheckBoxType {
   dialog, ///Dialog에 쓰이는 CheckBox

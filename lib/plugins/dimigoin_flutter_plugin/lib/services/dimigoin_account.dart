@@ -175,4 +175,27 @@ class DimigoinAccount {
     bool isSuccessStoreData = await storeUserData();
     if (!isSuccessStoreData) { _currentUser = DimigoinUser.fromJson(json.decode((await _storage.read(key: "dimigoinAccount_userInfo"))!)); _userChangeController.add(_currentUser); }
   }
+
+
+  Future<Map> update(String name, int grade, int _class) async {
+    try {
+      Response authResponse = await _dio.post(
+        '$apiUrl/update',
+        options: Options(contentType: "application/json"),
+        data: {"name": name, "grade": grade, "class" : _class},
+      );
+
+      await storeUserData();
+
+      return {
+        "success": true,
+        "content": authResponse.data
+      };
+    } catch (e) {
+      return {
+        "success": false,
+        "content": "오류."
+      };
+    }
+  }
 }

@@ -1,38 +1,64 @@
-import 'package:dalgeurak_widget_package/services/dalgeurak_api.dart';
-import 'package:dalgeurak_widget_package/widgets/blue_button.dart';
-import 'package:dalgeurak_widget_package/widgets/checkbox.dart';
-import 'package:dalgeurak_widget_package/widgets/dialog.dart';
-import 'package:dalgeurak_widget_package/widgets/overlay_alert.dart';
-import 'package:dalgeurak_widget_package/widgets/bottom_sheet.dart';
-import 'package:dalgeurak_widget_package/widgets/reason_textfield.dart';
-import 'package:dalgeurak/screens/widgets/small_menu_button.dart';
-import 'package:dalgeurak_widget_package/widgets/toast.dart';
-import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
+import 'package:dalgeurak/controllers/user_controller.dart';
+import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/widgets/dialog.dart';
+import 'package:dalgeurak/plugins/dimigoin_flutter_plugin/lib/dimigoin_flutter_plugin.dart';
+import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
-import '../../controllers/meal_controller.dart';
-import '../../controllers/user_controller.dart';
-import '../../themes/color_theme.dart';
-import '../../themes/text_theme.dart';
-import 'student_search.dart';
-import '../widgets/big_menu_button.dart';
-
 class StudentManageDialog {
-  StudentManageDialog();
 
   DalgeurakDialog _dalgeurakDialog = DalgeurakDialog();
 
-  RxMap warningList = {
-    "지각": false,
-    "욕설": false,
-    "통로 사용": false,
-    "순서 무시": false,
-    "기타": false,
-  }.obs;
-  TextEditingController warningReasonTextController = TextEditingController();
-  MealController mealController = Get.find<MealController>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _gradeController = TextEditingController();
+  final TextEditingController _classContorller = TextEditingController();
+
+  void showProfileEditDialog(UserController userController) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('프로필 수정'),
+        content: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(labelText: '이름'),
+              controller: _nameController,
+              // onChanged: (value) => userController.user.update((user) {
+              //   user?.name = value;
+              // }),
+            ),
+            TextField(
+              decoration: const InputDecoration(labelText: '학년'),
+              controller: _gradeController,
+              // onChanged: (value) => userController.user.update((user) {
+              //   user?.gradeNum = int.tryParse(value) ?? 0;
+              // }),
+            ),
+            TextField(
+              decoration: const InputDecoration(labelText: '반'),
+              controller: _classContorller,
+              // onChanged: (value) => userController.user.update((user) {
+              //   user?.classNum = int.tryParse(value) ?? 0;
+              // }),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              userController.updateProfile(_nameController.text, int.parse(_gradeController.text), int.parse(_classContorller.text)); // 프로필 업데이트 호출
+              Get.back();
+            },
+            child: const Text('저장'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('취소'),
+          ),
+        ],
+      ),
+    );
+  }
 
   showWarningDialog(List<DalgeurakWarning> warningList) => _dalgeurakDialog.showList(
       "경고",
