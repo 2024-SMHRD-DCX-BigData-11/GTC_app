@@ -30,7 +30,8 @@ class Home extends StatelessWidget {
             children: [
               // 상단 섹션
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 20.0),
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,12 +41,14 @@ class Home extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundImage: AssetImage('assets/profile_image.png'), // 학생 프로필 이미지
+                          backgroundImage: AssetImage(
+                              'assets/profile_image.png'), // 학생 프로필 이미지
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          "신상현님 환영합니다",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          "${userController.user?.name}님 환영합니다",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -54,7 +57,8 @@ class Home extends StatelessWidget {
                       children: [
                         Text(
                           "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -85,7 +89,8 @@ class Home extends StatelessWidget {
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
                             color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
+                            borderRadius: BorderRadius.circular(16),
+                            // 모서리를 둥글게 설정
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black12,
@@ -98,16 +103,21 @@ class Home extends StatelessWidget {
                             children: [
                               Text(
                                 "오늘 시간표",
-                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 16),
                               Expanded(
                                 child: ListView(
                                   children: [
-                                    _buildTimetableItem("1교시: 수학", Icons.calculate),
-                                    _buildTimetableItem("2교시: 영어", Icons.language),
-                                    _buildTimetableItem("3교시: 과학", Icons.science),
-                                    _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
+                                    _buildTimetableItem(
+                                        "1교시: 수학", Icons.calculate),
+                                    _buildTimetableItem(
+                                        "2교시: 영어", Icons.language),
+                                    _buildTimetableItem(
+                                        "3교시: 과학", Icons.science),
+                                    _buildTimetableItem(
+                                        "4교시: 체육", Icons.sports_soccer),
                                     _buildTimetableItem("5교시: 국어", Icons.book),
                                   ],
                                 ),
@@ -130,12 +140,15 @@ class Home extends StatelessWidget {
                                   children: [
                                     Text(
                                       "현재 마일리지",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       "150점", // 하드코딩된 마일리지 값
-                                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black87),
                                     ),
                                   ],
                                 ),
@@ -152,8 +165,10 @@ class Home extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
-                            color: Colors.white, // 배경색
-                            borderRadius: BorderRadius.circular(16), // 모서리를 둥글게 설정
+                            color: Colors.white,
+                            // 배경색
+                            borderRadius: BorderRadius.circular(16),
+                            // 모서리를 둥글게 설정
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black12,
@@ -164,21 +179,48 @@ class Home extends StatelessWidget {
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               // 버튼 정사각형 유지
-                              double buttonSize = (constraints.maxWidth - 64) / 3; // 간격 조정 및 버튼 크기 축소
+                              double buttonSize = (constraints.maxWidth - 64) /
+                                  3; // 간격 조정 및 버튼 크기 축소
 
                               return GridView.count(
-                                crossAxisCount: 3, // 세로로 3개의 버튼을 배치하도록 설정
+                                crossAxisCount: 3,
+                                // 세로로 3개의 버튼을 배치하도록 설정
                                 crossAxisSpacing: 16,
                                 mainAxisSpacing: 16,
                                 shrinkWrap: true,
-                                childAspectRatio: 1, // 정사각형 유지
+                                childAspectRatio: 1,
+                                // 정사각형 유지
                                 children: [
-                                  _buildShortcutButton("마일리지 상점", Colors.pinkAccent, Icons.shopping_cart, buttonSize),
-                                  _buildShortcutButton("이번 주 랭킹", Colors.cyanAccent, Icons.bar_chart, buttonSize),
-                                  _buildShortcutButton("교육 기록 보기", Colors.lightGreen, Icons.history, buttonSize),
-                                  _buildShortcutButton("이번 주 시간표 보기", Colors.lightBlue, Icons.calendar_today, buttonSize),
-                                  _buildShortcutButton("지난 교육 해설 보기", Colors.orangeAccent, Icons.book, buttonSize),
-                                  _buildShortcutButton("선생님께 문의하기", Colors.purpleAccent, Icons.contact_support, buttonSize),
+                                  _buildShortcutButton(
+                                      "마일리지 상점",
+                                      Colors.pinkAccent,
+                                      Icons.shopping_cart,
+                                      buttonSize),
+                                  _buildShortcutButton(
+                                      "이번 주 랭킹",
+                                      Colors.cyanAccent,
+                                      Icons.bar_chart,
+                                      buttonSize),
+                                  _buildShortcutButton(
+                                      "교육 기록 보기",
+                                      Colors.lightGreen,
+                                      Icons.history,
+                                      buttonSize),
+                                  _buildShortcutButton(
+                                      "이번 주 시간표 보기",
+                                      Colors.lightBlue,
+                                      Icons.calendar_today,
+                                      buttonSize),
+                                  _buildShortcutButton(
+                                      "지난 교육 해설 보기",
+                                      Colors.orangeAccent,
+                                      Icons.book,
+                                      buttonSize),
+                                  _buildShortcutButton(
+                                      "선생님께 문의하기",
+                                      Colors.purpleAccent,
+                                      Icons.contact_support,
+                                      buttonSize),
                                 ],
                               );
                             },
@@ -231,7 +273,8 @@ class Home extends StatelessWidget {
   }
 
   // 버튼 생성 메서드
-  Widget _buildShortcutButton(String title, Color color, IconData icon, double size) {
+  Widget _buildShortcutButton(
+      String title, Color color, IconData icon, double size) {
     return Container(
       width: size,
       height: size,

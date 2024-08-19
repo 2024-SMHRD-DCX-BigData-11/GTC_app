@@ -44,7 +44,7 @@ class Game extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          "신상현님 환영합니다",
+                          "${userController.user?.name}님 환영합니다",
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
