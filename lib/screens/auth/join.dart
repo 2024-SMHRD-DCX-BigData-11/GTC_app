@@ -15,7 +15,9 @@ class Join extends GetWidget<AuthController> {
 
   //controllers for save the states in the inputs
   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordContorller = TextEditingController();
   final TextEditingController _confirmPasswordContorller = TextEditingController();
   final DalgeurakToast _dalgeurakToast = DalgeurakToast();
@@ -70,16 +72,62 @@ class Join extends GetWidget<AuthController> {
                         height: 15,
                       ),
                       TextFormField(
-                        controller: _emailController,
+                        controller: _nameController,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "이메일을 입력하세요";
+                            return "이름을 입력하세요";
                           } else {
                             return null;
                           }
                         },
                         decoration: InputDecoration(
-                          hintText: "이메일",
+                          hintText: "이름",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        controller: _nicknameController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "닉네임을 입력하세요";
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: "닉네임",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        controller: _phoneController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "전화번호를 입력하세요";
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: "전화번호",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -150,7 +198,7 @@ class Join extends GetWidget<AuthController> {
                           if (_formKey.currentState!.validate()) {
                             // Form is valid, process data
                             String username = _usernameController.text;
-                            String email = _emailController.text;
+                            String email = _nameController.text;
                             String password = _passwordContorller.text;
                             String confirmPassword = _confirmPasswordContorller.text;
 
@@ -158,7 +206,7 @@ class Join extends GetWidget<AuthController> {
                               controller.showToast("비밀번호가 일치하지 않습니다.");
                               return;
                             }
-                            controller.join(_usernameController.text, _passwordContorller.text);
+                            controller.join(_usernameController.text, _passwordContorller.text, _nameController.text, _nicknameController.text, _phoneController.text);
                           }
                         },
                         child: const CustumButton(

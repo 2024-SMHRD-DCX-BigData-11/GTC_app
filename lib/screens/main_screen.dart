@@ -31,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
 
     Map pageIcon = {
       '홈': 'home',
-      '급식표': 'calendar',
+      '채팅': 'calendar',
       '관리': 'signDocu',
       '일정': 'calendar2',
       '내 정보': 'user'
@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
         icon: SvgPicture.asset('assets/images/icons/gaming.svg'),
       ),
       BottomNavigationBarItem(
-        label: "급식표",
+        label: "채팅",
         icon: SvgPicture.asset('assets/images/icons/calendar_unselect.svg'),
       ),
       BottomNavigationBarItem(

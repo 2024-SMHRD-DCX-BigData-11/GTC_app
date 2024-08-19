@@ -59,10 +59,13 @@ class AuthController extends GetxController {
     _dalgeurakToast.show("로그아웃 되었습니다.");
   }
 
-  void join(String id, String password) async {
+  void join(String id, String password, String name, String nickname, String phone) async {
     print("id : " + id);
     print("pw : " + password);
-    Map joinResult = await _dimigoinAccount.join(id, password);
+    print("name : " + name);
+    print("nickname : " + nickname);
+    print("phone : " + phone);
+    Map joinResult = await _dimigoinAccount.join(id, password, name, nickname, phone);
 
     if (joinResult['success']) {
       // await _dalgeurakService.registerFCMToken(await _notificationController.getFCMToken());

@@ -65,12 +65,18 @@ class DimigoinAccount {
   /// @param [username] 사용자의 디미고인 계정 아이디 string형 변수입니다.
   /// @param [password] 사용자의 디미고인 계정 비밀번호 string형 변수입니다.
   /// @returns 로그인에 성공할 경우 true, 실패할 경우 false를 반환합니다.
-  Future<Map> join(String userName, String password) async {
+  Future<Map> join(String userName, String password, String name, String nickname, String phone) async {
     try {
       Response authResponse = await _dio.post(
         '$apiUrl/join',
         options: Options(contentType: "application/json"),
-        data: {"username": userName, "password": password},
+        data: {
+          "username": userName,
+          "password": password,
+          "name": name,
+          "nickname": nickname,
+          "phone": phone
+        },
       );
 
 
