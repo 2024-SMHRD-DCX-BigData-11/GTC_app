@@ -3,6 +3,7 @@ import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/widgets/dialog.da
 import 'package:dalgeurak/plugins/dimigoin_flutter_plugin/lib/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -18,30 +19,42 @@ class StudentManageDialog {
     Get.dialog(
       AlertDialog(
         title: const Text('프로필 수정'),
-        content: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(labelText: '이름'),
-              controller: _nameController,
-              // onChanged: (value) => userController.user.update((user) {
-              //   user?.name = value;
-              // }),
-            ),
-            TextField(
-              decoration: const InputDecoration(labelText: '학년'),
-              controller: _gradeController,
-              // onChanged: (value) => userController.user.update((user) {
-              //   user?.gradeNum = int.tryParse(value) ?? 0;
-              // }),
-            ),
-            TextField(
-              decoration: const InputDecoration(labelText: '반'),
-              controller: _classContorller,
-              // onChanged: (value) => userController.user.update((user) {
-              //   user?.classNum = int.tryParse(value) ?? 0;
-              // }),
-            ),
-          ],
+        content: SizedBox(
+          width: 300, // 다이얼로그의 너비를 조절합니다.
+          child: ListView(
+            shrinkWrap: true, // ListView가 자식 위젯의 크기에 맞게 조절되도록 합니다.
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: '이름'),
+                controller: _nameController,
+                // onChanged: (value) => userController.user.update((user) {
+                //   user?.name = value;
+                // }),
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: '학년'),
+                controller: _gradeController,
+                keyboardType: TextInputType.number, // 키보드 타입을 숫자로 설정
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly, // 숫자만 입력 허용
+                ],
+                // onChanged: (value) => userController.user.update((user) {
+                //   user?.gradeNum = int.tryParse(value) ?? 0;
+                // }),
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: '반'),
+                controller: _classContorller,
+                keyboardType: TextInputType.number, // 키보드 타입을 숫자로 설정
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly, // 숫자만 입력 허용
+                ],
+                // onChanged: (value) => userController.user.update((user) {
+                //   user?.classNum = int.tryParse(value) ?? 0;
+                // }),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(

@@ -182,7 +182,7 @@ class DimigoinAccount {
       Response authResponse = await _dio.post(
         '$apiUrl/update',
         options: Options(contentType: "application/json"),
-        data: {"name": name, "grade": grade, "class" : _class},
+        data: {"name": name, "grade": grade, "_class" : _class},
       );
 
       await storeUserData();
