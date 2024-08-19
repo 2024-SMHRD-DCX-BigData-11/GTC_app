@@ -152,12 +152,12 @@ class MyProfile extends GetWidget<UserController> {
                                               int warningAmount = controller.warningList.length;
 
                                               return MediumMenuButton(
-                                                  iconName: "noticeCircle", title: "경고 횟수", subTitle: "$warningAmount회",
+                                                  iconName: "noticeCircle", title: "프로필 수정", subTitle: "개인 정보 변경",
                                                   clickAction: () => studentManageDialog.showWarningDialog(controller.warningList)
                                               );
                                             }),
                                             MediumMenuButton(
-                                              iconName: "foodBucket", title: "간편식", subTitle: "신청",
+                                              iconName: "foodBucket", title: "이번주 시간표", subTitle: "확인하기",
                                               clickAction: () => Get.toNamed(DalgeurakMealApplicationRoutes.CONVENIENCEFOOD),
                                             ),
                                           ],
@@ -169,11 +169,11 @@ class MyProfile extends GetWidget<UserController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             MediumMenuButton(
-                                              iconName: "checkCircle_round", title: "입장 기록", subTitle: "체크",
+                                              iconName: "checkCircle_round", title: "이번주 급식표", subTitle: "확인하기",
                                               clickAction: () => studentManageDialog.showCheckInRecordDialog(controller.user!.name!),
                                             ),
                                             MediumMenuButton(
-                                              iconName: "signDocu", title: "선/후밥", subTitle: "신청",
+                                              iconName: "signDocu", title: "마일리지 상점", subTitle: "이용하기",
                                               clickAction: () => Get.toNamed(DalgeurakMealApplicationRoutes.MEALEXCEPTION),
                                             ),
                                           ],
@@ -185,11 +185,11 @@ class MyProfile extends GetWidget<UserController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             MediumMenuButton(
-                                              iconName: "twoTicket", title: "선밥권", subTitle: "사용",
+                                              iconName: "twoTicket", title: "이번 주 랭킹", subTitle: "친구 추가/삭제",
                                               clickAction: () => DalgeurakToast().show("선밥권 기능은 현재 지원하지 않습니다."),
                                             ),
                                             MediumMenuButton(
-                                              iconName: "cancel", title: "급식 취소", subTitle: "신청",
+                                              iconName: "cancel", title: "교육 기록 보기", subTitle: "조회하기",
                                               clickAction: () => controller.dalgeurakToast.show("현재 공개된 기능이 아닙니다. 추후 공개 예정입니다."),//Get.toNamed(DalgeurakMealApplicationRoutes.MEALCANCEL, arguments: {"pageMode": MealCancelPageMode.application}),
                                             ),
                                           ],
@@ -213,9 +213,9 @@ class MyProfile extends GetWidget<UserController> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ...getTeacherMenu(),
-                              SimpleListButton(title: "디넌 규정집", iconName: "page", clickAction: () => _launchURL(Get.find<RemoteConfigService>().getDienenManualFileUrl())),
+                              SimpleListButton(title: "교육 기록 보기", iconName: "page", clickAction: () => _launchURL(Get.find<RemoteConfigService>().getDienenManualFileUrl())),
                               SimpleListButton(title: "문의하기", iconName: "headset", clickAction: () => dalgeurakDialog.showInquiry()),
-                              SimpleListButton(title: "급식실 인스타그램 보러가기", iconName: "instagram", clickAction: () => _launchURL("https://www.instagram.com/ara__dmigo/")),
+                              SimpleListButton(title: "이번 주 랭킹", iconName: "instagram", clickAction: () => _launchURL("https://www.instagram.com/ara__dmigo/")),
                               SimpleListButton(title: "앱 정보", iconName: "info", clickAction: () => myProfileBottomSheet.showApplicationInfo()),
                               SimpleListButton(title: "로그아웃", iconName: "logout", color: Colors.red, clickAction: () => authController.logOut()),
                             ],
