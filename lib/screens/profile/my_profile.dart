@@ -57,10 +57,19 @@ class MyProfile extends GetWidget<UserController> {
                       Positioned(
                         top: _height * 0.05,
                         left: _width * 0.1,
-                        child: WindowTitle(
-                          subTitle: controller.user?.userType != DimigoinUserType.teacher ? "${controller.user?.gradeNum}학년 ${controller.user?.classNum}반" : (controller.user?.teacherRole ?? "등록 부서 없음"),
-                          title: "${controller.user?.name}${controller.user?.userType != DimigoinUserType.teacher ? "" : " 선생님"}",
-                        ),
+                        child: Obx(() {
+                          return WindowTitle(
+                            subTitle: controller.user?.userType !=
+                                DimigoinUserType.teacher
+                                ? "${controller.user?.gradeNum}학년 ${controller
+                                .user?.classNum}반"
+                                : (controller.user?.teacherRole ?? "등록 부서 없음"),
+                            title: "${controller.user?.name}${controller.user
+                                ?.userType != DimigoinUserType.teacher
+                                ? ""
+                                : " 선생님"}",
+                          );
+                        }),
                       ),
                       Positioned(
                         right: -(_width * 0.125),
