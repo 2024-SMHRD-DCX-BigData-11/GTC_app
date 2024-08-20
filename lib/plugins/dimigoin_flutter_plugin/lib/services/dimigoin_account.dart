@@ -153,8 +153,8 @@ class DimigoinAccount {
       Response infoResponse = await _dio.post(
         "$apiUrl/user/me",
         options: Options(contentType: "application/json",
-            // headers: {'Authorization': 'Bearer $_accessToken'}),
-          headers: {'Authorization': _accessToken}),
+            headers: {'Authorization': 'Bearer $_accessToken'}),
+          // headers: {'Authorization': _accessToken}),
       );
 
       await _storage.write(key: "dimigoinAccount_userInfo", value: json.encode(infoResponse.data['identity']));

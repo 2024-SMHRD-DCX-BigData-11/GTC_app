@@ -23,7 +23,7 @@ part 'models/stream_socket.dart';
 final _dio = Dio();
 final _storage = const FlutterSecureStorage();
 
-String apiUrl = "http://192.168.124.28:8080"; // 임시
+String apiUrl = "http://172.30.1.60:8080"; // smhrdA_5G 와이파이 사용 필수
 const socketApiUrl = "http://oci.dimigo.in:4999";
 const dimigoStudentApiUrl = "https://api.dimigo.hs.kr/v1";
 
@@ -53,11 +53,11 @@ class DimigoinFlutterPlugin {
 
         if (options.uri.toString().contains('/auth/refresh')) {
           String? refreshToken = await _storage.read(key: "dimigoinAccount_refreshToken");
-          // options.headers['Authorization'] = 'Bearer $refreshToken';
-          options.headers['Authorization'] = _accessToken;
+          options.headers['Authorization'] = 'Bearer $refreshToken';
+          // options.headers['Authorization'] = _accessToken;
         } else {
-          // options.headers['Authorization'] = 'Bearer $_accessToken';
-          options.headers['Authorization'] = _accessToken;
+          options.headers['Authorization'] = 'Bearer $_accessToken';
+          // options.headers['Authorization'] = _accessToken;
         }
 
         return handler.next(options);
