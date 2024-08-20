@@ -16,7 +16,7 @@ class DimigoinAccount {
   Future<Map> login(String userName, String password, bool isDalgeurakService) async {
     try {
       Response authResponse = await _dio.post(
-        '$apiUrl/auth',
+        '$apiUrl/auth/login',
         options: Options(contentType: "application/json"),
         queryParameters: {"dalgeurak": isDalgeurakService},
         data: {"username": userName, "password": password},
@@ -68,7 +68,7 @@ class DimigoinAccount {
   Future<Map> join(String userName, String password, String name, String nickname, String phone) async {
     try {
       Response authResponse = await _dio.post(
-        '$apiUrl/join',
+        '$apiUrl/auth/join',
         options: Options(contentType: "application/json"),
         data: {
           "username": userName,
@@ -180,7 +180,7 @@ class DimigoinAccount {
   Future<Map> update(String name, int grade, int _class) async {
     try {
       Response authResponse = await _dio.post(
-        '$apiUrl/update',
+        '$apiUrl/user/update',
         options: Options(contentType: "application/json"),
         data: {"name": name, "grade": grade, "_class" : _class},
       );

@@ -106,14 +106,7 @@ flutter:
     - assets/images/icons/
     - assets/lotties/
     - assets/fonts/
-    - assets/emoticons/emoticon1.jpg
-    - assets/emoticons/emoticon2.jpg
-    - assets/emoticons/emoticon3.gif
-    - assets/emoticons/emoticon4.gif
-    - assets/emoticons/emoticon5.gif
-    - assets/emoticons/emoticon6.gif
-    - assets/emoticons/emoticon7.gif
-    - assets/emoticons/emoticon8.gif
+    - assets/emoticons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

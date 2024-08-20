@@ -1,3 +1,4 @@
+import 'package:dalgeurak/utils/stringUtils.dart';
 import 'package:flutter/material.dart';
 
 class StudentMileageStorePage extends StatelessWidget {
@@ -5,14 +6,18 @@ class StudentMileageStorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 마일리지 상점 데이터를 하드코딩
     final List<Map<String, dynamic>> storeItems = [
-      {"item": "emoticon1", "price": 300, "image": "assets/emoticons/emoticon1.jpg"},
-      {"item": "emoticon2", "price": 300, "image": "assets/emoticons/emoticon2.jpg"},
-      {"item": "emoticon3", "price": 300, "image": "assets/emoticons/emoticon3.gif"},
-      {"item": "emoticon4", "price": 300, "image": "assets/emoticons/emoticon4.gif"},
-      {"item": "emoticon5", "price": 300, "image": "assets/emoticons/emoticon5.gif"},
-      {"item": "emoticon6", "price": 300, "image": "assets/emoticons/emoticon6.gif"},
-      {"item": "emoticon7", "price": 300, "image": "assets/emoticons/emoticon7.gif"},
-      {"item": "emoticon8", "price": 300, "image": "assets/emoticons/emoticon8.gif"},
+      {"item": "안녕 리부트", "price": 3000, "image": "assets/emoticons/emoticon1.jpg"},
+      {"item": "창구는 못말려", "price": 3000, "image": "assets/emoticons/emoticon2.jpg"},
+      {"item": "메이플 이모티콘1", "price": 300, "image": "assets/emoticons/emoticon3.gif"},
+      {"item": "메이플 이모티콘2", "price": 300, "image": "assets/emoticons/emoticon4.gif"},
+      {"item": "메이플 이모티콘3", "price": 300, "image": "assets/emoticons/emoticon5.gif"},
+      {"item": "메이플 이모티콘4", "price": 300, "image": "assets/emoticons/emoticon6.gif"},
+      {"item": "메이플 이모티콘5", "price": 300, "image": "assets/emoticons/emoticon7.gif"},
+      {"item": "메이플 이모티콘6", "price": 300, "image": "assets/emoticons/emoticon8.gif"},
+      {"item": "창섭에몽", "price": 3000, "image": "assets/emoticons/emoticon9.jpg"},
+      {"item": "창섭의 꿈", "price": 3000, "image": "assets/emoticons/emoticon10.jpg"},
+      {"item": "신창섭", "price": 3000, "image": "assets/emoticons/emoticon11.jpg"},
+      {"item": "춤창섭", "price": 3000, "image": "assets/emoticons/emoticon12.gif"},
     ];
 
     return Scaffold(
@@ -105,7 +110,7 @@ class StudentMileageStorePage extends StatelessWidget {
                 Navigator.of(context).pop();
                 // 구매 처리 로직 추가
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('$itemName를(을) 구매했습니다.')),
+                  SnackBar(content: Text('$itemName${getParticle(itemName)} 구매했습니다.')),
                 );
               },
               child: Text('예'),

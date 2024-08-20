@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../themes/color_theme.dart';
-import '../../themes/text_theme.dart';
 
 class Game extends StatelessWidget {
   Game({Key? key}) : super(key: key);
@@ -38,14 +37,14 @@ class Game extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
+                        const CircleAvatar(
                           radius: 30,
                           backgroundImage: AssetImage('assets/profile_image.png'), // 학생 프로필 이미지
                         ),
                         const SizedBox(width: 12),
                         Text(
                           "${userController.user?.name}님 환영합니다",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -54,15 +53,15 @@ class Game extends StatelessWidget {
                       children: [
                         Text(
                           "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
-                        Text(
+                        const Text(
                           "오늘의 할 일 ${3}개가 있어요.",
                           style: TextStyle(fontSize: 18, color: Colors.black87),
                         ),
                         const SizedBox(height: 8),
-                        Text(
+                        const Text(
                           "담당 선생님: 정진용",
                           style: TextStyle(fontSize: 16, color: Colors.black54),
                         ),
@@ -96,7 +95,7 @@ class Game extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "오늘 시간표",
                                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                               ),
@@ -218,7 +217,7 @@ class Game extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               subject,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -253,7 +252,7 @@ class Game extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12, // 폰트 크기 축소
               fontWeight: FontWeight.bold,
               color: Colors.white,
