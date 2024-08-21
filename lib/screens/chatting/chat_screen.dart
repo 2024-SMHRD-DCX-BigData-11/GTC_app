@@ -1,44 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // 추가된 임포트
 
 class ChatScreen extends StatefulWidget {
+  final String chatRoomId;
+
+  ChatScreen({required this.chatRoomId});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? loggedInUser;
+  final _messageController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-  }
-
-  void getCurrentUser() {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        loggedInUser = user;
-        print(loggedInUser!.email);
-      }
-    } catch (e) {
-      print(e);
+  void _sendMessage() async {
+    final message = _messageController.text;
+    if (message.isEmpty) {
+      return;
     }
-  }
 
-  void _sendMessage() {
-    _controller.text = _controller.text.trim();
-    if (_controller.text.isNotEmpty) {
-      FirebaseFirestore.instance.collection('chats').add({
-        'text': _controller.text,
-        'sender': loggedInUser!.email,
-        'timestamp': Timestamp.now(),
+    try {
+      await FirebaseFirestore.instance.collection('chatRooms').doc(widget.chatRoomId).collection('messages').add({
+        'text': message,
+        'createdAt': Timestamp.now(),
+        'userId': FirebaseAuth.instance.currentUser!.uid,
       });
-      _controller.clear();
+      await FirebaseFirestore.instance.collection('chatRooms').doc(widget.chatRoomId).update({
+        'lastMessage': message,
+        'lastMessageAt': Timestamp.now(),
+      });
+      _messageController.clear();
+    } catch (e) {
+      print('메시지 전송 실패: $e');
     }
   }
 
@@ -46,64 +40,37 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              _auth.signOut();
-              Navigator.pop(context);
-            },
-          ),
-        ],
+        title: Text('채팅방'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection('chats')
-                  .orderBy('timestamp', descending: true)
+                  .collection('chatRooms')
+                  .doc(widget.chatRoomId)
+                  .collection('messages')
+                  .orderBy('createdAt', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-                final chatDocs = snapshot.data!.docs;
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return Center(child: Text('메시지가 없습니다.'));
+                }
+                final messages = snapshot.data!.docs;
                 return ListView.builder(
                   reverse: true,
-                  itemCount: chatDocs.length,
+                  itemCount: messages.length,
                   itemBuilder: (ctx, index) {
-                    bool isMe = chatDocs[index]['sender'] == loggedInUser!.email;
-                    return Row(
-                      mainAxisAlignment:
-                      isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 16),
-                          margin: EdgeInsets.symmetric(
-                              vertical: 4, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: isMe ? Colors.grey[300] : Colors.grey[500],
-                            borderRadius: isMe
-                                ? BorderRadius.only(
-                              topLeft: Radius.circular(14),
-                              topRight: Radius.circular(14),
-                              bottomLeft: Radius.circular(14),
-                            )
-                                : BorderRadius.only(
-                              topLeft: Radius.circular(14),
-                              topRight: Radius.circular(14),
-                              bottomRight: Radius.circular(14),
-                            ),
-                          ),
-                          child: Text(
-                            chatDocs[index]['text'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ],
+                    final message = messages[index];
+                    final messageText = message['text'];
+                    final createdAt = (message['createdAt'] as Timestamp).toDate();
+                    return ListTile(
+                      title: Text(messageText),
+                      subtitle: Text('${createdAt.toLocal()}'),
                     );
                   },
                 );
@@ -111,13 +78,13 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(labelText: 'Send a message...'),
+                    controller: _messageController,
+                    decoration: InputDecoration(labelText: '메시지 입력'),
                   ),
                 ),
                 IconButton(

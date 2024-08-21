@@ -20,10 +20,13 @@ import 'package:dalgeurak/controllers/bindings/main_binding.dart'; // MainBindin
 
 // Firebase 설정 옵션 (웹에서 사용)
 const FirebaseOptions firebaseOption = FirebaseOptions(
-  apiKey: "your-api-key",
-  appId: "your-app-id",
-  messagingSenderId: "your-messaging-sender-id",
-  projectId: "your-project-id",
+  apiKey: 'AIzaSyCiL45mXWuDWp9M7nQ_2lLxzZ3Gr_vEgUc',
+  authDomain: 'gtcapp-673ed.firebaseapp.com',
+  projectId: 'gtcapp-673ed',
+  storageBucket: 'gtcapp-673ed.appspot.com',
+  messagingSenderId: '981552705511',
+  appId: '1:981552705511:web:b9f15e09dfe324391c9742',
+  measurementId: 'G-SYX3J8X2H8',
 );
 
 // Dimigoin API 인증 토큰
