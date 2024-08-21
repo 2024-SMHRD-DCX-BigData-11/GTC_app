@@ -7,9 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-
 class QrCodeController extends GetxController {
-
   final DalgeurakService _dalgeurakService = Get.find<DalgeurakService>();
 
   QRViewController? scanController;
@@ -27,22 +25,22 @@ class QrCodeController extends GetxController {
   }
 
   analyzeQrCodeData(String? scanResult) async {
-
     scanController!.pauseCamera();
 
     // isLoading.value = true; // 로딩 상태 시작
 
     // API 호출 예시
-    await _fetchDataFromApi();
+    final data = await _fetchDataFromApi(scanResult);
 
     // isLoading.value = false; // 로딩 상태 종료
 
     Get.back();
 
-    Get.dialog(showAlert());
+    Get.dialog(showAlert(data));
 
-    if (scanResult!.startsWith("dalgeurak_checkin_qr://")) {
-      Map checkInResult = await _dalgeurakService.mealCheckInWithJWT(scanResult.substring(scanResult.indexOf("://")+3));
+    if (scanResult!.startsWith(apiUrl)) {
+      Map checkInResult = await _dalgeurakService.mealCheckInWithJWT(
+          scanResult.substring(scanResult.indexOf("://") + 3));
 
       if (checkInResult["result"] == "success") {
         showToast("${checkInResult['name']}님 체크인 되었습니다.");
@@ -56,10 +54,10 @@ class QrCodeController extends GetxController {
     // scanController!.resumeCamera();
   }
 
-  AlertDialog showAlert()  {
+  AlertDialog showAlert(Map<String, dynamic> map) {
     return AlertDialog(
-      title: const Text('QR'),
-      content: const Text('인식 성공'),
+      title: const Text('QR 인식 성공'),
+      content: Text(jsonEncode(map)),
       actions: [
         TextButton(
           child: const Text("Close"),
@@ -69,15 +67,12 @@ class QrCodeController extends GetxController {
     );
   }
 
-  Future<void> _fetchDataFromApi() async {
+  Future<Map<String, dynamic>>_fetchDataFromApi(String? url) async {
     di.Response response = await dio.post(
-        "$apiUrl/qrcode/join",
+      url ?? "$apiUrl/qrcode/join",
       options: di.Options(contentType: "application/json"),
-      data: {"테스트": "보냄"},
-      
     );
-    final responseBody = jsonEncode(response.data);
-    print("ㅎㅇㅎㅇ : $responseBody");
+    return response.data;
   }
 
   showToast(String message) => Fluttertoast.showToast(
@@ -87,6 +82,5 @@ class QrCodeController extends GetxController {
       timeInSecForIosWeb: 1,
       backgroundColor: const Color(0xE6FFFFFF),
       textColor: Colors.black,
-      fontSize: 13.0
-  );
+      fontSize: 13.0);
 }

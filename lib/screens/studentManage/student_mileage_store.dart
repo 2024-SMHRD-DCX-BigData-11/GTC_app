@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class StudentMileageStorePage extends StatelessWidget {
+  const StudentMileageStorePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> storeItems = [
@@ -16,16 +18,20 @@ class StudentMileageStorePage extends StatelessWidget {
       {"item": "창섭의 꿈", "price": 3000, "image": "assets/emoticons/emoticon10.jpg"},
       {"item": "신창섭", "price": 3000, "image": "assets/emoticons/emoticon11.jpg"},
       {"item": "춤창섭", "price": 3000, "image": "assets/emoticons/emoticon12.gif"},
+      {"item": "예수 신창섭", "price": 3000, "image": "assets/emoticons/emoticon13.jpg"},
+      {"item": "쌀 숭이", "price": 3000, "image": "assets/emoticons/emoticon14.jpg"},
+      {"item": "리게로", "price": 3000, "image": "assets/emoticons/emoticon15.jpg"},
+      {"item": "김창섭의 건드림", "price": 3000, "image": "assets/emoticons/emoticon16.webp"},
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('마일리지 상점'),
+        title: const Text('마일리지 상점'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4, // 한 줄에 4개씩 배치
             crossAxisSpacing: 16.0,
             mainAxisSpacing: 16.0,
@@ -48,7 +54,7 @@ class StudentMileageStorePage extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -66,7 +72,7 @@ class StudentMileageStorePage extends StatelessWidget {
                     ),
                     Text(
                       "${item['price']} 마일리지",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -87,7 +93,7 @@ class StudentMileageStorePage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('이모티콘 구매'),
+          title: const Text('이모티콘 구매'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -96,9 +102,9 @@ class StudentMileageStorePage extends StatelessWidget {
                 height: 100,
                 fit: BoxFit.contain,
               ),
-              SizedBox(height: 16),
-              Text("현재 이모티콘을 구매하시겠습니까?"),
-              SizedBox(height: 8),
+              const SizedBox(height: 16),
+              const Text("현재 이모티콘을 구매하시겠습니까?"),
+              const SizedBox(height: 8),
               Text("가격: $price 마일리지"),
             ],
           ),
@@ -109,13 +115,13 @@ class StudentMileageStorePage extends StatelessWidget {
                 // 이모티콘을 채팅방으로 전송
                 Navigator.of(context).pop(imagePath);
               },
-              child: Text('예'),
+              child: const Text('예'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('아니요'),
+              child: const Text('아니요'),
             ),
           ],
         );
