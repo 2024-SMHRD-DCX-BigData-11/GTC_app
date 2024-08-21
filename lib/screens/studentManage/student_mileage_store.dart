@@ -1,10 +1,8 @@
-import 'package:dalgeurak/utils/stringUtils.dart';
 import 'package:flutter/material.dart';
 
 class StudentMileageStorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // 마일리지 상점 데이터를 하드코딩
     final List<Map<String, dynamic>> storeItems = [
       {"item": "안녕 리부트", "price": 3000, "image": "assets/emoticons/emoticon1.jpg"},
       {"item": "창구는 못말려", "price": 3000, "image": "assets/emoticons/emoticon2.jpg"},
@@ -108,10 +106,8 @@ class StudentMileageStorePage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // 구매 처리 로직 추가
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('$itemName${getParticle(itemName)} 구매했습니다.')),
-                );
+                // 이모티콘을 채팅방으로 전송
+                Navigator.of(context).pop(imagePath);
               },
               child: Text('예'),
             ),

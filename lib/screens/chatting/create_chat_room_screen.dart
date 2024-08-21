@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // 추가된 임포트
 
 class CreateChatRoomScreen extends StatefulWidget {
   @override
@@ -33,7 +32,10 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-                if (!snapshot.hasData || snapshot.data == null) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('사용자 목록을 불러오는 중 오류가 발생했습니다.'));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Center(child: Text('사용자 목록을 불러올 수 없습니다.'));
                 }
                 final users = snapshot.data!.docs;
@@ -48,7 +50,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
                   items: users.map((user) {
                     return DropdownMenuItem<String>(
                       value: user.id,
-                      child: Text(user['name']),
+                      child: Text(user['name'] ?? '이름 없음'),
                     );
                   }).toList(),
                 );
@@ -67,6 +69,8 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
 
   void _createChatRoom() async {
     final chatRoomName = _chatRoomNameController.text;
+    final currentUserId = "anonymousUser"; // 로그인하지 않은 경우에 사용할 기본 사용자 ID
+
     if (chatRoomName.isEmpty || _selectedUserId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('채팅방 이름과 사용자 선택은 필수입니다.')),
@@ -77,7 +81,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
     try {
       await FirebaseFirestore.instance.collection('chatRooms').add({
         'name': chatRoomName,
-        'users': [FirebaseAuth.instance.currentUser!.uid, _selectedUserId],
+        'users': [currentUserId, _selectedUserId],
         'lastMessage': 'No messages yet.',
         'createdAt': Timestamp.now(),
       });

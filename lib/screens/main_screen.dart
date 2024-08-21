@@ -1,6 +1,7 @@
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/screens/calendar/calendar_page.dart';
 import 'package:dalgeurak/screens/chatting/ChatRoomListScreen.dart';
+import 'package:dalgeurak/screens/game/ExampleScreen.dart';
 import 'package:dalgeurak/screens/game/game.dart';
 import 'package:dalgeurak/screens/chatting//chat_screen.dart';
 import 'package:dalgeurak/screens/profile/my_profile.dart';
