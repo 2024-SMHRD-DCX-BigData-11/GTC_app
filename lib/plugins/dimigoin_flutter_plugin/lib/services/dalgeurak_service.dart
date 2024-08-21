@@ -340,7 +340,7 @@ class DalgeurakService {
   /// 학생 본인이 직접 체크인을 진행하는 함수입니다.
   mealCheckInWithJWT(String jwtToken) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/",
         options: Options(contentType: "application/json"),
         data: {"key": jwtToken},
@@ -361,7 +361,7 @@ class DalgeurakService {
   /// 디넌이 수동으로 학생의 체크인을 진행하는 함수입니다.
   mealCheckInByManager(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/entrance",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid},
@@ -384,7 +384,7 @@ class DalgeurakService {
     try {
       warningType.forEach((element) => warningType[warningType.indexOf(element)] = (element as StudentWarningType).convertEngStr);
 
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/warning",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid, "type": warningType, "reason": reason},
@@ -404,7 +404,7 @@ class DalgeurakService {
 
   getMyWarningList() async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/warning",
         options: Options(contentType: "application/json"),
       );
@@ -427,7 +427,7 @@ class DalgeurakService {
 
   getStudentWarningList(int studentUid) async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/warning/$studentUid",
         options: Options(contentType: "application/json"),
       );
@@ -451,7 +451,7 @@ class DalgeurakService {
   /// 학생의 현재 입장 여부, 선/후밥 여부를 확인하는 함수입니다.
   getUserMealInfo() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/me",
         options: Options(contentType: "application/json"),
       );
@@ -474,7 +474,7 @@ class DalgeurakService {
   /// 학생이 직접 선/후밥을 신청하는 함수입니다.
   setUserMealException(List<MealType> mealTypeList, List<String> dateList, List<MealExceptionType> exceptionTypeList, String reason, List<int> studentUidList) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/exception",
         options: Options(contentType: "application/json"),
         data: {
@@ -502,7 +502,7 @@ class DalgeurakService {
   /// 선생님이 학생에게 선/후밥을 부여하는 함수입니다.
   setTeacherMealException(List<MealType> mealTypeList, List<String> dateList, List<MealExceptionType> exceptionTypeList, String reason, List<int> studentUidList) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/exception/instead",
         options: Options(contentType: "application/json"),
         data: {
@@ -531,7 +531,7 @@ class DalgeurakService {
   /// 선생님이 선/후밥을 취소하는 함수입니다.
   removeUserMealException(String studentUid, MealType mealType, MealExceptionType excepetionType, String date) async {
     try {
-      Response response = await _dio.delete(
+      Response response = await dio.delete(
         "$apiUrl/dalgeurak/exception",
         options: Options(contentType: "application/json"),
         data: {
@@ -557,7 +557,7 @@ class DalgeurakService {
   /// 선/후밥을 신청한 모든 학생들의 리스트를 가져오는 함수입니다.
   getAllUserMealException(bool isGetGroupAppliersStudentInfo) async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/exception/",
         options: Options(contentType: "application/json"),
       );
@@ -595,7 +595,7 @@ class DalgeurakService {
   /// 신청 되어있는 선/후밥을 선생님이 허가/거부할 수 있는 함수입니다.
   changeMealExceptionStatus(MealExceptionStatusType statusType, String exceptionModelId, String reason) async {
     try {
-      Response response = await _dio.patch(
+      Response response = await dio.patch(
         "$apiUrl/dalgeurak/exception/application",
         options: Options(contentType: "application/json"),
         data: {
@@ -620,7 +620,7 @@ class DalgeurakService {
   /// 급식실에 선밥 학생이 들어올 경우 선생님/디넌이 입장 처리를 진행하는 함수입니다.
   enterStudentMealException(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/exception/enter",
         options: Options(contentType: "application/json"),
         data: {
@@ -643,7 +643,7 @@ class DalgeurakService {
   /// 현재 선/후밥 신청이 가능한 학생 수를 반환하는 함수입니다.
   getRemainMealExceptionStudentAmount() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/exception/remain",
         options: Options(contentType: "application/json"),
       );
@@ -663,7 +663,7 @@ class DalgeurakService {
   /// 학생이 선밥권을 사용하는 함수입니다.
   useMealExceptionTicket(MealType mealType) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/exception/ticket",
         options: Options(contentType: "application/json"),
         data: {"time": mealType.convertEngStr},
@@ -684,7 +684,7 @@ class DalgeurakService {
   /// 학생을 선/후밥 블랙리스트에 추가하는 함수입니다.
   addStudentInBlackListMealException(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
           "$apiUrl/dalgeurak/exception/blacklist",
           options: Options(contentType: "application/json"),
           data: {"sid": studentUid}
@@ -705,7 +705,7 @@ class DalgeurakService {
   /// 학생을 선/후밥 블랙리스트에서 제거하는 함수입니다.
   removeStudentInBlackListMealException(int studentUid) async {
     try {
-      Response response = await _dio.delete(
+      Response response = await dio.delete(
           "$apiUrl/dalgeurak/exception/blacklist",
           options: Options(contentType: "application/json"),
           data: {"sid": studentUid}
@@ -726,7 +726,7 @@ class DalgeurakService {
   /// 달그락 선생님 화면에 사용할 수 있는 간단한 학생의 정보를 불러올 수 있는 함수입니다.
   getSimpleStudentInfo(int studentUid, {bool? isExceptionEnter}) async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/user",
         options: Options(contentType: "application/json"),
         queryParameters: {
@@ -752,7 +752,7 @@ class DalgeurakService {
   /// 모든 학년의 급식 반 순서를 가져오는 함수입니다.
   getMealSequence() async {
     try {
-      Response response = await _dio.get("$apiUrl/dalgeurak/sequence");
+      Response response = await dio.get("$apiUrl/dalgeurak/sequence");
 
       return {
         "success": true,
@@ -771,7 +771,7 @@ class DalgeurakService {
     try {
       if (sequence.length != 6 || sequence[0].toString().length != 1) { return {"success": false, "content": "데이터가 정상적이지 않습니다. 다시 시도해주세요."}; }
 
-      Response response = await _dio.patch(
+      Response response = await dio.patch(
         "$apiUrl/dalgeurak/sequence/$grade",
         options: Options(contentType: "application/json"),
         data: {"time": mealType.convertEngStr, "sequences": sequence},
@@ -792,7 +792,7 @@ class DalgeurakService {
   /// 모든 학년의 급식 시간을 가져오는 함수입니다.
   getMealTime() async {
     try {
-      Response response = await _dio.get("$apiUrl/dalgeurak/time");
+      Response response = await dio.get("$apiUrl/dalgeurak/time");
 
       return {
         "success": true,
@@ -811,7 +811,7 @@ class DalgeurakService {
     try {
       if (time.length != 6 || time[0].toString().length != 4) { return {"success": false, "content": "데이터가 정상적이지 않습니다. 다시 시도해주세요."}; }
 
-      Response response = await _dio.patch(
+      Response response = await dio.patch(
         "$apiUrl/dalgeurak/time/$grade",
         options: Options(contentType: "application/json"),
         data: {"time": mealType.convertEngStr, "classTimes": time},
@@ -832,7 +832,7 @@ class DalgeurakService {
   /// 급식 줄이 밀렸을 경우 설정되는 지연 시간을 받아오는 함수입니다.
   getMealExtraTime() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/extraTime",
       );
 
@@ -851,7 +851,7 @@ class DalgeurakService {
   /// 급식 줄이 밀렸을 경우 반의 급식 시간들을 미루는 함수입니다.
   setMealExtraTime(int time) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/extra",
         options: Options(contentType: "application/json"),
         data: {"extraMinute": time},
@@ -872,7 +872,7 @@ class DalgeurakService {
   /// 급식 대기 장소를 설정하는 함수입니다.
   setMealWaitingPlace(MealWaitingPlaceType placeType) async {
     try {
-      Response response = await _dio.put(
+      Response response = await dio.put(
         "$apiUrl/dalgeurak/waitingLine",
         options: Options(contentType: "application/json"),
         data: {"position": placeType.convertEng},
@@ -893,7 +893,7 @@ class DalgeurakService {
   /// 간편식의 정보를 가져오는 함수입니다.
   getConvenienceFoodInfo() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/convenience",
         options: Options(contentType: "application/json"),
       );
@@ -913,7 +913,7 @@ class DalgeurakService {
   /// 자신의 간편식 신청 현황 정보를 가져오는 함수입니다.
   getMyConvenienceFoodApplicationInfo() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/convenience/me",
         options: Options(contentType: "application/json"),
       );
@@ -933,7 +933,7 @@ class DalgeurakService {
   /// 학생이 간편식을 신청하는 함수입니다.
   applicationConvenienceFood(MealType mealType, ConvenienceFoodType foodType) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/convenience",
         options: Options(contentType: "application/json"),
         data: {"time": mealType.convertEngStr, "food": foodType.convertEng},
@@ -954,7 +954,7 @@ class DalgeurakService {
   /// 선생님이 간편식을 대신 신청하는 함수입니다.
   applicationTeacherConvenienceFood(int studentUid, MealType mealType, ConvenienceFoodType foodType) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/convenience/instead",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid, "time": mealType.convertEngStr, "food": foodType.convertEng},
@@ -975,7 +975,7 @@ class DalgeurakService {
   /// 달그락 간편식 체크인에서 금요귀가임을 등록할 수 있는 함수입니다.
   registerFridayHomecomingInConvenienceFood(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/convenience/fri",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid},
@@ -996,7 +996,7 @@ class DalgeurakService {
   /// 학생이 간편식을 먹을 때 체크인을 진행하는 함수입니다.
   checkInConvenienceFood(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/convenience/checkin",
         options: Options(contentType: "application/json"),
         data: {
@@ -1019,7 +1019,7 @@ class DalgeurakService {
   /// 간편식 체크인을 취소하는 함수입니다.
   cancelCheckInConvenienceFood(int studentUid) async {
     try {
-      Response response = await _dio.delete(
+      Response response = await dio.delete(
         "$apiUrl/dalgeurak/convenience/checkin",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid}
@@ -1040,7 +1040,7 @@ class DalgeurakService {
   /// 간편식을 신청한 학생들의 리스트를 불러오는 함수입니다.
   getConvenienceFoodStudentList() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/convenience/users",
         options: Options(contentType: "application/json"),
       );
@@ -1082,7 +1082,7 @@ class DalgeurakService {
   /// 학생을 간편식 블랙리스트에 추가하는 함수입니다.
   addStudentInBlackListConvenienceFood(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
           "$apiUrl/dalgeurak/convenience/blacklist",
           options: Options(contentType: "application/json"),
           data: {"sid": studentUid}
@@ -1103,7 +1103,7 @@ class DalgeurakService {
   /// 학생을 간편식 블랙리스트에서 제거하는 함수입니다.
   removeStudentInBlackListConvenienceFood(int studentUid) async {
     try {
-      Response response = await _dio.delete(
+      Response response = await dio.delete(
           "$apiUrl/dalgeurak/convenience/blacklist",
           options: Options(contentType: "application/json"),
           data: {"sid": studentUid}
@@ -1126,7 +1126,7 @@ class DalgeurakService {
     try {
       DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
-      Response response = await _dio.get(
+      Response response = await dio.get(
           "$apiUrl/dalgeurak/convenience/${dateFormat.format(firstDate)}/${dateFormat.format(lastDate)}",
           options: Options(contentType: "application/json"),
       );
@@ -1178,7 +1178,7 @@ class DalgeurakService {
   /// 간편식에 관한 모든 정보들을 불러오는 함수입니다.
   getAllConvenienceFoodInfo() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/convenience/data",
         options: Options(contentType: "application/json"),
       );
@@ -1227,7 +1227,7 @@ class DalgeurakService {
   /// 학생들이 간편식 체크인을 진행한 정보를 불러오는 함수입니다.
   getConvenienceCheckInInfo() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/convenience/checkeat",
         options: Options(contentType: "application/json"),
       );
@@ -1264,7 +1264,7 @@ class DalgeurakService {
   /// 급식실에서 잔류 급식비 단가를 변경하는 함수입니다.
   setStayMealPrice(int price) async {
     try {
-      Response response = await _dio.patch(
+      Response response = await dio.patch(
         "$apiUrl/dalgeurak/stayMealPrice",
         options: Options(contentType: "application/json"),
         data: {"price": price}
@@ -1285,7 +1285,7 @@ class DalgeurakService {
   /// 지정된 잔류 급식비 단가를 가져오는 함수입니다.
   getStayMealPrice() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
           "$apiUrl/dalgeurak/stayMealPrice",
           options: Options(contentType: "application/json"),
       );
@@ -1305,7 +1305,7 @@ class DalgeurakService {
   /// 달그락의 공지사항을 불러오는 함수입니다.
   getNotice() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/notice",
         options: Options(contentType: "application/json"),
       );
@@ -1325,7 +1325,7 @@ class DalgeurakService {
   /// 달그락의 공지사항을 등록하는 함수입니다.
   setNotice(String noticeText) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/notice",
         options: Options(contentType: "application/json"),
         data: {"message": noticeText}
@@ -1349,7 +1349,7 @@ class DalgeurakService {
       List<String> mealTypeStrList = [];
       mealTypeList.forEach((element) => mealTypeStrList.add(element.convertEngStr));
 
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/cancel",
         options: Options(contentType: "application/json"),
         data: {
@@ -1381,7 +1381,7 @@ class DalgeurakService {
       List<int> studentUidList = [];
       studentList.forEach((element) => studentUidList.add(element.id!));
 
-      Response response = await _dio.post(
+      Response response = await dio.post(
           "$apiUrl/dalgeurak/cancel/students",
           options: Options(contentType: "application/json"),
           data: {
@@ -1408,7 +1408,7 @@ class DalgeurakService {
   /// 급식 취소 신청을 승인/거절하는 함수입니다.
   changeMealCancelStatus(String mealCancelObjId, bool isApprove) async {
     try {
-      Response response = await _dio.patch(
+      Response response = await dio.patch(
           "$apiUrl/dalgeurak/cancel",
           options: Options(contentType: "application/json"),
           data: {
@@ -1432,7 +1432,7 @@ class DalgeurakService {
   /// 급식 취소 신청 목록을 불러오는 함수입니다. 선생님은 자신 반 학생들 내역만, 급식실은 1차 승인이 진행된 내역만 보여줍니다.
   getMealCancelApplicationList() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
           "$apiUrl/dalgeurak/cancel",
           options: Options(contentType: "application/json"),
       );
@@ -1456,7 +1456,7 @@ class DalgeurakService {
   /// 학생에게 디넌 권한을 부여하는 함수입니다.
   authorizeDienenPermission(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak-management/permission",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid},
@@ -1477,7 +1477,7 @@ class DalgeurakService {
   /// 학생에게 디넌 권한을 제거하는 함수입니다.
   removeDienenPermission(int studentUid) async {
     try {
-      Response response = await _dio.delete(
+      Response response = await dio.delete(
         "$apiUrl/dalgeurak-management/permission",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid},
@@ -1498,7 +1498,7 @@ class DalgeurakService {
   /// 학생에게 디넌장 권한을 위임하는 함수입니다.
   mandateDienenLeaderPermission(int studentUid) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak-management/mandate",
         options: Options(contentType: "application/json"),
         data: {"sid": studentUid},
@@ -1519,7 +1519,7 @@ class DalgeurakService {
   /// 현재 급식 순서인 반을 반환해주는 함수입니다.
   getNowSequenceClass() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/nowSequence",
         options: Options(contentType: "application/json"),
       );
@@ -1539,7 +1539,7 @@ class DalgeurakService {
   /// 현재 기기의 FCM Token을 서버에 등록하는 함수입니다.
   registerFCMToken(String token) async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         "$apiUrl/dalgeurak/token",
         options: Options(contentType: "application/json"),
         data: {"deviceToken": token},
@@ -1560,7 +1560,7 @@ class DalgeurakService {
   /// 유저의 FCM Token 중 원하는 Token을 서버에서 제거하는 함수입니다.
   removeFCMToken(String token) async {
     try {
-      Response response = await _dio.delete(
+      Response response = await dio.delete(
         "$apiUrl/dalgeurak/token",
         options: Options(contentType: "application/json"),
         data: {"deviceToken": token},
@@ -1584,7 +1584,7 @@ class DalgeurakService {
       List formattingData = [];
 
       for (int i=1; i<=3; i++) {
-        Response response = await _dio.get(
+        Response response = await dio.get(
           "$dimigoStudentApiUrl/user-students/search",
           options: Options(contentType: "application/json", headers: {'Authorization': 'Basic $_dimigoStudentAPIAuthToken'}),
           queryParameters: {"grade": i}
@@ -1617,7 +1617,7 @@ class DalgeurakService {
     try {
       List formattingData = [];
 
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/student",
         options: Options(contentType: "application/json"),
       );
@@ -1640,7 +1640,7 @@ class DalgeurakService {
   /// 현재 디미고인에 등록되어있는 모든 1, 2학년 학생들의 급식 상태를 리스트 형태로 반환하는 함수입니다.
   getAllStudentMealStatus() async {
     try {
-      Response response = await _dio.get(
+      Response response = await dio.get(
         "$apiUrl/dalgeurak/mealStatus",
         options: Options(contentType: "application/json"),
       );

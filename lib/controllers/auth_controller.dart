@@ -9,13 +9,15 @@ import 'package:get/get.dart';
 
 class AuthController extends GetxController {
   UserController userController = Get.find<UserController>();
-  NotificationController _notificationController = Get.find<NotificationController>();
+  final NotificationController _notificationController =
+      Get.find<NotificationController>();
   FirebaseAuth authInstance = FirebaseAuth.instance;
-  DimigoinAccount _dimigoinAccount = Get.find<DimigoinAccount>();
-  DalgeurakService _dalgeurakService = Get.find<DalgeurakService>();
-  DalgeurakToast _dalgeurakToast = DalgeurakToast();
+  final DimigoinAccount _dimigoinAccount = Get.find<DimigoinAccount>();
+  final DalgeurakService _dalgeurakService = Get.find<DalgeurakService>();
+  final DalgeurakToast _dalgeurakToast = DalgeurakToast();
 
-  Rxn<User> _firebaseUser = Rxn<User>();
+  final Rxn<User> _firebaseUser = Rxn<User>();
+
   User? get user => _firebaseUser.value;
 
   final userIdTextController = TextEditingController();
@@ -26,7 +28,6 @@ class AuthController extends GetxController {
   RxDouble btnContainerPositioned = 0.0.obs;
   RxDouble helloTextPositioned = 0.0.obs;
   RxMap subTitlePositioned = {"top": 0.0, "left": 0.0}.obs;
-
 
   @override
   onInit() async {
@@ -40,7 +41,8 @@ class AuthController extends GetxController {
   }
 
   void logInWithDimigoinAccount() async {
-    Map loginResult = await _dimigoinAccount.login(userIdTextController.text, passwordTextController.text, true);
+    Map loginResult = await _dimigoinAccount.login(
+        userIdTextController.text, passwordTextController.text, true);
 
     if (loginResult['success']) {
       // await _dalgeurakService.registerFCMToken(await _notificationController.getFCMToken());
@@ -59,13 +61,10 @@ class AuthController extends GetxController {
     _dalgeurakToast.show("로그아웃 되었습니다.");
   }
 
-  void join(String id, String password, String name, String nickname, String phone) async {
-    print("id : " + id);
-    print("pw : " + password);
-    print("name : " + name);
-    print("nickname : " + nickname);
-    print("phone : " + phone);
-    Map joinResult = await _dimigoinAccount.join(id, password, name, nickname, phone);
+  void join(String id, String password, String name, String nickname,
+      String phone) async {
+    Map joinResult =
+        await _dimigoinAccount.join(id, password, name, nickname, phone);
 
     if (joinResult['success']) {
       // await _dalgeurakService.registerFCMToken(await _notificationController.getFCMToken());
@@ -89,35 +88,26 @@ class AuthController extends GetxController {
     successCheckIconPositioned["top"] = (height * 0.5);
     successCheckIconPositioned["left"] = (width * 0.5);
 
+    Future.delayed(const Duration(milliseconds: 20), () {
+      successCheckIconSize.value = 0.75;
+      successCheckIconPositioned["top"] = (height * 0.5) - (width * 0.75) / 2;
+      successCheckIconPositioned["left"] = (width * 0.5) - (width * 0.75) / 2;
+    });
 
-    Future.delayed(
-        Duration(milliseconds: 20),
-            () {
-          successCheckIconSize.value = 0.75;
-          successCheckIconPositioned["top"] = (height * 0.5) - (width * 0.75) / 2;
-          successCheckIconPositioned["left"] = (width * 0.5) - (width * 0.75) / 2;
-        }
-    );
+    Future.delayed(const Duration(milliseconds: 1400), () {
+      successCheckIconSize.value = 0.1;
+      successCheckIconPositioned['top'] = height * 0.39;
+      successCheckIconPositioned['left'] = width * 0.335;
 
-    Future.delayed(
-        Duration(milliseconds: 1400),
-            () {
-          successCheckIconSize.value = 0.1;
-          successCheckIconPositioned['top'] = height * 0.39;
-          successCheckIconPositioned['left'] = width * 0.335;
+      subTitlePositioned['top'] = height * 0.4;
+    });
 
-          subTitlePositioned['top'] = height * 0.4;
-        }
-    );
+    Future.delayed(const Duration(milliseconds: 1800), () {
+      helloTextPositioned.value = height * 0.45;
+    });
 
-    Future.delayed(
-        Duration(milliseconds: 1800),
-            () { helloTextPositioned.value = height * 0.45; }
-    );
-
-    Future.delayed(
-        Duration(milliseconds: 2200),
-            () { btnContainerPositioned.value = height * 0.1; }
-    );
+    Future.delayed(const Duration(milliseconds: 2200), () {
+      btnContainerPositioned.value = height * 0.1;
+    });
   }
 }

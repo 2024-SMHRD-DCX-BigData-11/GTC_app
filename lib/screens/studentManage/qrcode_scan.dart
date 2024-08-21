@@ -38,7 +38,7 @@ class QrCodeScan extends GetWidget<QrCodeController> {
                   }
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -48,6 +48,9 @@ class QrCodeScan extends GetWidget<QrCodeController> {
   void _onQRViewCreated(QRViewController scanController) {
     controller.scanController = scanController;
 
-    scanController.scannedDataStream.listen((scanData) => controller.analyzeQrCodeData(scanData.code));
+    controller.scanController!.resumeCamera();
+
+    scanController.scannedDataStream
+        .listen((scanData) => controller.analyzeQrCodeData(scanData.code));
   }
 }

@@ -8,7 +8,7 @@ class DimigoinTimetable {
   /// @returns 주간 시간표를 List 형태로 반환합니다.
   getWeeklyTimeTable(int gradeNum, int classNum) async {
     try {
-      Response response = await _dio.get('$apiUrl/timetable/weekly/grade/$gradeNum/class/$classNum');
+      Response response = await dio.get('$apiUrl/timetable/weekly/grade/$gradeNum/class/$classNum');
 
       List originalData = response.data['timetable'];
 

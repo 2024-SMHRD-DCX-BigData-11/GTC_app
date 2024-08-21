@@ -15,7 +15,7 @@ class DimigoinAccount {
   /// @returns 로그인에 성공할 경우 true, 실패할 경우 false를 반환합니다.
   Future<Map> login(String userName, String password, bool isDalgeurakService) async {
     try {
-      Response authResponse = await _dio.post(
+      Response authResponse = await dio.post(
         '$apiUrl/auth/login',
         options: Options(contentType: "application/json"),
         queryParameters: {"dalgeurak": isDalgeurakService},
@@ -25,7 +25,7 @@ class DimigoinAccount {
 
       _accessToken = authResponse.data['accessToken'];
       await _storage.write(key: "dimigoinAccount_accessToken", value: authResponse.data['accessToken']);
-      await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
+      // await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
       await storeUserData();
 
       return {
@@ -67,7 +67,7 @@ class DimigoinAccount {
   /// @returns 로그인에 성공할 경우 true, 실패할 경우 false를 반환합니다.
   Future<Map> join(String userName, String password, String name, String nickname, String phone) async {
     try {
-      Response authResponse = await _dio.post(
+      Response authResponse = await dio.post(
         '$apiUrl/auth/join',
         options: Options(contentType: "application/json"),
         data: {
@@ -103,7 +103,7 @@ class DimigoinAccount {
   validateAccessToken() async {
     String? accessToken = await _storage.read(key: "dimigoinAccount_accessToken");
     try {
-      await _dio.get(
+      await dio.get(
         "$apiUrl/user/me",
         options: Options(contentType: "application/json"),
       );
@@ -124,7 +124,7 @@ class DimigoinAccount {
   /// @returns 갱신에 성공할 경우 true, 실패할 경우 false를 반환합니다.
   refreshAccessToken() async {
     try {
-      Response response = await _dio.post(
+      Response response = await dio.post(
         '$apiUrl/auth/refresh',
         options: Options(contentType: "application/json"),
       );
@@ -150,7 +150,7 @@ class DimigoinAccount {
   /// @returns 저장에 성공할 경우 true, 실패할 경우 false를 반환합니다.
   storeUserData() async {
     try {
-      Response infoResponse = await _dio.post(
+      Response infoResponse = await dio.post(
         "$apiUrl/user/me",
         options: Options(contentType: "application/json",
             headers: {'Authorization': 'Bearer $_accessToken'}),
@@ -179,7 +179,7 @@ class DimigoinAccount {
 
   Future<Map> update(String name, int grade, int _class) async {
     try {
-      Response authResponse = await _dio.post(
+      Response authResponse = await dio.post(
         '$apiUrl/user/update',
         options: Options(contentType: "application/json"),
         data: {"name": name, "grade": grade, "_class" : _class},

@@ -8,7 +8,7 @@ class DimigoinMeal {
   /// @returns 급식정보를 List 형태로 반환합니다.
   getWeeklyMeal() async {
     try {
-      Response response = await _dio.get('$apiUrl/meal/weekly');
+      Response response = await dio.get('$apiUrl/meal/weekly');
 
       return response.data['meals'];
     } catch (e) {
@@ -25,7 +25,7 @@ class DimigoinMeal {
     try {
       String mealApiUrl = getTodayInfo ? "$apiUrl/meal/today" : "$apiUrl/meal/date/$date";
 
-      Response response = await _dio.get(mealApiUrl);
+      Response response = await dio.get(mealApiUrl);
 
       return response.data['meal'];
     } catch (e) {

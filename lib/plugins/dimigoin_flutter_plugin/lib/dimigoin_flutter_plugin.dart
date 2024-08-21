@@ -20,8 +20,8 @@ part 'models/dalgeurak_conveniencefood.dart';
 part 'models/stream_socket.dart';
 
 
-final _dio = Dio();
-final _storage = const FlutterSecureStorage();
+final Dio dio = Dio();
+FlutterSecureStorage _storage = const FlutterSecureStorage();
 
 String apiUrl = "http://172.30.1.60:8080"; // smhrdA_5G 와이파이 사용 필수
 const socketApiUrl = "http://oci.dimigo.in:4999";
@@ -44,8 +44,8 @@ class DimigoinFlutterPlugin {
     _dimigoStudentAPIAuthToken = dimigoStudentAPIAuthToken;
     if (customApiUrl != null) { apiUrl = customApiUrl; }
 
-    _dio.interceptors.clear();
-    _dio.interceptors.add(InterceptorsWrapper(
+    dio.interceptors.clear();
+    dio.interceptors.add(InterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) async {
         if (options.path == '/auth/refresh') {
           return handler.next(options);
@@ -72,7 +72,7 @@ class DimigoinFlutterPlugin {
           bool isTokenRefreshSuccess = await _dimigoinLogin.refreshAccessToken();
 
           if (isTokenRefreshSuccess) {
-            Response response = await _dio.fetch(err.requestOptions);
+            Response response = await dio.fetch(err.requestOptions);
             return handler.resolve(response);
           } else {
             return handler.next(err);

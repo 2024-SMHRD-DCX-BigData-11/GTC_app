@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _dimigoinAccount.refreshAccessToken(),
-        child: Icon(Icons.refresh_rounded),
+        child: const Icon(Icons.refresh_rounded),
       ),
     );
   }
