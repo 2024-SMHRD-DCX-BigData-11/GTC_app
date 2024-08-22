@@ -24,13 +24,13 @@ class Login extends GetWidget<AuthController> {
           children: [
             Image.asset(
               "assets/images/logo.png",
-              width: 100,
-              height: 100,
+              width: 200,
+              height: 200,
             ),
             SizedBox(height: _height * 0.015),
-            Text("달그락", style: loginTitle),
-            SizedBox(height: _height * 0.015),
-            Text("Go To Canada", style: loginSubTitle),
+            //Text("양건열", style: loginTitle),
+            //SizedBox(height: _height * 0.015),
+            Text("Grow Thrive Cultivate", style: loginSubTitle),
             SizedBox(height: _height * 0.08),
             getInputTextField("아이디", controller.userIdTextController),
             SizedBox(height: _height * 0.0075),
