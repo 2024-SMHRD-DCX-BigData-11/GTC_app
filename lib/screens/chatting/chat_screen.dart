@@ -1,20 +1,45 @@
+import 'package:dalgeurak/controllers/auth_controller.dart';
+import 'package:dalgeurak/controllers/user_controller.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:dio/dio.dart' as di;
 
-class ChatScreen extends StatefulWidget {
+class ChatScreenState extends GetWidget<AuthController> {
   final String chatRoomId;
+  ChatScreenState({required this.chatRoomId, Key? key}) : super(key: key);
 
-  ChatScreen({required this.chatRoomId});
-
-  @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
   final _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode(); // FocusNode 추가
+
+  late UserController userController = Get.find<UserController>();
+
+  Future<Map<String, dynamic>> sendMessage(String? message) async {
+    print('gd');
+    di.Response response = await dio.post(
+      "$apiUrl/chat/chat",
+      options: di.Options(contentType: "application/json"),
+      data: {
+        "room": chatRoomId,
+        "message": message
+      },
+    );
+    print('gdgd');
+    _messageController.clear();
+    _focusNode.requestFocus();
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>>_fetchDataFromApi(String? url) async {
+    di.Response response = await dio.post(
+      url ?? "$apiUrl/qrcode/join",
+      options: di.Options(contentType: "application/json"),
+    );
+    return response.data;
+  }
 
   void _sendMessage(String message) async {
     // 로그인 여부와 관계없이 기본 사용자 ID 사용
@@ -28,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       await FirebaseFirestore.instance
           .collection('chatRooms')
-          .doc(widget.chatRoomId)
+          .doc(chatRoomId)
           .collection('messages')
           .add({
         'text': message,
@@ -37,7 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
       await FirebaseFirestore.instance
           .collection('chatRooms')
-          .doc(widget.chatRoomId)
+          .doc(chatRoomId)
           .update({
         'lastMessage': message,
         'lastMessageAt': Timestamp.now(),
@@ -49,24 +74,58 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  /*void _sendMessage(String message) async {
+    // 로그인 여부와 관계없이 기본 사용자 ID 사용
+    final userId = FirebaseAuth.instance.currentUser?.uid ??
+        "anonymousUser"; // 로그인하지 않은 경우 기본 사용자 ID
+
+    if (message.isEmpty) {
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('chatRooms')
+          .doc(chatRoomId)
+          .collection('messages')
+          .add({
+        'text': message,
+        'createdAt': Timestamp.now(),
+        'userId': userId, // 기본 사용자 ID 저장
+      });
+      await FirebaseFirestore.instance
+          .collection('chatRooms')
+          .doc(chatRoomId)
+          .update({
+        'lastMessage': message,
+        'lastMessageAt': Timestamp.now(),
+      });
+      _messageController.clear();
+      _focusNode.requestFocus(); // 메시지 전송 후 다시 포커스를 TextField에 설정
+    } catch (e) {
+      print('메시지 전송 실패: $e');
+    }
+  }*/
+
   Future<void> _openMileageStore() async {
-    final selectedEmoticon = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => StudentMileageStorePage()),
+    final selectedEmoticon = await Get.to<String>(
+          () => const StudentMileageStorePage(),
     );
 
     if (selectedEmoticon != null) {
-      _sendMessage(selectedEmoticon);
+      sendMessage(selectedEmoticon);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId =
-        FirebaseAuth.instance.currentUser?.uid ?? "anonymousUser";
+    // final currentUserId =
+    //     FirebaseAuth.instance.currentUser?.uid ?? "anonymousUser";
+    final currentUserId = userController.user?.id;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('채팅방'),
+        title: const Text('채팅방'),
         backgroundColor: Colors.blueAccent,
       ),
       body: Column(
@@ -75,16 +134,16 @@ class _ChatScreenState extends State<ChatScreen> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('chatRooms')
-                  .doc(widget.chatRoomId)
+                  .doc(chatRoomId)
                   .collection('messages')
                   .orderBy('createdAt', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data == null) {
-                  return Center(child: Text('메시지가 없습니다.'));
+                  return const Center(child: Text('메시지가 없습니다.'));
                 }
                 final messages = snapshot.data!.docs;
                 return ListView.builder(
@@ -108,8 +167,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         },
                         child: Container(
                           margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                          padding: EdgeInsets.symmetric(
+                          const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 15),
                           decoration: BoxDecoration(
                             color: Colors.white, // 내부는 흰색
@@ -128,7 +187,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             children: [
                               messageText.contains('assets/')
                                   ? Container(
-                                      constraints: BoxConstraints(
+                                      constraints: const BoxConstraints(
                                         maxWidth: 150, // 최대 너비 설정
                                         maxHeight: 150, // 최대 높이 설정
                                       ),
@@ -139,7 +198,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       ),
                                     )
                                   : Container(
-                                      constraints: BoxConstraints(
+                                      constraints: const BoxConstraints(
                                         maxWidth: 150, // 최대 너비 설정
                                       ),
                                       child: Text(
@@ -151,10 +210,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                           fontSize: 16,
                                         ),
                                       )),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               Text(
                                 '${createdAt.toLocal()}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 12,
                                 ),
@@ -174,7 +233,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.emoji_emotions, color: Colors.blueAccent),
+                  icon: const Icon(Icons.emoji_emotions, color: Colors.blueAccent),
                   onPressed: _openMileageStore, // 이모티콘 상점 열기
                 ),
                 Expanded(
@@ -190,13 +249,13 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderSide: BorderSide.none,
                       ),
                     ),
-                    onSubmitted: _sendMessage,
+                    onSubmitted: sendMessage,
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.blueAccent),
-                  onPressed: () => _sendMessage(_messageController.text),
+                  icon: const Icon(Icons.send, color: Colors.blueAccent),
+                  onPressed: () => sendMessage(_messageController.text),
                 ),
               ],
             ),
@@ -215,17 +274,17 @@ class _ChatScreenState extends State<ChatScreen> {
           content: Text("이 메시지를 삭제하시겠습니까?"),
           actions: [
             TextButton(
-              child: Text("취소"),
+              child: const Text("취소"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("삭제"),
+              child: const Text("삭제"),
               onPressed: () async {
                 await FirebaseFirestore.instance
                     .collection('chatRooms')
-                    .doc(widget.chatRoomId)
+                    .doc(chatRoomId)
                     .collection('messages')
                     .doc(messageId)
                     .delete();

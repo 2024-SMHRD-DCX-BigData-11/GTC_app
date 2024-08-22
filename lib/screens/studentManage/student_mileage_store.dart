@@ -115,13 +115,13 @@ class StudentMileageStorePage extends StatelessWidget {
                 // 이모티콘을 채팅방으로 전송
                 Navigator.of(context).pop(imagePath);
               },
-              child: const Text('예'),
+              child: const Text("예"),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('아니요'),
+              child: const Text("아니요"),
             ),
           ],
         );

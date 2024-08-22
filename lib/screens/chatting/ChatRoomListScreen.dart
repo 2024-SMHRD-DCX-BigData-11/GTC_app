@@ -1,9 +1,13 @@
+import 'package:dalgeurak/screens/auth/login_success.dart';
+import 'package:dalgeurak/screens/chatting/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'chat_screen.dart';
+import 'package:get/get.dart';
 import 'create_chat_room_screen.dart';
 
 class ChatRoomListScreen extends StatelessWidget {
+  const ChatRoomListScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,35 +68,31 @@ class ChatRoomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(16),
         title: Text(
           name,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           lastMessage,
           style: TextStyle(fontSize: 16, color: Colors.grey[600]),
         ),
         trailing: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red),
+          icon: const Icon(Icons.delete, color: Colors.red),
           onPressed: () {
             _showDeleteOptionsDialog(context, chatRoomId);
           },
         ),
         onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ChatScreen(
-                chatRoomId: chatRoomId,
-              ),
-            ),
-          );
+          Get.to(ChatScreenState(
+            chatRoomId: chatRoomId,
+          ));
         },
       ),
     );
