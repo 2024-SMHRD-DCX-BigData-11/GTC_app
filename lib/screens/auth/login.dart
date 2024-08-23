@@ -27,7 +27,7 @@ class Login extends GetWidget<AuthController> {
               width: 500,
               height: 250,
             ),
-            // SizedBox(height: _height * 0.04),
+            // SizedBox(height: _height * 0.08),
             getInputTextField("아이디", controller.userIdTextController),
             SizedBox(height: _height * 0.0075),
             getInputTextField("비밀번호", controller.passwordTextController),

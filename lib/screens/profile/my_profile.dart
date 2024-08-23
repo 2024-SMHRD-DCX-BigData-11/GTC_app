@@ -1,6 +1,7 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
 import 'package:dalgeurak/controllers/qrcode_controller.dart';
 import 'package:dalgeurak/controllers/user_controller.dart';
+import 'package:dalgeurak/dialogs/classDialog.dart';
 import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
@@ -34,11 +35,12 @@ class MyProfile extends GetWidget<UserController> {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
 
-    AuthController authController = Get.find<AuthController>();
+    final AuthController authController = Get.find<AuthController>();
 
-    MyProfileBottomSheet myProfileBottomSheet = MyProfileBottomSheet();
-    DalgeurakDialog dalgeurakDialog = DalgeurakDialog();
-    StudentManageDialog studentManageDialog = StudentManageDialog();
+    final MyProfileBottomSheet myProfileBottomSheet = MyProfileBottomSheet();
+    final DalgeurakDialog dalgeurakDialog = DalgeurakDialog();
+    final StudentManageDialog studentManageDialog = StudentManageDialog();
+    final ClassDialog classDialog = ClassDialog();
 
     controller.getUserWarningList();
 
@@ -194,11 +196,12 @@ class MyProfile extends GetWidget<UserController> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       MediumMenuButton(
-                                        iconName: "qrCode",
-                                        title: "반 등록하기",
-                                        subTitle: "QR 코드",
+                                        iconName: "class",
+                                        title: "반 설정",
+                                        subTitle: "생성 / 가입",
                                         clickAction: () =>
-                                            Get.to(QrCodeScan()),
+                                            classDialog.showDialog(),
+                                            // Get.to(QrCodeScan()),
                                       ),
                                       MediumMenuButton(
                                         iconName: "signDocu",
