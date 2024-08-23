@@ -85,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
       String? label = bottomNavigatorItem[i].label;
       bottomNavigatorItem[i] = BottomNavigationBarItem(
         label: label,
-        icon: SvgPicture.asset('assets/images/icons/${pageIcon[label]}_${_selectIndex == i ? "select" : "unselect"}.svg'),
+        icon: SvgPicture.asset('assets/images/icons/${pageIcon[label]}_${_selectIndex == i ? "select" : "unselect"}.svg', width: 24, height: 24),
       );
     }
 
