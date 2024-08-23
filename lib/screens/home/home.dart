@@ -6,18 +6,27 @@ import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';  // 이미지 선택을 위한 패키지
+import 'dart:io';  // File 사용을 위해 필요
+
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../themes/color_theme.dart';
 import '../../themes/text_theme.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
 
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   late MealController mealController;
   late UserController userController;
   late double _height, _width;
+  File? _profileImage;  // 선택된 프로필 이미지를 저장하기 위한 변수
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +54,14 @@ class Home extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage(
-                              'assets/profile_image.png'), // 학생 프로필 이미지
+                        GestureDetector(
+                          onTap: _pickImage,  // 이미지 선택을 위해 탭 이벤트 추가
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundImage: _profileImage != null
+                                ? FileImage(_profileImage!)
+                                : AssetImage('assets/images/default_profile_image.png') as ImageProvider,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Text(
@@ -241,6 +254,17 @@ class Home extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // 이미지 선택 메서드
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
   }
 
   // 시간표 항목 생성 메서드

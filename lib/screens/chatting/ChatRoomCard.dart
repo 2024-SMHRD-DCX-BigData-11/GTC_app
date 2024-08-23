@@ -8,7 +8,7 @@ class ChatRoomCard extends StatelessWidget {
   final String chatRoomId;
   final String name;
   final String lastMessage;
-  final String profileImageUrl; // 프로필 이미지 URL을 위한 변수 추가
+  final String profileImageUrl; // 프로필 이미지 URL
 
   ChatRoomCard({
     required this.chatRoomId,
@@ -29,7 +29,9 @@ class ChatRoomCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
           radius: 30,
-          backgroundImage: AssetImage(profileImageUrl), // 로컬 이미지 사용
+          backgroundImage: profileImageUrl.isNotEmpty
+              ? NetworkImage(profileImageUrl)
+              : AssetImage('assets/images/default_profile_image.png') as ImageProvider, // 상대방 프로필 이미지 또는 기본 이미지
         ),
         title: Text(
           name,
