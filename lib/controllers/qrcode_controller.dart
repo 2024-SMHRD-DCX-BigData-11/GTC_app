@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dalgeurak/dialogs/class_join_dialog.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dio/dio.dart' as di;
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrCodeController extends GetxController {
   final DalgeurakService _dalgeurakService = Get.find<DalgeurakService>();
+  ClassJoinDialog classJoinDialog = const ClassJoinDialog();
 
   QRViewController? scanController;
 
@@ -36,7 +38,9 @@ class QrCodeController extends GetxController {
 
     Get.back();
 
-    Get.dialog(showAlert(data));
+    classJoinDialog.showDialog();
+
+    // Get.dialog(showAlert(data));
 
     if (scanResult!.startsWith(apiUrl)) {
       Map checkInResult = await _dalgeurakService.mealCheckInWithJWT(

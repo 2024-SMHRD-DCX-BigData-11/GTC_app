@@ -1,5 +1,3 @@
-import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/color_theme.dart';
-import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/text_theme.dart';
 import 'package:dalgeurak/screens/studentManage/qrcode_scan.dart';
 import 'package:dalgeurak/screens/widgets/medium_menu_button.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +29,10 @@ class ClassDialog extends StatelessWidget {
                       Material(
                         color: Colors.transparent, // 투명 배경
                         child: InkWell(
-                          onTap: () => print('Flag button tapped'),
                           child: Container(
                             width: 120,
                             height: 120,
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.blue,
@@ -48,7 +45,7 @@ class ClassDialog extends StatelessWidget {
                                 iconName: "flag",
                                 title: "반 만들기",
                                 subTitle: "생성",
-                                clickAction: () => print('asd'),
+                                clickAction: () => {},
                               ),
                             ),
                           ),
@@ -58,11 +55,10 @@ class ClassDialog extends StatelessWidget {
                       Material(
                         color: Colors.transparent, // 투명 배경
                         child: InkWell(
-                          onTap: () => print('QR Code button tapped'),
                           child: Container(
                             width: 120,
                             height: 120,
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.blue,

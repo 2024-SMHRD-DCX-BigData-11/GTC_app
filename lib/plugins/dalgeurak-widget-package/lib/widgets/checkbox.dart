@@ -12,7 +12,7 @@ enum DalgeurakCheckBoxType {
 extension DalgeurakCheckBoxTypeExtension on DalgeurakCheckBoxType {
   TextStyle get textStyle {
     switch (this) {
-      case DalgeurakCheckBoxType.dialog: return noticeDialog_menu;
+      case DalgeurakCheckBoxType.dialog: return noticeDialogMenu;
       case DalgeurakCheckBoxType.window: return checkBox;
       default: return TextStyle();
     }

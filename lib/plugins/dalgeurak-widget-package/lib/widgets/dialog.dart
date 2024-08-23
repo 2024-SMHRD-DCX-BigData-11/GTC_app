@@ -32,12 +32,12 @@ class DalgeurakDialog {
                   top: Get.height * 0.07,
                   child: Text(
                     message,
-                    style: warningDialog_message,
+                    style: warningDialogMessage,
                   ),
                 ),
                 Positioned(
                   top: Get.height * 0.105,
-                  child: Text(subMessage, style: warningDialog_subMessage),
+                  child: Text(subMessage, style: warningDialogSubMessage),
                 ),
                 Positioned(
                     bottom: 0,
@@ -102,7 +102,7 @@ class DalgeurakDialog {
                       top: Get.height * 0.07,
                       child: Text(
                         message,
-                        style: noticeDialog_message,
+                        style: noticeDialogMessage,
                       ),
                     ),
                     Positioned(
@@ -139,7 +139,7 @@ class DalgeurakDialog {
                     ),
                     GestureDetector(
                       onTap: () => Get.back(),
-                      child: Text("닫기", style: noticeDialog_menu.copyWith(decoration: TextDecoration.underline))
+                      child: Text("닫기", style: noticeDialogMenu.copyWith(decoration: TextDecoration.underline))
                     )
                   ],
                 ),
@@ -217,9 +217,9 @@ class DalgeurakDialog {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("E-mail", style: inquiryDialog_emailTitle),
+                  Text("E-mail", style: inquiryDialogEmailTitle),
                   SizedBox(width: 4),
-                  Text("dimigoin2022@dimigo.hs.kr", style: inquiryDialog_emailAddress)
+                  Text("dimigoin2022@dimigo.hs.kr", style: inquiryDialogEmailAddress)
                 ],
               ),
             ),
@@ -250,7 +250,7 @@ class DalgeurakDialog {
     if (listView == null) {
       contentWidget = Positioned(
         top: Get.height * 0.32,
-        child: Text("$contentKind이(가) 없어요!", style: listDialog_listEmpty),
+        child: Text("$contentKind이(가) 없어요!", style: listDialogListEmpty),
       );
     } else {
       contentWidget = Positioned(
@@ -280,9 +280,9 @@ class DalgeurakDialog {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("$subTitle", style: listDialog_subTitle),
+                        Text("$subTitle", style: listDialogSubTitle),
                         SizedBox(height: 4),
-                        Text("$title", style: listDialog_title)
+                        Text("$title", style: listDialogTitle)
                       ],
                     )
                 ),

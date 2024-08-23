@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../themes/text_theme.dart';
+import 'package:dalgeurak_widget_package/themes/text_theme.dart';
 
 class WindowTitle extends StatelessWidget {
   final String title;
@@ -13,8 +13,8 @@ class WindowTitle extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(subTitle, style: windowTitle_subTitle),
-        Text(title, style: windowTitle_title)
+        Text(subTitle, style: windowTitleSubTitle),
+        Text(title, style: windowTitleTitle)
       ],
     );
   }

@@ -1,7 +1,7 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
 import 'package:dalgeurak/controllers/qrcode_controller.dart';
 import 'package:dalgeurak/controllers/user_controller.dart';
-import 'package:dalgeurak/dialogs/classDialog.dart';
+import 'package:dalgeurak/dialogs/class_dialog.dart';
 import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
@@ -40,7 +40,7 @@ class MyProfile extends GetWidget<UserController> {
     final MyProfileBottomSheet myProfileBottomSheet = MyProfileBottomSheet();
     final DalgeurakDialog dalgeurakDialog = DalgeurakDialog();
     final StudentManageDialog studentManageDialog = StudentManageDialog();
-    final ClassDialog classDialog = ClassDialog();
+    const ClassDialog classDialog = ClassDialog();
 
     controller.getUserWarningList();
 
