@@ -1,3 +1,4 @@
+import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/screens/auth/login_success.dart';
 import 'package:dalgeurak/screens/chatting/ChatRoomCard.dart';
 import 'package:dalgeurak/screens/chatting/chat_screen.dart';
@@ -6,14 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'create_chat_room_screen.dart';
 
-class ChatRoomListScreen extends StatelessWidget {
+class ChatRoomListScreen extends GetWidget<UserController> {
   const ChatRoomListScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('채팅방 목록'),
+        title: Text("${controller.user?.name}"),
         backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(

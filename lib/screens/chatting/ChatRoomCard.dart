@@ -1,9 +1,8 @@
-import 'package:dalgeurak/screens/auth/login_success.dart';
 import 'package:dalgeurak/screens/chatting/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'create_chat_room_screen.dart';
+import 'package:badges/badges.dart'; // badges 패키지 추가
 
 class ChatRoomCard extends StatelessWidget {
   final String chatRoomId;
@@ -40,11 +39,40 @@ class ChatRoomCard extends StatelessWidget {
           lastMessage,
           style: TextStyle(fontSize: 16, color: Colors.grey[600]),
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () {
-            _showDeleteOptionsDialog(context, chatRoomId);
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 읽지 않은 메시지 수를 표시하는 Badge
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('chatRooms')
+                  .doc(chatRoomId)
+                  .collection('messages')
+                  .where('isRead', isEqualTo: false) // 읽지 않은 메시지만 필터링
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return Container(); // 데이터가 없으면 빈 컨테이너 반환
+                }
+                final unreadCount = snapshot.data!.docs.length;
+                return unreadCount > 0
+                    ? Badge(
+                  badgeContent: Text(
+                    unreadCount.toString(),
+                    style: TextStyle(color: Colors.lightBlueAccent), // 여기서 수정
+                  ),
+                  badgeColor: Colors.red,
+                )
+                    : SizedBox.shrink(); // 읽지 않은 메시지가 없으면 아무것도 표시하지 않음
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                _showDeleteOptionsDialog(context, chatRoomId);
+              },
+            ),
+          ],
         ),
         onTap: () {
           Get.to(ChatScreenState(

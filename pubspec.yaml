@@ -66,6 +66,7 @@ dependencies:
   connectivity_plus: ^2.2.1
   upgrader: ^4.10.0
   version: ^3.0.2
+  badges: ^2.0.3
 
   jiffy: ^4.1.0
 
