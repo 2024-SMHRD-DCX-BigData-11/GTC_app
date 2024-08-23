@@ -22,6 +22,10 @@ class StudentMileageStorePage extends StatelessWidget {
       {"item": "쌀 숭이", "price": 3000, "image": "assets/emoticons/emoticon14.jpg"},
       {"item": "리게로", "price": 3000, "image": "assets/emoticons/emoticon15.jpg"},
       {"item": "김창섭의 건드림", "price": 3000, "image": "assets/emoticons/emoticon16.webp"},
+      {"item": "소드마스터 신창섭", "price": 3000, "image": "assets/emoticons/emoticon17.webp"},
+      {"item": "정상화", "price": 3000, "image": "assets/emoticons/emoticon18.webp"},
+      {"item": "쉐복창섭", "price": 3000, "image": "assets/emoticons/emoticon19.webp"},
+      {"item": "Siuuuu창섭", "price": 3000, "image": "assets/emoticons/emoticon20.gif"},
     ];
 
     return Scaffold(

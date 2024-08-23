@@ -4,7 +4,6 @@ import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as di;
 
@@ -15,10 +14,14 @@ class ChatScreenState extends GetWidget<AuthController> {
   final _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode(); // FocusNode 추가
 
-  late UserController userController = Get.find<UserController>();
+  final UserController userController = Get.find<UserController>();
 
-  Future<Map<String, dynamic>> sendMessage(String? message) async {
-    print('gd');
+  Future<void> sendMessage(String? message) async {
+
+    if (message!.isEmpty) {
+      return;
+    }
+
     di.Response response = await dio.post(
       "$apiUrl/chat/chat",
       options: di.Options(contentType: "application/json"),
@@ -27,51 +30,10 @@ class ChatScreenState extends GetWidget<AuthController> {
         "message": message
       },
     );
-    print('gdgd');
+
     _messageController.clear();
     _focusNode.requestFocus();
     return response.data;
-  }
-
-  Future<Map<String, dynamic>>_fetchDataFromApi(String? url) async {
-    di.Response response = await dio.post(
-      url ?? "$apiUrl/qrcode/join",
-      options: di.Options(contentType: "application/json"),
-    );
-    return response.data;
-  }
-
-  void _sendMessage(String message) async {
-    // 로그인 여부와 관계없이 기본 사용자 ID 사용
-    final userId = FirebaseAuth.instance.currentUser?.uid ??
-        "anonymousUser"; // 로그인하지 않은 경우 기본 사용자 ID
-
-    if (message.isEmpty) {
-      return;
-    }
-
-    try {
-      await FirebaseFirestore.instance
-          .collection('chatRooms')
-          .doc(chatRoomId)
-          .collection('messages')
-          .add({
-        'text': message,
-        'createdAt': Timestamp.now(),
-        'userId': userId, // 기본 사용자 ID 저장
-      });
-      await FirebaseFirestore.instance
-          .collection('chatRooms')
-          .doc(chatRoomId)
-          .update({
-        'lastMessage': message,
-        'lastMessageAt': Timestamp.now(),
-      });
-      _messageController.clear();
-      _focusNode.requestFocus(); // 메시지 전송 후 다시 포커스를 TextField에 설정
-    } catch (e) {
-      print('메시지 전송 실패: $e');
-    }
   }
 
   /*void _sendMessage(String message) async {
@@ -270,8 +232,8 @@ class ChatScreenState extends GetWidget<AuthController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("메시지 삭제"),
-          content: Text("이 메시지를 삭제하시겠습니까?"),
+          title: const Text("메시지 삭제"),
+          content: const Text("이 메시지를 삭제하시겠습니까?"),
           actions: [
             TextButton(
               child: const Text("취소"),

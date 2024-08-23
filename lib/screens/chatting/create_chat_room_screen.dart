@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateChatRoomScreen extends StatefulWidget {
+  const CreateChatRoomScreen({Key? key}) : super(key: key);
+
   @override
   _CreateChatRoomScreenState createState() => _CreateChatRoomScreenState();
 }
@@ -14,7 +16,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('채팅방 생성'),
+        title: const Text('채팅방 생성'),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
@@ -23,24 +25,24 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
           children: [
             TextField(
               controller: _chatRoomNameController,
-              decoration: InputDecoration(labelText: '채팅방 이름'),
+              decoration: const InputDecoration(labelText: '채팅방 이름'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             FutureBuilder<QuerySnapshot>(
               future: FirebaseFirestore.instance.collection('users').get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('사용자 목록을 불러오는 중 오류가 발생했습니다.'));
+                  return const Center(child: Text('사용자 목록을 불러오는 중 오류가 발생했습니다.'));
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('사용자 목록을 불러올 수 없습니다.'));
+                  return const Center(child: Text('사용자 목록을 불러올 수 없습니다.'));
                 }
                 final users = snapshot.data!.docs;
                 return DropdownButton<String>(
-                  hint: Text('채팅할 사용자 선택'),
+                  hint: const Text('채팅할 사용자 선택'),
                   value: _selectedUserId,
                   onChanged: (String? newValue) {
                     setState(() {
@@ -56,10 +58,10 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
                 );
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _createChatRoom,
-              child: Text('생성'),
+              child: const Text('생성'),
             ),
           ],
         ),
@@ -69,11 +71,11 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
 
   void _createChatRoom() async {
     final chatRoomName = _chatRoomNameController.text;
-    final currentUserId = "anonymousUser"; // 로그인하지 않은 경우에 사용할 기본 사용자 ID
+    const currentUserId = "anonymousUser"; // 로그인하지 않은 경우에 사용할 기본 사용자 ID
 
     if (chatRoomName.isEmpty || _selectedUserId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('채팅방 이름과 사용자 선택은 필수입니다.')),
+        const SnackBar(content: Text('채팅방 이름과 사용자 선택은 필수입니다.')),
       );
       return;
     }
