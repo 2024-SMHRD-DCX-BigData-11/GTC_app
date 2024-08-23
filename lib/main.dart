@@ -17,6 +17,8 @@ import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_web_frame/flutter_web_frame.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:dalgeurak/controllers/bindings/main_binding.dart'; // MainBinding 클래스를 임포트합니다.
+import 'package:provider/provider.dart';
+import 'screens/game/game_provider.dart'; // GameProvider 경로 추가
 
 // Firebase 설정 옵션 (웹에서 사용)
 const FirebaseOptions firebaseOption = FirebaseOptions(
@@ -54,7 +56,15 @@ void main() async {
   NotificationController _notiController = Get.put<NotificationController>(NotificationController(), permanent: true);
   await _notiController.initialize();
 
-  runApp(MyApp(notiController: _notiController));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GameProvider()), // GameProvider 등록
+        // 다른 Provider가 있다면 여기에 추가할 수 있습니다.
+      ],
+      child: MyApp(notiController: _notiController),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -69,7 +79,6 @@ class MyApp extends StatelessWidget {
     ));
 
     return FlutterWebFrame(
-
       builder: (context) => FGBGNotifier(
         onEvent: (event) {
           notiController.serviceWorkType.value = event;

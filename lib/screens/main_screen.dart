@@ -4,6 +4,7 @@ import 'package:dalgeurak/screens/chatting/ChatRoomListScreen.dart';
 import 'package:dalgeurak/screens/game/ExampleScreen.dart';
 import 'package:dalgeurak/screens/game/game.dart';
 import 'package:dalgeurak/screens/chatting//chat_screen.dart';
+import 'package:dalgeurak/screens/game/game_selection_screen.dart';
 import 'package:dalgeurak/screens/profile/my_profile.dart';
 import 'package:dalgeurak/screens/home/home.dart';
 import 'package:dalgeurak/screens/studentManage/admin_page.dart';
@@ -12,6 +13,9 @@ import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import '../screens/game/game_provider.dart';
+
 
 import '../themes/text_theme.dart';
 
@@ -41,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
 
     List pages = [
       Home(),
-      Game(),
+      GameSelectionScreen(),
       ChatRoomListScreen(),
       MyProfile()
     ];
