@@ -35,7 +35,7 @@ dependencies:
   cloud_firestore: ^3.1.10
   get: ^4.6.5
   dio: ^4.0.1
-
+  fluttertoast: 8.0.9
   dimigoin_flutter_plugin:
     path: lib/plugins/dimigoin_flutter_plugin
   dalgeurak_meal_application:
@@ -113,6 +113,12 @@ flutter:
     - assets/lotties/
     - assets/fonts/
     - assets/emoticons/
+    - assets/home/timetable.png
+    - assets/home/meal.png
+    - assets/home/inquiry.png
+    - assets/home/shop.png
+    - assets/home/rank.png
+    - assets/home/record.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
