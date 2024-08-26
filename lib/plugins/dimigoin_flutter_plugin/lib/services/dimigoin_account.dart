@@ -103,7 +103,7 @@ class DimigoinAccount {
   validateAccessToken() async {
     String? accessToken = await _storage.read(key: "dimigoinAccount_accessToken");
     try {
-      await dio.get(
+      await dio.post(
         "$apiUrl/user/me",
         options: Options(contentType: "application/json"),
       );
