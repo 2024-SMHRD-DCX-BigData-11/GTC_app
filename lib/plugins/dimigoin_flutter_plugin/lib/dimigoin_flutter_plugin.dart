@@ -23,7 +23,7 @@ part 'models/stream_socket.dart';
 final Dio dio = Dio();
 FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-String apiUrl = "http://172.30.1.60:8080"; // smhrdA_5G 와이파이 사용 필수
+String apiUrl = "http://172.30.1.75:8080"; // smhrdA_5G 와이파이 사용 필수
 const socketApiUrl = "http://oci.dimigo.in:4999";
 const dimigoStudentApiUrl = "https://api.dimigo.hs.kr/v1";
 
