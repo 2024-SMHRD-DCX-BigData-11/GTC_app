@@ -78,8 +78,33 @@ class _HomeState extends State<Home> {
       color: Colors.white.withOpacity(0.8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // 좌측 상단 로고 이미지 (크기 조정)
+          Image.asset(
+            'assets/images/logo2.png',
+            height: 150, // 로고 크기를 더 키움
+          ),
+          // 가운데 날짜, 오늘 할 일, 담당 선생님
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())}",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "오늘의 할 일 ${3}개입니다",
+                style: TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "담당 선생님: 정진용",
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+            ],
+          ),
+          // 우측 상단 프로필 사진과 환영 메시지
           Row(
             children: [
               GestureDetector(
@@ -88,8 +113,8 @@ class _HomeState extends State<Home> {
                   radius: 30,
                   backgroundImage: userController.user?.imageUrl == null
                       ? const AssetImage(
-                              "assets/images/default_profile_image.png")
-                          as ImageProvider
+                      "assets/images/default_profile_image.png")
+                  as ImageProvider
                       : NetworkImage((userController.user?.imageUrl)!),
                 ),
               ),
@@ -97,26 +122,7 @@ class _HomeState extends State<Home> {
               Text(
                 "${userController.user?.name}님 환영합니다",
                 style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "오늘의 할 일 ${3}개가 있어요.",
-                style: TextStyle(fontSize: 18, color: Colors.black87),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "담당 선생님: 정진용",
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -210,27 +216,53 @@ class _HomeState extends State<Home> {
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            double buttonSize = (constraints.maxWidth - 64) / 3;
+            double buttonWidth = (constraints.maxWidth - 48) / 3;
+            double buttonHeight = (constraints.maxHeight - 32) / 2;
 
             return GridView.count(
               crossAxisCount: 3,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
+              childAspectRatio: buttonWidth / buttonHeight,
               shrinkWrap: true,
-              childAspectRatio: 1,
               children: [
-                _buildShortcutButton("마일리지 상점", 'assets/home/shop.png',
-                    buttonSize, () => Get.to(StudentMileageStorePage())),
-                _buildShortcutButton("이번 주 랭킹", 'assets/home/rank.png',
-                    buttonSize, () => Get.to(StudentRankingPage())),
-                _buildShortcutButton("교육 기록 보기", 'assets/home/record.png',
-                    buttonSize, () => Get.to(StudentEducationRecordPage())),
-                _buildShortcutButton("이번 주 시간표 보기", 'assets/home/timetable.png',
-                    buttonSize, () => Get.to(StudentSchedulePage())),
-                _buildShortcutButton("급식", 'assets/home/meal.png', buttonSize,
-                    () => Get.to(StudentMealPlanPage())),
-                _buildShortcutButton("선생님께 문의하기", 'assets/home/inquiry.png',
-                    buttonSize, () => Get.to(ContactTeacherPage())),
+                _buildShortcutButton(
+                    "마일리지 상점",
+                    'assets/home/shop.png',
+                    buttonWidth,
+                    buttonHeight,
+                    Colors.pinkAccent,
+                        () => Get.to(StudentMileageStorePage())),
+                _buildShortcutButton(
+                    "이번 주 랭킹",
+                    'assets/home/rank.png',
+                    buttonWidth,
+                    buttonHeight,
+                    Colors.cyanAccent,
+                        () => Get.to(StudentRankingPage())),
+                _buildShortcutButton(
+                    "교육 기록 보기",
+                    'assets/home/record.png',
+                    buttonWidth,
+                    buttonHeight,
+                    Colors.greenAccent,
+                        () => Get.to(StudentEducationRecordPage())),
+                _buildShortcutButton(
+                    "이번 주 시간표 보기",
+                    'assets/home/timetable.png',
+                    buttonWidth,
+                    buttonHeight,
+                    Colors.blueAccent,
+                        () => Get.to(StudentSchedulePage())),
+                _buildShortcutButton("식단표", 'assets/home/meal.png', buttonWidth,
+                    buttonHeight, Colors.orangeAccent, () => Get.to(StudentMealPlanPage())),
+                _buildShortcutButton(
+                    "선생님께 문의하기",
+                    'assets/home/inquiry.png',
+                    buttonWidth,
+                    buttonHeight,
+                    Colors.purpleAccent,
+                        () => Get.to(ContactTeacherPage())),
               ],
             );
           },
@@ -272,15 +304,14 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildShortcutButton(
-      String title, String iconPath, double size, VoidCallback onTap) {
+  Widget _buildShortcutButton(String title, String iconPath, double width,
+      double height, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: size,
-        height: size,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -290,17 +321,41 @@ class _HomeState extends State<Home> {
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(iconPath, height: 40, width: 40), // 이미지 크기를 키움
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14, // 글씨 크기를 키움
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+            // Image section
+            Container(
+              width: width,
+              height: height * 0.7, // 70% of the button height for the image
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+              child: Center(
+                child: Image.asset(iconPath, height: height * 0.4),
+              ),
+            ),
+            // Text section
+            Container(
+              width: width,
+              height: height * 0.3, // 30% of the button height for the text
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(16),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ],
@@ -364,7 +419,7 @@ class _HomeState extends State<Home> {
       return;
     }
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       await uploadImageA(pickedFile.path, (userController.user?.userId)!);
     } else {
