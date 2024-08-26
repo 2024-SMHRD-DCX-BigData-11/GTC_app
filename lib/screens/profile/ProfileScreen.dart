@@ -20,15 +20,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadProfileImage();
-    print('dgdgdgdgdgdgdgdgdgdgg');
   }
 
   Future<void> _loadProfileImage() async {
     // Firestore에서 저장된 프로필 이미지 URL을 불러옵니다.
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc('rjsduf').get();
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc('rjsduf')
+        .get();
     setState(() {
       _imageUrl = snapshot['profileImageUrl'];
-      print('dgdgdgdgdgdgdgdgdgdgg' + snapshot['profileImageUrl']);
     });
   }
 
@@ -44,24 +45,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Column(
           children: [
             const SizedBox(height: 20),
-            if (_imageUrl == null)
-              Container(
-                constraints: BoxConstraints(
-                  minHeight: imageSize,
-                  minWidth: imageSize,
-                ),
-                child: GestureDetector(
-                  onTap: _showBottomSheet,
-                  child: Center(
-                    child: Icon(
-                      Icons.account_circle,
-                      size: imageSize,
-                    ),
-                  ),
-                ),
-              )
-            else
-              Center(
+            Center(
+              child: GestureDetector(
+                onTap: _showBottomSheet,
                 child: Container(
                   width: imageSize,
                   height: imageSize,
@@ -72,12 +58,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(_imageUrl!),
+                      image: _imageUrl == null
+                          ? const AssetImage("assets/images/default_profile_image.png")
+                              as ImageProvider
+                          : NetworkImage(_imageUrl!),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -116,7 +106,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _getCameraImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       await _uploadImage(File(pickedFile.path));
     } else {
@@ -128,7 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _getPhotoLibraryImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       await _uploadImage(File(pickedFile.path));
     } else {
@@ -142,7 +134,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _uploadImage(File file) async {
     // Firebase Storage에 업로드
     String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    Reference storageRef = FirebaseStorage.instance.ref().child('profile_images').child(fileName);
+    Reference storageRef =
+        FirebaseStorage.instance.ref().child('profile_images').child(fileName);
     await storageRef.putFile(file);
     String downloadUrl = await storageRef.getDownloadURL();
 
