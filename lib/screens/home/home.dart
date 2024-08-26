@@ -1,19 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
-import '../../themes/color_theme.dart';
-import '../../themes/text_theme.dart';
 import 'package:dalgeurak/screens/studentManage/contact_teacher.dart';
 import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
 import 'package:dalgeurak/screens/studentManage/student_meal_plan.dart';
 import 'package:dalgeurak/screens/studentManage/student_ranking.dart';
 import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
-import '../../screens/profile/ProfileScreen.dart';
+import 'web_functions.dart' if (dart.library.io) 'mobile_functions.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -41,7 +42,8 @@ class _HomeState extends State<Home> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/4f8a60aef14cc733ca0e8fc7e76c1738.png'), // 배경 이미지 설정
+            image: AssetImage('assets/4f8a60aef14cc733ca0e8fc7e76c1738.png'),
+            // 배경 이미지 설정
             fit: BoxFit.cover,
           ),
         ),
@@ -81,29 +83,21 @@ class _HomeState extends State<Home> {
           Row(
             children: [
               GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreen(),
-                    ),
-                  );
-                  if (result != null && result is File) {
-                    setState(() {
-                      _profileImage = result;
-                    });
-                  }
-                },
+                onTap: _showBottomSheet,
                 child: CircleAvatar(
                   radius: 30,
-                  backgroundImage: _profileImage != null
-                      ? FileImage(_profileImage!)
-                      : AssetImage('assets/images/default_profile_image.png') as ImageProvider,
+                  backgroundImage: userController.user?.imageUrl == null
+                      ? const AssetImage(
+                              "assets/images/default_profile_image.png")
+                          as ImageProvider
+                      : NetworkImage((userController.user?.imageUrl)!),
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 "${userController.user?.name}님 환영합니다",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -225,18 +219,18 @@ class _HomeState extends State<Home> {
               shrinkWrap: true,
               childAspectRatio: 1,
               children: [
-                _buildShortcutButton("마일리지 상점", 'assets/home/shop.png', buttonSize,
-                        () => Get.to(StudentMileageStorePage())),
-                _buildShortcutButton("이번 주 랭킹", 'assets/home/rank.png', buttonSize,
-                        () => Get.to(StudentRankingPage())),
-                _buildShortcutButton("교육 기록 보기", 'assets/home/record.png', buttonSize,
-                        () => Get.to(StudentEducationRecordPage())),
-                _buildShortcutButton("이번 주 시간표 보기", 'assets/home/timetable.png', buttonSize,
-                        () => Get.to(StudentSchedulePage())),
+                _buildShortcutButton("마일리지 상점", 'assets/home/shop.png',
+                    buttonSize, () => Get.to(StudentMileageStorePage())),
+                _buildShortcutButton("이번 주 랭킹", 'assets/home/rank.png',
+                    buttonSize, () => Get.to(StudentRankingPage())),
+                _buildShortcutButton("교육 기록 보기", 'assets/home/record.png',
+                    buttonSize, () => Get.to(StudentEducationRecordPage())),
+                _buildShortcutButton("이번 주 시간표 보기", 'assets/home/timetable.png',
+                    buttonSize, () => Get.to(StudentSchedulePage())),
                 _buildShortcutButton("급식", 'assets/home/meal.png', buttonSize,
-                        () => Get.to(StudentMealPlanPage())),
-                _buildShortcutButton("선생님께 문의하기", 'assets/home/inquiry.png', buttonSize,
-                        () => Get.to(ContactTeacherPage())),
+                    () => Get.to(StudentMealPlanPage())),
+                _buildShortcutButton("선생님께 문의하기", 'assets/home/inquiry.png',
+                    buttonSize, () => Get.to(ContactTeacherPage())),
               ],
             );
           },
@@ -278,7 +272,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildShortcutButton(String title, String iconPath, double size, VoidCallback onTap) {
+  Widget _buildShortcutButton(
+      String title, String iconPath, double size, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -297,13 +292,13 @@ class _HomeState extends State<Home> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(iconPath, height: 40, width: 40),  // 이미지 크기를 키움
+            Image.asset(iconPath, height: 40, width: 40), // 이미지 크기를 키움
             const SizedBox(height: 12),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,  // 글씨 크기를 키움
+                fontSize: 14, // 글씨 크기를 키움
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
@@ -312,5 +307,95 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  Future<void> loadProfileImage() async {
+    // Firestore에서 저장된 프로필 이미지 URL을 불러옵니다.
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userController.user?.userId)
+        .get();
+    setState(() {
+      userController.user?.imageUrl = snapshot['profileImageUrl'];
+    });
+  }
+
+  void _showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+      ),
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _getCameraImage,
+              child: const Text('사진 찍기'),
+            ),
+            const SizedBox(height: 10),
+            const Divider(thickness: 3),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _getPhotoLibraryImage,
+              child: const Text('갤러리에서 선택'),
+            ),
+            const SizedBox(height: 10),
+            const Divider(thickness: 3),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _resetToDefaultImage, // 기본 이미지로 되돌리는 버튼
+              child: const Text('기본 이미지로 설정'),
+            ),
+            const SizedBox(height: 20),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _getCameraImage() async {
+    if (kIsWeb) {
+      userController.showToast("PC 환경에서는 사용할 수 없는 기능입니다.");
+      return;
+    }
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      await uploadImageA(pickedFile.path, (userController.user?.userId)!);
+    } else {
+      if (kDebugMode) {
+        print('이미지 선택안함');
+      }
+    }
+    await loadProfileImage();
+    Navigator.of(context).pop(); // BottomSheet 닫기
+  }
+
+  Future<void> _getPhotoLibraryImage() async {
+    getPhotoLibraryImage((userController.user?.userId)!);
+    await loadProfileImage();
+    Navigator.of(context).pop(); // BottomSheet 닫기
+  }
+
+  Future<void> _resetToDefaultImage() async {
+    // 기본 이미지로 설정 (Firestore에서 이미지 URL 제거)
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc((userController.user?.userId)!)
+        .update({
+      'profileImageUrl': FieldValue.delete(),
+    });
+
+    // 기본 상태로 설정
+    setState(() {
+      userController.user?.imageUrl = null;
+    });
+
+    Navigator.of(context).pop(); // BottomSheet 닫기
   }
 }

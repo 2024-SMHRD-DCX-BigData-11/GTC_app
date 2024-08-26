@@ -14,6 +14,7 @@ class UserController extends GetxController {
   Rxn<DimigoinUser?> _dimigoinUser = Rxn<DimigoinUser?>();
 
   DimigoinUser? get user => _dimigoinUser.value;
+
   set user(DimigoinUser? value) => _dimigoinUser.value = value;
 
   RxBool isAllowAlert = true.obs;
@@ -29,7 +30,8 @@ class UserController extends GetxController {
     if (user?.photos == null || user?.photos?.length == 0) {
       return Icon(Icons.person_rounded, size: _width * 0.12);
     } else {
-      return ExtendedImage.network("${user?.photos![0]}", cache: true, width: _width * 0.3);
+      return ExtendedImage.network("${user?.photos![0]}",
+          cache: true, width: _width * 0.3);
     }
   }
 
@@ -60,7 +62,6 @@ class UserController extends GetxController {
     isAllowAlert.value = isAllow;
   }
 
-
   void updateProfile(String name, int grade, int _class) async {
     Map joinResult = await _dimigoinAccount.update(name, grade, _class);
 
@@ -69,5 +70,9 @@ class UserController extends GetxController {
     } else {
       dalgeurakToast.show("프로필 업데이트에 실패했습니다.");
     }
+  }
+
+  void showToast(String text) async {
+    dalgeurakToast.show(text);
   }
 }

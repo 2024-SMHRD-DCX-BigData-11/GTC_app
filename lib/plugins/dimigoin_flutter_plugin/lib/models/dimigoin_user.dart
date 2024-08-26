@@ -209,6 +209,7 @@ class DimigoinUser {
   bool? get isExceptionEnter => _isExceptionEnter;
   bool? get isConvenienceBlack => _isConvenienceBlack;
   bool? get isExceptionBlack => _isExceptionBlack;
+  String? imageUrl; // 선택된 프로필 이미지를 저장하기 위한 변수
 
 
   DimigoinUser({

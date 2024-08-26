@@ -1,8 +1,10 @@
 import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/color_theme.dart';
 import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/text_theme.dart';
+import 'package:dalgeurak/plugins/dimigoin_flutter_plugin/lib/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as di;
 
 class ClassJoinDialog extends StatelessWidget {
   const ClassJoinDialog({Key? key}) : super(key: key);
@@ -12,7 +14,7 @@ class ClassJoinDialog extends StatelessWidget {
     return const Placeholder();
   }
 
-  void showDialog() =>
+  void showDialog(Map<String, dynamic> data) =>
       Get.dialog(
         Dialog(
           shape: const RoundedRectangleBorder(
@@ -31,23 +33,23 @@ class ClassJoinDialog extends StatelessWidget {
                 const Divider(color: dalgeurakGrayOne, thickness: 1.0),
                 const SizedBox(height: 16),
                 Row(
-                  children: const [
-                    Text("반 이름 ", style: inquiryDialogEmailTitle),
-                    Text("양건열과 아이들", style: inquiryDialogEmailAddress),
+                  children: [
+                    const Text("반 이름 ", style: inquiryDialogEmailTitle),
+                    Text("${data['name']}", style: inquiryDialogEmailAddress),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  children: const [
-                    Text("선생님 ", style: inquiryDialogEmailTitle),
-                    Text("양건열", style: inquiryDialogEmailAddress),
+                  children: [
+                    const Text("선생님 ", style: inquiryDialogEmailTitle),
+                    Text("${data['owner']}", style: inquiryDialogEmailAddress),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  children: const [
-                    Text("구성원 수 ", style: inquiryDialogEmailTitle),
-                    Text("18명", style: inquiryDialogEmailAddress),
+                  children: [
+                    const Text("구성원 수 ", style: inquiryDialogEmailTitle),
+                    Text("${data['count']}명", style: inquiryDialogEmailAddress),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -62,14 +64,15 @@ class ClassJoinDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                // const Text("이 반에 가입하시겠습니까?", textAlign: TextAlign.left),
                 const SizedBox(height: 24), // 상단 콘텐츠와 버튼 사이의 여백
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                       child: InkWell(
-                        onTap: () => Get.back(),
+                        onTap: () => {
+                          registerClass(1),
+                        },
                         child: Container(
                           height: 44,
                           alignment: Alignment.center,
@@ -110,7 +113,7 @@ class ClassJoinDialog extends StatelessWidget {
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ],
@@ -118,4 +121,13 @@ class ClassJoinDialog extends StatelessWidget {
           ),
         ),
       );
+
+  Future<void> registerClass(int cid) async {
+    di.Response response = await dio.post(
+      "$apiUrl/class/join",
+      options: di.Options(contentType: "application/json"),
+      data: {"id": cid},
+    );
+    Get.back();
+  }
 }
