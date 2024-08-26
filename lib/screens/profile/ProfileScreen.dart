@@ -20,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadProfileImage();
+    print('dgdgdgdgdgdgdgdgdgdgg');
   }
 
   Future<void> _loadProfileImage() async {
@@ -71,9 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     image: DecorationImage(
-                      image: kIsWeb
-                          ? NetworkImage(_imageUrl!) as ImageProvider
-                          : FileImage(File(_pickedFile!.path)),
+                      image: NetworkImage(_imageUrl!),
                       fit: BoxFit.cover,
                     ),
                   ),
