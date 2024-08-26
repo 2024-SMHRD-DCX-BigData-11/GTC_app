@@ -6,14 +6,15 @@ import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';  // 이미지 선택을 위한 패키지
-import 'dart:io';  // File 사용을 위해 필요
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../themes/color_theme.dart';
 import '../../themes/text_theme.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
+import '../../screens/profile/ProfileScreen.dart'; // ProfileScreen을 가져오기 위해 추가
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _HomeState extends State<Home> {
   late MealController mealController;
   late UserController userController;
   late double _height, _width;
-  File? _profileImage;  // 선택된 프로필 이미지를 저장하기 위한 변수
+  File? _profileImage; // 선택된 프로필 이미지를 저장하기 위한 변수
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +46,7 @@ class _HomeState extends State<Home> {
             children: [
               // 상단 섹션
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,7 +55,18 @@ class _HomeState extends State<Home> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: _pickImage,  // 이미지 선택을 위해 탭 이벤트 추가
+                          onTap: () async {
+                            final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ProfileScreen(),
+                              ),
+                            );
+                            if (result != null && result is File) {
+                              setState(() {
+                                _profileImage = result;
+                              });
+                            }
+                          }, // 이미지 선택을 위해 탭 이벤트 추가
                           child: CircleAvatar(
                             radius: 30,
                             backgroundImage: _profileImage != null
@@ -66,8 +77,7 @@ class _HomeState extends State<Home> {
                         const SizedBox(width: 12),
                         Text(
                           "${userController.user?.name}님 환영합니다",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -76,8 +86,7 @@ class _HomeState extends State<Home> {
                       children: [
                         Text(
                           "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -121,21 +130,16 @@ class _HomeState extends State<Home> {
                             children: [
                               Text(
                                 "오늘 시간표",
-                                style: TextStyle(
-                                    fontSize: 22, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 16),
                               Expanded(
                                 child: ListView(
                                   children: [
-                                    _buildTimetableItem(
-                                        "1교시: 수학", Icons.calculate),
-                                    _buildTimetableItem(
-                                        "2교시: 영어", Icons.language),
-                                    _buildTimetableItem(
-                                        "3교시: 과학", Icons.science),
-                                    _buildTimetableItem(
-                                        "4교시: 체육", Icons.sports_soccer),
+                                    _buildTimetableItem("1교시: 수학", Icons.calculate),
+                                    _buildTimetableItem("2교시: 영어", Icons.language),
+                                    _buildTimetableItem("3교시: 과학", Icons.science),
+                                    _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
                                     _buildTimetableItem("5교시: 국어", Icons.book),
                                   ],
                                 ),
@@ -158,15 +162,12 @@ class _HomeState extends State<Home> {
                                   children: [
                                     Text(
                                       "현재 마일리지",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       "150점", // 하드코딩된 마일리지 값
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.black87),
+                                      style: TextStyle(fontSize: 16, color: Colors.black87),
                                     ),
                                   ],
                                 ),
@@ -203,41 +204,17 @@ class _HomeState extends State<Home> {
                                 shrinkWrap: true,
                                 childAspectRatio: 1,
                                 children: [
-                                  _buildShortcutButton(
-                                      "마일리지 상점",
-                                      Colors.pinkAccent,
-                                      Icons.shopping_cart,
-                                      buttonSize,
+                                  _buildShortcutButton("마일리지 상점", Colors.pinkAccent, Icons.shopping_cart, buttonSize,
                                           () => Get.to(StudentMileageStorePage())),
-                                  _buildShortcutButton(
-                                      "이번 주 랭킹",
-                                      Colors.cyanAccent,
-                                      Icons.bar_chart,
-                                      buttonSize,
+                                  _buildShortcutButton("이번 주 랭킹", Colors.cyanAccent, Icons.bar_chart, buttonSize,
                                           () => Get.to(StudentRankingPage())),
-                                  _buildShortcutButton(
-                                      "교육 기록 보기",
-                                      Colors.lightGreen,
-                                      Icons.history,
-                                      buttonSize,
+                                  _buildShortcutButton("교육 기록 보기", Colors.lightGreen, Icons.history, buttonSize,
                                           () => Get.to(StudentEducationRecordPage())),
-                                  _buildShortcutButton(
-                                      "이번 주 시간표 보기",
-                                      Colors.lightBlue,
-                                      Icons.calendar_today,
-                                      buttonSize,
+                                  _buildShortcutButton("이번 주 시간표 보기", Colors.lightBlue, Icons.calendar_today, buttonSize,
                                           () => Get.to(StudentSchedulePage())),
-                                  _buildShortcutButton(
-                                      "급식",
-                                      Colors.orangeAccent,
-                                      Icons.restaurant_menu,
-                                      buttonSize,
+                                  _buildShortcutButton("급식", Colors.orangeAccent, Icons.restaurant_menu, buttonSize,
                                           () => Get.to(StudentMealPlanPage())),
-                                  _buildShortcutButton(
-                                      "선생님께 문의하기",
-                                      Colors.purpleAccent,
-                                      Icons.contact_support,
-                                      buttonSize,
+                                  _buildShortcutButton("선생님께 문의하기", Colors.purpleAccent, Icons.contact_support, buttonSize,
                                           () => Get.to(ContactTeacherPage())),
                                 ],
                               );
@@ -254,17 +231,6 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
-  }
-
-  // 이미지 선택 메서드
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
-    }
   }
 
   // 시간표 항목 생성 메서드
@@ -302,8 +268,7 @@ class _HomeState extends State<Home> {
   }
 
   // 버튼 생성 메서드
-  Widget _buildShortcutButton(
-      String title, Color color, IconData icon, double size, VoidCallback onTap) {
+  Widget _buildShortcutButton(String title, Color color, IconData icon, double size, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(

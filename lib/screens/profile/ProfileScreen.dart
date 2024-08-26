@@ -1,132 +1,126 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';  // 이미지 선택을 위한 패키지
-import 'package:firebase_storage/firebase_storage.dart';  // Firebase Storage 사용
-import 'package:cloud_firestore/cloud_firestore.dart';  // Firestore 사용
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  File? _image;
-  String? _uploadedFileURL;
-  final picker = ImagePicker();
-
-  Future<void> _pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(Icons.photo_library),
-              title: Text('갤러리에서 선택'),
-              onTap: () async {
-                final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-                if (pickedFile != null) {
-                  setState(() {
-                    _image = File(pickedFile.path);
-                    _uploadedFileURL = null;  // 새 이미지를 선택했으므로 기존 업로드 URL을 초기화
-                  });
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('기본 사진으로 설정'),
-              onTap: () {
-                setState(() {
-                  _image = null;
-                  _uploadedFileURL = null;  // 기본 사진으로 설정 시 업로드 URL 초기화
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _uploadImage() async {
-    if (_image == null) return;
-    try {
-      // Firebase Storage에 업로드
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('profile_images')
-          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await ref.putFile(_image!);
-      final url = await ref.getDownloadURL();
-
-      // Firestore에 이미지 URL 저장
-      await FirebaseFirestore.instance.collection('users').doc('user_id').update({
-        'profileImageUrl': url,
-      });
-
-      setState(() {
-        _uploadedFileURL = url;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('프로필 사진이 성공적으로 업로드되었습니다.')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('프로필 사진 업로드에 실패했습니다: $e')),
-      );
-    }
-  }
+  XFile? _pickedFile;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('프로필 사진 등록'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    final imageSize = MediaQuery.of(context).size.width / 4;
+
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile'),
+        ),
+        body: Column(
           children: [
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: _uploadedFileURL != null
-                  ? NetworkImage(_uploadedFileURL!)
-                  : _image != null
-                  ? FileImage(_image!) as ImageProvider
-                  : AssetImage('assets/images/default_profile_image.png'),
-              backgroundColor: Colors.grey[300],
-              child: _uploadedFileURL == null && _image == null
-                  ? Icon(Icons.person, size: 60)
-                  : null,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: Text('사진 선택'),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _uploadImage,
-              child: Text('사진 업로드'),
-            ),
-            SizedBox(height: 20),
-            _uploadedFileURL != null
-                ? Text('업로드된 URL: $_uploadedFileURL')
-                : Container(),
+            const SizedBox(height: 20),
+            if (_pickedFile == null)
+              Container(
+                constraints: BoxConstraints(
+                  minHeight: imageSize,
+                  minWidth: imageSize,
+                ),
+                child: GestureDetector(
+                  onTap: _showBottomSheet,
+                  child: Center(
+                    child: Icon(
+                      Icons.account_circle,
+                      size: imageSize,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Center(
+                child: Container(
+                  width: imageSize,
+                  height: imageSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      width: 2,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    image: DecorationImage(
+                      image: FileImage(File(_pickedFile!.path)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
-}
 
-void main() {
-  runApp(MaterialApp(
-    home: ProfileScreen(),
-  ));
+  void _showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+      ),
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _getCameraImage,
+              child: const Text('사진 찍기'),
+            ),
+            const SizedBox(height: 10),
+            const Divider(thickness: 3),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _getPhotoLibraryImage,
+              child: const Text('라이브러리에서 불러오기'),
+            ),
+            const SizedBox(height: 20),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _getCameraImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedFile = pickedFile;
+      });
+    } else {
+      if (kDebugMode) {
+        print('이미지 선택안함');
+      }
+    }
+    Navigator.of(context).pop(); // BottomSheet 닫기
+  }
+
+  Future<void> _getPhotoLibraryImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedFile = pickedFile;
+      });
+    } else {
+      if (kDebugMode) {
+        print('이미지 선택안함');
+      }
+    }
+    Navigator.of(context).pop(); // BottomSheet 닫기
+  }
 }
