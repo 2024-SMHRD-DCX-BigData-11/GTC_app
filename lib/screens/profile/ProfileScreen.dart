@@ -24,10 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadProfileImage() async {
     // Firestore에서 저장된 프로필 이미지 URL을 불러옵니다.
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc('rjsduf')
-        .get();
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc('user_id').get();
     setState(() {
       _imageUrl = snapshot['profileImageUrl'];
     });
@@ -45,9 +42,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Column(
           children: [
             const SizedBox(height: 20),
-            Center(
-              child: GestureDetector(
-                onTap: _showBottomSheet,
+            if (_imageUrl == null)
+              Container(
+                constraints: BoxConstraints(
+                  minHeight: imageSize,
+                  minWidth: imageSize,
+                ),
+                child: GestureDetector(
+                  onTap: _showBottomSheet,
+                  child: Center(
+                    child: Icon(
+                      Icons.account_circle,
+                      size: imageSize,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Center(
                 child: Container(
                   width: imageSize,
                   height: imageSize,
@@ -58,16 +70,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     image: DecorationImage(
-                      image: _imageUrl == null
-                          ? const AssetImage("assets/images/default_profile_image.png")
-                              as ImageProvider
-                          : NetworkImage(_imageUrl!),
+                      image: NetworkImage(_imageUrl!),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -98,6 +106,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: _getPhotoLibraryImage,
               child: const Text('라이브러리에서 불러오기'),
             ),
+            const SizedBox(height: 10),
+            const Divider(thickness: 3),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _resetToDefaultImage, // 기본 이미지로 되돌리는 버튼
+              child: const Text('기본 이미지로 설정'),
+            ),
             const SizedBox(height: 20),
           ],
         );
@@ -106,8 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _getCameraImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       await _uploadImage(File(pickedFile.path));
     } else {
@@ -119,8 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _getPhotoLibraryImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       await _uploadImage(File(pickedFile.path));
     } else {
@@ -134,8 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _uploadImage(File file) async {
     // Firebase Storage에 업로드
     String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    Reference storageRef =
-        FirebaseStorage.instance.ref().child('profile_images').child(fileName);
+    Reference storageRef = FirebaseStorage.instance.ref().child('profile_images').child(fileName);
     await storageRef.putFile(file);
     String downloadUrl = await storageRef.getDownloadURL();
 
@@ -147,5 +159,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _imageUrl = downloadUrl;
     });
+  }
+
+  Future<void> _resetToDefaultImage() async {
+    // 기본 이미지로 설정 (Firestore에서 이미지 URL 제거)
+    await FirebaseFirestore.instance.collection('users').doc('user_id').update({
+      'profileImageUrl': FieldValue.delete(),
+    });
+
+    // 기본 상태로 설정
+    setState(() {
+      _imageUrl = null;
+    });
+
+    Navigator.of(context).pop(); // BottomSheet 닫기
   }
 }
