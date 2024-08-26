@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -12,6 +14,22 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   XFile? _pickedFile;
+  String? _imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    // Firestore에서 저장된 프로필 이미지 URL을 불러옵니다.
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc('rjsduf').get();
+    setState(() {
+      _imageUrl = snapshot['profileImageUrl'];
+      print('dgdgdgdgdgdgdgdgdgdgg' + snapshot['profileImageUrl']);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Column(
           children: [
             const SizedBox(height: 20),
-            if (_pickedFile == null)
+            if (_imageUrl == null)
               Container(
                 constraints: BoxConstraints(
                   minHeight: imageSize,
@@ -53,7 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     image: DecorationImage(
-                      image: FileImage(File(_pickedFile!.path)),
+                      image: kIsWeb
+                          ? NetworkImage(_imageUrl!) as ImageProvider
+                          : FileImage(File(_pickedFile!.path)),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -99,9 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _getCameraImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      setState(() {
-        _pickedFile = pickedFile;
-      });
+      await _uploadImage(File(pickedFile.path));
     } else {
       if (kDebugMode) {
         print('이미지 선택안함');
@@ -113,14 +131,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _getPhotoLibraryImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _pickedFile = pickedFile;
-      });
+      await _uploadImage(File(pickedFile.path));
     } else {
       if (kDebugMode) {
         print('이미지 선택안함');
       }
     }
     Navigator.of(context).pop(); // BottomSheet 닫기
+  }
+
+  Future<void> _uploadImage(File file) async {
+    // Firebase Storage에 업로드
+    String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    Reference storageRef = FirebaseStorage.instance.ref().child('profile_images').child(fileName);
+    await storageRef.putFile(file);
+    String downloadUrl = await storageRef.getDownloadURL();
+
+    // Firestore에 이미지 URL 저장
+    await FirebaseFirestore.instance.collection('users').doc('user_id').update({
+      'profileImageUrl': downloadUrl,
+    });
+
+    setState(() {
+      _imageUrl = downloadUrl;
+    });
   }
 }
