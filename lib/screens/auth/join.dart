@@ -95,29 +95,6 @@ class Join extends GetWidget<AuthController> {
                         height: 15,
                       ),
                       TextFormField(
-                        controller: _nicknameController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "닉네임을 입력하세요";
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: "닉네임",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 20,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      TextFormField(
                         controller: _phoneController,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -211,7 +188,7 @@ class Join extends GetWidget<AuthController> {
                         },
                         child: const CustumButton(
                           buttonName: "회원가입",
-                          buttonColor: kMainColor,
+                          buttonColor: Colors.blueAccent,
                         ),
                       ),
                     ],

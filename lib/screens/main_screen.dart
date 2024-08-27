@@ -5,6 +5,7 @@ import 'package:dalgeurak/screens/game/game_selection_screen.dart';
 import 'package:dalgeurak/screens/profile/my_profile.dart';
 import 'package:dalgeurak/screens/home/home.dart';
 import 'package:dalgeurak/screens/studentManage/admin_page.dart';
+import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
 import 'package:dalgeurak/themes/color_theme.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:flutter/material.dart';
@@ -32,14 +33,14 @@ class _MainScreenState extends State<MainScreen> {
 
     Map pageIcon = {
       '홈': 'home',
-      '게임': 'game',
+      '학습': 'StudentEducationRecordPage',
       '채팅': 'calendar',
       '내 정보': 'user'
     };
 
     List pages = [
       Home(),
-      GameSelectionScreen(),
+      StudentEducationRecordPage(),
       const ChatRoomListScreen(),
       MyProfile()
     ];
@@ -50,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
         icon: SvgPicture.asset('assets/images/icons/home_select.svg'),
       ),
       BottomNavigationBarItem(
-        label: "게임",
+        label: "학습",
         icon: SvgPicture.asset('assets/images/icons/game_unselect.svg'),
       ),
       BottomNavigationBarItem(

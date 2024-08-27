@@ -53,15 +53,15 @@ class MyProfileBottomSheet {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    "assets/images/logo.png",
-                    width: 50,
-                    height: 50,
+                    "assets/images/logo2-removebg.png",
+                    width: 70,
+                    height: 70,
                   ),
                   SizedBox(width: 18),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("달그락", style: myProfile_appInfo_title),
+                      Text("GTC_app", style: myProfile_appInfo_title),
                       SizedBox(height: 6),
                       Row(
                         children: [
@@ -94,14 +94,14 @@ class MyProfileBottomSheet {
                     style: myProfile_appInfo_content,
                   ),
                   TextSpan(
-                    text: "달그락",
+                    text: "GTC",
                     style: myProfile_appInfo_content.copyWith(fontWeight: FontWeight.w600)
                   ),
                   TextSpan(
-                    text: "은\n한국디지털미디어고등학교의 인트라넷 개발 팀\n"
+                    text: "는\n스마트 인재 개발원 순천점의 인트라넷 개발 팀\n"
                   ),
                   TextSpan(
-                      text: "DIN ",
+                      text: "양건열 ",
                       style: myProfile_appInfo_content.copyWith(fontWeight: FontWeight.w600)
                   ),
                   TextSpan(
