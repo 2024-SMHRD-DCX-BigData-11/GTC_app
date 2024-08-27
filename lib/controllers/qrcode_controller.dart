@@ -9,8 +9,7 @@ import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrCodeController extends GetxController {
-  final DalgeurakService _dalgeurakService = Get.find<DalgeurakService>();
-  ClassJoinDialog classJoinDialog = const ClassJoinDialog();
+  ClassJoinDialog classJoinDialog = ClassJoinDialog();
 
   QRViewController? scanController;
 

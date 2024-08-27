@@ -195,20 +195,29 @@ class MyProfile extends GetWidget<UserController> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      MediumMenuButton(
-                                        iconName: "class",
-                                        title: "반 설정",
-                                        subTitle: "생성 / 가입",
-                                        clickAction: () =>
-                                            classDialog.showDialog(),
+                                      if (controller.user?.classId != null)
+                                        MediumMenuButton(
+                                            iconName: "class",
+                                            title: "반 어쩌고",
+                                            subTitle: "저쩌고",
+                                            clickAction: () => {}
                                             // Get.to(QrCodeScan()),
-                                      ),
+                                            )
+                                      else
+                                        MediumMenuButton(
+                                          iconName: "class",
+                                          title: "반 설정",
+                                          subTitle: "생성 / 가입",
+                                          clickAction: () =>
+                                              classDialog.showDialog(),
+                                          // Get.to(QrCodeScan()),
+                                        ),
                                       MediumMenuButton(
                                         iconName: "signDocu",
                                         title: "마일리지 상점",
                                         subTitle: "이용하기",
-                                        clickAction: () =>
-                                            Get.to(StudentMileageStorePage()),
+                                        clickAction: () => Get.to(
+                                            const StudentMileageStorePage()),
                                       ),
                                     ],
                                   ),

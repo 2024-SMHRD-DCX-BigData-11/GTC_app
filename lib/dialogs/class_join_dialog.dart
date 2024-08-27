@@ -1,13 +1,16 @@
+import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/color_theme.dart';
 import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/text_theme.dart';
-import 'package:dalgeurak/plugins/dimigoin_flutter_plugin/lib/dimigoin_flutter_plugin.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as di;
 
-class ClassJoinDialog extends StatelessWidget {
-  const ClassJoinDialog({Key? key}) : super(key: key);
+class ClassJoinDialog extends GetxController {
+
+  UserController userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +74,7 @@ class ClassJoinDialog extends StatelessWidget {
                     Expanded(
                       child: InkWell(
                         onTap: () => {
-                          registerClass(1),
+                          fetchDataFromApi(data['id']),
                         },
                         child: Container(
                           height: 44,
@@ -122,12 +125,25 @@ class ClassJoinDialog extends StatelessWidget {
         ),
       );
 
-  Future<void> registerClass(int cid) async {
+  Future<Map<String, dynamic>> fetchDataFromApi(int cid) async {
     di.Response response = await dio.post(
       "$apiUrl/class/join",
       options: di.Options(contentType: "application/json"),
       data: {"id": cid},
     );
+    userController.user?.setClassId = cid;
     Get.back();
+    _showToast("가입되었습니다.");
+    return response.data;
   }
+
+  void _showToast(String content) => Fluttertoast.showToast(
+      msg: content,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: const Color(0xE6FFFFFF),
+      textColor: Colors.black,
+      fontSize: 13.0
+  );
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
 
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
@@ -17,7 +16,7 @@ import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
 import 'web_functions.dart' if (dart.library.io) 'mobile_functions.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -27,7 +26,6 @@ class _HomeState extends State<Home> {
   late MealController mealController;
   late UserController userController;
   late double _height, _width;
-  File? _profileImage;
 
   @override
   Widget build(BuildContext context) {
@@ -37,35 +35,51 @@ class _HomeState extends State<Home> {
     mealController = Get.find<MealController>();
     userController = Get.find<UserController>();
 
+    loadProfileImage(); // 프로필 불러오기
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/4f8a60aef14cc733ca0e8fc7e76c1738.png'),
-            // 배경 이미지 설정
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: SafeArea(
-            child: Column(
-              children: [
-                _buildTopSection(),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        _buildTimetableSection(),
-                        const SizedBox(width: 16),
-                        _buildShortcutSection(),
-                      ],
-                    ),
+      body: Center(
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildTopSection(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      bool isWide = constraints.maxWidth > 600;
+                      return isWide
+                          ? Row(
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 3,
+                                  child: _buildTimetableSection(),
+                                ),
+                                const SizedBox(width: 16), // 간격 추가
+                                Expanded(
+                                  flex: 7,
+                                  child: _buildShortcutSection(),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              children: <Widget>[
+                                Expanded(
+                                  child: _buildTimetableSection(),
+                                ),
+                                const SizedBox(height: 16), // 간격 추가
+                                Expanded(
+                                  child: _buildShortcutSection(),
+                                ),
+                              ],
+                            );
+                    },
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -79,32 +93,30 @@ class _HomeState extends State<Home> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // 좌측 상단 로고 이미지 (크기 조정)
           Image.asset(
             'assets/images/logo2.png',
-            height: 150, // 로고 크기를 더 키움
+            height: 150,
           ),
-          // 가운데 날짜, 오늘 할 일, 담당 선생님
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())}",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 "오늘의 할 일 ${3}개입니다",
                 style: TextStyle(fontSize: 18, color: Colors.black87),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 "담당 선생님: 정진용",
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ],
           ),
-          // 우측 상단 프로필 사진과 환영 메시지
           Row(
             children: [
               GestureDetector(
@@ -113,8 +125,8 @@ class _HomeState extends State<Home> {
                   radius: 30,
                   backgroundImage: userController.user?.imageUrl == null
                       ? const AssetImage(
-                      "assets/images/default_profile_image.png")
-                  as ImageProvider
+                              "assets/images/default_profile_image.png")
+                          as ImageProvider
                       : NetworkImage((userController.user?.imageUrl)!),
                 ),
               ),
@@ -122,7 +134,7 @@ class _HomeState extends State<Home> {
               Text(
                 "${userController.user?.name}님 환영합니다",
                 style:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -132,141 +144,140 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildTimetableSection() {
-    return Expanded(
-      flex: 3,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.blue[50]!.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.blue[50]!.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "오늘 시간표",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView(
+              children: [
+                _buildTimetableItem("1교시: 수학", Icons.calculate),
+                _buildTimetableItem("2교시: 영어", Icons.language),
+                _buildTimetableItem("3교시: 과학", Icons.science),
+                _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
+                _buildTimetableItem("5교시: 국어", Icons.book),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "오늘 시간표",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildTimetableItem("1교시: 수학", Icons.calculate),
-                  _buildTimetableItem("2교시: 영어", Icons.language),
-                  _buildTimetableItem("3교시: 과학", Icons.science),
-                  _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
-                  _buildTimetableItem("5교시: 국어", Icons.book),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "현재 마일리지",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "150점",
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "현재 마일리지",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "150점", // 하드코딩된 마일리지 값
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildShortcutSection() {
-    return Expanded(
-      flex: 7,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-            ),
-          ],
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            double buttonWidth = (constraints.maxWidth - 48) / 3;
-            double buttonHeight = (constraints.maxHeight - 32) / 2;
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double buttonWidth = (constraints.maxWidth - 48) / 3;
+          double buttonHeight = (constraints.maxHeight - 32) / 2;
 
-            return GridView.count(
-              crossAxisCount: 3,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: buttonWidth / buttonHeight,
-              shrinkWrap: true,
-              children: [
-                _buildShortcutButton(
-                    "마일리지 상점",
-                    'assets/home/shop.png',
-                    buttonWidth,
-                    buttonHeight,
-                    Colors.pinkAccent,
-                        () => Get.to(StudentMileageStorePage())),
-                _buildShortcutButton(
-                    "이번 주 랭킹",
-                    'assets/home/rank.png',
-                    buttonWidth,
-                    buttonHeight,
-                    Colors.cyanAccent,
-                        () => Get.to(StudentRankingPage())),
-                _buildShortcutButton(
-                    "교육 기록 보기",
-                    'assets/home/record.png',
-                    buttonWidth,
-                    buttonHeight,
-                    Colors.greenAccent,
-                        () => Get.to(StudentEducationRecordPage())),
-                _buildShortcutButton(
-                    "이번 주 시간표 보기",
-                    'assets/home/timetable.png',
-                    buttonWidth,
-                    buttonHeight,
-                    Colors.blueAccent,
-                        () => Get.to(StudentSchedulePage())),
-                _buildShortcutButton("식단표", 'assets/home/meal.png', buttonWidth,
-                    buttonHeight, Colors.orangeAccent, () => Get.to(StudentMealPlanPage())),
-                _buildShortcutButton(
-                    "선생님께 문의하기",
-                    'assets/home/inquiry.png',
-                    buttonWidth,
-                    buttonHeight,
-                    Colors.purpleAccent,
-                        () => Get.to(ContactTeacherPage())),
-              ],
-            );
-          },
-        ),
+          return GridView.count(
+            crossAxisCount: 3,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: buttonWidth / buttonHeight,
+            shrinkWrap: true,
+            children: [
+              _buildShortcutButton(
+                  "마일리지 상점",
+                  'assets/home/shop.png',
+                  buttonWidth,
+                  buttonHeight,
+                  Colors.pinkAccent,
+                  () => Get.to(const StudentMileageStorePage())),
+              _buildShortcutButton(
+                  "이번 주 랭킹",
+                  'assets/home/rank.png',
+                  buttonWidth,
+                  buttonHeight,
+                  Colors.cyanAccent,
+                  () => Get.to(StudentRankingPage())),
+              _buildShortcutButton(
+                  "교육 기록 보기",
+                  'assets/home/record.png',
+                  buttonWidth,
+                  buttonHeight,
+                  Colors.greenAccent,
+                  () => Get.to(StudentEducationRecordPage())),
+              _buildShortcutButton(
+                  "이번 주 시간표 보기",
+                  'assets/home/timetable.png',
+                  buttonWidth,
+                  buttonHeight,
+                  Colors.blueAccent,
+                  () => Get.to(StudentSchedulePage())),
+              _buildShortcutButton(
+                  "식단표",
+                  'assets/home/meal.png',
+                  buttonWidth,
+                  buttonHeight,
+                  Colors.orangeAccent,
+                  () => Get.to(StudentMealPlanPage())),
+              _buildShortcutButton(
+                  "선생님께 문의하기",
+                  'assets/home/inquiry.png',
+                  buttonWidth,
+                  buttonHeight,
+                  Colors.purpleAccent,
+                  () => Get.to(ContactTeacherPage())),
+            ],
+          );
+        },
       ),
     );
   }
@@ -279,7 +290,7 @@ class _HomeState extends State<Home> {
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.8),
           borderRadius: BorderRadius.circular(8),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 4,
@@ -292,7 +303,7 @@ class _HomeState extends State<Home> {
             const SizedBox(width: 8),
             Text(
               subject,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -313,7 +324,7 @@ class _HomeState extends State<Home> {
         height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
@@ -322,11 +333,10 @@ class _HomeState extends State<Home> {
         ),
         child: Column(
           children: [
-            // Image section
             Container(
               width: width,
-              height: height * 0.7, // 70% of the button height for the image
-              decoration: BoxDecoration(
+              height: height * 0.7,
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(16),
@@ -336,13 +346,12 @@ class _HomeState extends State<Home> {
                 child: Image.asset(iconPath, height: height * 0.4),
               ),
             ),
-            // Text section
             Container(
               width: width,
-              height: height * 0.3, // 30% of the button height for the text
+              height: height * 0.3,
               decoration: BoxDecoration(
                 color: color,
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(16),
                 ),
               ),
@@ -350,7 +359,7 @@ class _HomeState extends State<Home> {
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -365,7 +374,6 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> loadProfileImage() async {
-    // Firestore에서 저장된 프로필 이미지 URL을 불러옵니다.
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(userController.user?.userId)
@@ -403,7 +411,7 @@ class _HomeState extends State<Home> {
             const Divider(thickness: 3),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: _resetToDefaultImage, // 기본 이미지로 되돌리는 버튼
+              onPressed: _resetToDefaultImage,
               child: const Text('기본 이미지로 설정'),
             ),
             const SizedBox(height: 20),
@@ -419,7 +427,7 @@ class _HomeState extends State<Home> {
       return;
     }
     final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.camera);
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       await uploadImageA(pickedFile.path, (userController.user?.userId)!);
     } else {
@@ -438,7 +446,6 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _resetToDefaultImage() async {
-    // 기본 이미지로 설정 (Firestore에서 이미지 URL 제거)
     await FirebaseFirestore.instance
         .collection('users')
         .doc((userController.user?.userId)!)
@@ -446,7 +453,6 @@ class _HomeState extends State<Home> {
       'profileImageUrl': FieldValue.delete(),
     });
 
-    // 기본 상태로 설정
     setState(() {
       userController.user?.imageUrl = null;
     });
