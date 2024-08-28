@@ -1,5 +1,6 @@
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/data/Question.dart';
+import 'package:dalgeurak/screens/drawing/drawing_screen.dart';
 import 'package:dalgeurak/utils/toast.dart';
 import 'package:dio/dio.dart' as di;
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:get/get.dart';
 
 class StudentEducationRecordPage extends StatefulWidget {
+  const StudentEducationRecordPage({Key? key}) : super(key: key);
+
   @override
   _StudentEducationRecordPageState createState() =>
       _StudentEducationRecordPageState();
@@ -15,6 +18,7 @@ class StudentEducationRecordPage extends StatefulWidget {
 
 class _StudentEducationRecordPageState
     extends State<StudentEducationRecordPage> {
+  int? term;
   String? _selectedSemester;
   String? _selectedUnit;
   String? _selectedSubUnit;
@@ -72,8 +76,8 @@ class _StudentEducationRecordPageState
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        leading: Icon(Icons.menu, color: Colors.black),
-        actions: [
+        leading: const Icon(Icons.menu, color: Colors.black),
+        actions: const [
           Icon(Icons.search, color: Colors.black),
           SizedBox(width: 16),
           Icon(Icons.notifications, color: Colors.black),
@@ -83,35 +87,35 @@ class _StudentEducationRecordPageState
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Image.asset(
               "assets/images/logo2.png",
               width: 300, // 이미지 크기를 줄임
               height: 150, // 이미지 크기를 줄임
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               color: Colors.grey[300],
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Center(
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
                     "${userController.user?.name}님을 위한 추천 문제 보기",
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   _buildCategoryButton(
-                    _selectedSemester ?? "학년/과",
+                    _selectedSemester ?? "학년 / 학기",
                     onTap: _showSemesterSelection,
                   ),
                   _buildCategoryButton(
@@ -138,7 +142,7 @@ class _StudentEducationRecordPageState
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (_selectedSemester != null)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -146,7 +150,7 @@ class _StudentEducationRecordPageState
                   alignment: Alignment.centerLeft,
                   child: Text(
                     '선택된 학년/과: $_selectedSemester',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ),
               ),
@@ -157,7 +161,7 @@ class _StudentEducationRecordPageState
                   alignment: Alignment.centerLeft,
                   child: Text(
                     '선택된 대단원: $_selectedUnit',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ),
               ),
@@ -168,7 +172,7 @@ class _StudentEducationRecordPageState
                   alignment: Alignment.centerLeft,
                   child: Text(
                     '선택된 중단원: $_selectedSubUnit',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ),
               ),
@@ -179,16 +183,16 @@ class _StudentEducationRecordPageState
                   alignment: Alignment.centerLeft,
                   child: Text(
                     '선택된 난이도: $_selectedDifficulty',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ),
               ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blue[50],
                   borderRadius: BorderRadius.circular(8),
@@ -215,12 +219,12 @@ class _StudentEducationRecordPageState
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             FutureBuilder<List<Question>>(
               future: _dataFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
@@ -228,7 +232,7 @@ class _StudentEducationRecordPageState
                   print('questions.length : ${questions.length}');
 
                   return ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     // ListView 내부의 스크롤을 비활성화
                     shrinkWrap: true,
                     // ListView가 필요한 만큼만 공간을 차지하도록 설정
@@ -237,13 +241,13 @@ class _StudentEducationRecordPageState
                       var question = questions[index];
                       return Column(
                         children: [
-                          SizedBox(height: 30),
+                          const SizedBox(height: 30),
                           Container(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   color: Colors.black26,
                                   blurRadius: 4,
@@ -254,17 +258,17 @@ class _StudentEducationRecordPageState
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Text(question.name),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Image.network(
                                   "$apiUrl/save/${question.name}",
                                   fit: BoxFit.cover,
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 OutlinedButton(
                                   onPressed: () {
-                                    print('문제 풀기 버튼 클릭됨');
+                                    Get.to(DrawingScreen(question: question));
                                   },
                                   child: const Text('문제 풀기'),
                                 ),
@@ -276,10 +280,11 @@ class _StudentEducationRecordPageState
                     },
                   );
                 } else {
-                  return Center(child: Text('No Data Available'));
+                  return const Center(child: Text('No Data Available'));
                 }
               },
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -291,9 +296,9 @@ class _StudentEducationRecordPageState
       padding: const EdgeInsets.only(right: 8.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
-          onPrimary: Colors.blueAccent,
-          side: BorderSide(color: Colors.blueAccent),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.blueAccent,
+          side: const BorderSide(color: Colors.blueAccent),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -309,12 +314,12 @@ class _StudentEducationRecordPageState
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text('5학년 1학기'),
+                title: const Text('5학년 1학기'),
                 onTap: () {
                   setState(() {
                     _selectedSemester = '5학년 1학기';
@@ -325,7 +330,7 @@ class _StudentEducationRecordPageState
                 },
               ),
               ListTile(
-                title: Text('5학년 2학기'),
+                title: const Text('5학년 2학기'),
                 onTap: () {
                   setState(() {
                     _selectedSemester = '5학년 2학기';
@@ -372,7 +377,7 @@ class _StudentEducationRecordPageState
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: units.map((unit) {
@@ -419,7 +424,7 @@ class _StudentEducationRecordPageState
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: selectedSubUnits.map((subUnit) {
@@ -444,7 +449,7 @@ class _StudentEducationRecordPageState
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: ['상', '중', '하'].map((difficulty) {
@@ -463,30 +468,31 @@ class _StudentEducationRecordPageState
       },
     );
   }
+
+  Future<List<Question>> _fetchDataFromApi() async {
+    try {
+      di.Response response = await dio.post(
+        "$apiUrl/question/random",
+        options: di.Options(contentType: "application/json"),
+        data: {"term": term},
+      );
+
+      List<dynamic> jsonList = response.data;
+      List<Question> questions =
+          jsonList.map((json) => Question.fromJson(json)).toList();
+
+      return questions;
+    } catch (e) {
+      throw Exception('Failed to load data: $e');
+    }
+  }
 }
 
 void main() {
   runApp(MaterialApp(
-    home: StudentEducationRecordPage(),
+    home: const StudentEducationRecordPage(),
     theme: ThemeData(
       primarySwatch: Colors.blue,
     ),
   ));
-}
-
-Future<List<Question>> _fetchDataFromApi() async {
-  try {
-    di.Response response = await dio.post(
-      "$apiUrl/question/random",
-      options: di.Options(contentType: "application/json"),
-    );
-
-    List<dynamic> jsonList = response.data;
-    List<Question> questions =
-        jsonList.map((json) => Question.fromJson(json)).toList();
-
-    return questions;
-  } catch (e) {
-    throw Exception('Failed to load data: $e');
-  }
 }
