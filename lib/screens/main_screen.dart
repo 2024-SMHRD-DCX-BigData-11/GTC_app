@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
 
     Map pageIcon = {
       '홈': 'home',
-      '학습': 'StudentEducationRecordPage',
+      '학습': 'Game',
       '채팅': 'calendar',
       '내 정보': 'user'
     };

@@ -1,5 +1,11 @@
+import 'package:dalgeurak/controllers/user_controller.dart';
+import 'package:dalgeurak/data/Question.dart';
+import 'package:dalgeurak/utils/toast.dart';
+import 'package:dio/dio.dart' as di;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
+import 'package:get/get.dart';
 
 class StudentEducationRecordPage extends StatefulWidget {
   @override
@@ -9,14 +15,12 @@ class StudentEducationRecordPage extends StatefulWidget {
 
 class _StudentEducationRecordPageState
     extends State<StudentEducationRecordPage> {
-  int _currentIndex = 0;
   String? _selectedSemester;
   String? _selectedUnit;
   String? _selectedSubUnit;
   String? _selectedDifficulty;
 
-  // 사용자 이름을 받아온다고 가정합니다.
-  final String userName = "사용자 이름"; // 예: userController.user?.name;
+  UserController userController = Get.find<UserController>();
 
   List<BottomNavigationBarItem> bottomNavigatorItem = [
     BottomNavigationBarItem(
@@ -53,6 +57,14 @@ class _StudentEducationRecordPageState
     ),
   ];
 
+  late Future<List<Question>> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = _fetchDataFromApi();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +89,6 @@ class _StudentEducationRecordPageState
               width: 300, // 이미지 크기를 줄임
               height: 150, // 이미지 크기를 줄임
             ),
-
             SizedBox(height: 20),
             Container(
               color: Colors.grey[300],
@@ -87,7 +98,7 @@ class _StudentEducationRecordPageState
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
-                    "$userName님을 위한 추천 문제 보기",
+                    "${userController.user?.name}님을 위한 추천 문제 보기",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
@@ -121,6 +132,7 @@ class _StudentEducationRecordPageState
                       _selectedUnit = null;
                       _selectedSubUnit = null;
                       _selectedDifficulty = null;
+                      _dataFuture = _fetchDataFromApi();
                     });
                   }),
                 ],
@@ -183,7 +195,7 @@ class _StudentEducationRecordPageState
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     Text(
                       "모든 사용자들의 피드에 등록된 문제/답변 set 중에서 문항들을\n좋아요 순으로 검색할 수 있습니다.",
                       style: TextStyle(
@@ -203,20 +215,73 @@ class _StudentEducationRecordPageState
                 ),
               ),
             ),
+            SizedBox(height: 10),
+            FutureBuilder<List<Question>>(
+              future: _dataFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  List<Question> questions = snapshot.data!;
+                  print('questions.length : ${questions.length}');
+
+                  return ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    // ListView 내부의 스크롤을 비활성화
+                    shrinkWrap: true,
+                    // ListView가 필요한 만큼만 공간을 차지하도록 설정
+                    itemCount: questions.length,
+                    itemBuilder: (context, index) {
+                      var question = questions[index];
+                      return Column(
+                        children: [
+                          SizedBox(height: 30),
+                          Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(height: 10),
+                                Text(question.name),
+                                SizedBox(height: 10),
+                                Image.network(
+                                  "$apiUrl/save/${question.name}",
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(height: 10),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    print('문제 풀기 버튼 클릭됨');
+                                  },
+                                  child: const Text('문제 풀기'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return Center(child: Text('No Data Available'));
+                }
+              },
+            ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: bottomNavigatorItem,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
       ),
     );
   }
@@ -280,25 +345,26 @@ class _StudentEducationRecordPageState
   void _showUnitSelection() {
     final units = _selectedSemester == '5학년 1학기'
         ? [
-      '자연수의 혼합 계산',
-      '약수와 배수',
-      '규칙과 대응',
-      '약분과 통분',
-      '분수의 덧셈과 뺄셈',
-      '다각형의 둘레와 넓이',
-    ]
+            '자연수의 혼합 계산',
+            '약수와 배수',
+            '규칙과 대응',
+            '약분과 통분',
+            '분수의 덧셈과 뺄셈',
+            '다각형의 둘레와 넓이',
+          ]
         : _selectedSemester == '5학년 2학기'
-        ? [
-      '수의 범위와 어림하기',
-      '분수의 곱셈',
-      '합동과 대칭',
-      '소수의 곱셈',
-      '직육면체',
-      '평균과 가능성',
-    ]
-        : [];
+            ? [
+                '수의 범위와 어림하기',
+                '분수의 곱셈',
+                '합동과 대칭',
+                '소수의 곱셈',
+                '직육면체',
+                '평균과 가능성',
+              ]
+            : [];
 
     if (units.isEmpty) {
+      showToast("학년 / 학기를 먼저 선택해주세요.");
       return;
     }
 
@@ -406,4 +472,21 @@ void main() {
       primarySwatch: Colors.blue,
     ),
   ));
+}
+
+Future<List<Question>> _fetchDataFromApi() async {
+  try {
+    di.Response response = await dio.post(
+      "$apiUrl/question/random",
+      options: di.Options(contentType: "application/json"),
+    );
+
+    List<dynamic> jsonList = response.data;
+    List<Question> questions =
+        jsonList.map((json) => Question.fromJson(json)).toList();
+
+    return questions;
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
 }
