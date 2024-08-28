@@ -13,7 +13,7 @@ class DrawingScreen extends StatefulWidget {
 
 class _DrawingScreenState extends State<DrawingScreen> {
   final List<Offset?> _points = [];
-  late Size _imageSize;
+  Offset? _lastPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +42,15 @@ class _DrawingScreenState extends State<DrawingScreen> {
                         if (loadingProgress == null) {
                           return child;
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
                       },
                       errorBuilder: (context, error, stackTrace) {
-                        return Center(child: Text('이미지를 불러오는 데 실패했습니다.'));
+                        return const Center(
+                          child: Text('이미지를 불러오는 데 실패했습니다.'),
+                        );
                       },
                     ),
                   ),
@@ -54,16 +58,22 @@ class _DrawingScreenState extends State<DrawingScreen> {
               ),
               // 그림판을 그릴 공간
               Positioned.fill(
-                child: GestureDetector(
-                  onPanUpdate: (details) {
+                child: Listener(
+                  onPointerMove: (event) {
                     setState(() {
                       RenderBox renderBox = context.findRenderObject() as RenderBox;
-                      Offset localPosition = renderBox.globalToLocal(details.globalPosition);
-                      _points.add(localPosition);
+                      Offset localPosition = renderBox.globalToLocal(event.position);
+                      if (_lastPosition != null && (localPosition - _lastPosition!).distance > 1.0) {
+                        _points.add(localPosition);
+                      }
+                      _lastPosition = localPosition;
                     });
                   },
-                  onPanEnd: (details) {
-                    _points.add(null);
+                  onPointerUp: (event) {
+                    setState(() {
+                      _points.add(null);
+                      _lastPosition = null;
+                    });
                   },
                   child: CustomPaint(
                     painter: DrawingPainter(_points),
