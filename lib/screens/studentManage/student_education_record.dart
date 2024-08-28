@@ -1,10 +1,9 @@
 import 'package:dalgeurak/controllers/user_controller.dart';
-import 'package:dalgeurak/data/Question.dart';
+import 'package:dalgeurak/data/question.dart';
 import 'package:dalgeurak/screens/drawing/drawing_screen.dart';
 import 'package:dalgeurak/utils/toast.dart';
 import 'package:dio/dio.dart' as di;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:get/get.dart';
 
@@ -18,48 +17,16 @@ class StudentEducationRecordPage extends StatefulWidget {
 
 class _StudentEducationRecordPageState
     extends State<StudentEducationRecordPage> {
-  int? term;
+  int? _term;
+  int? _unit;
+  int? _subunit;
+  int? _difficulty;
   String? _selectedSemester;
   String? _selectedUnit;
   String? _selectedSubUnit;
   String? _selectedDifficulty;
 
   UserController userController = Get.find<UserController>();
-
-  List<BottomNavigationBarItem> bottomNavigatorItem = [
-    BottomNavigationBarItem(
-      label: "홈",
-      icon: SvgPicture.asset(
-        'assets/images/icons/home_select.svg',
-        width: 24,
-        height: 24,
-      ),
-    ),
-    BottomNavigationBarItem(
-      label: "게임",
-      icon: SvgPicture.asset(
-        'assets/images/icons/gaming.svg',
-        width: 24,
-        height: 24,
-      ),
-    ),
-    BottomNavigationBarItem(
-      label: "채팅",
-      icon: SvgPicture.asset(
-        'assets/images/icons/calendar_unselect.svg',
-        width: 24,
-        height: 24,
-      ),
-    ),
-    BottomNavigationBarItem(
-      label: "내 정보",
-      icon: SvgPicture.asset(
-        'assets/images/icons/user_unselect.svg',
-        width: 24,
-        height: 24,
-      ),
-    ),
-  ];
 
   late Future<List<Question>> _dataFuture;
 
@@ -132,6 +99,10 @@ class _StudentEducationRecordPageState
                   ),
                   _buildCategoryButton("초기화", onTap: () {
                     setState(() {
+                      _term = null;
+                      _unit = null;
+                      _subunit = null;
+                      _difficulty = null;
                       _selectedSemester = null;
                       _selectedUnit = null;
                       _selectedSubUnit = null;
@@ -229,7 +200,6 @@ class _StudentEducationRecordPageState
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   List<Question> questions = snapshot.data!;
-                  print('questions.length : ${questions.length}');
 
                   return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -322,9 +292,14 @@ class _StudentEducationRecordPageState
                 title: const Text('5학년 1학기'),
                 onTap: () {
                   setState(() {
+                    _term = 1;
+                    _unit = null;
+                    _subunit = null;
+                    _difficulty = null;
                     _selectedSemester = '5학년 1학기';
                     _selectedUnit = null;
                     _selectedSubUnit = null;
+                    _dataFuture = _fetchDataFromApi();
                   });
                   Navigator.pop(context);
                 },
@@ -333,9 +308,14 @@ class _StudentEducationRecordPageState
                 title: const Text('5학년 2학기'),
                 onTap: () {
                   setState(() {
+                    _term = 2;
+                    _unit = null;
+                    _subunit = null;
+                    _difficulty = null;
                     _selectedSemester = '5학년 2학기';
                     _selectedUnit = null;
                     _selectedSubUnit = null;
+                    _dataFuture = _fetchDataFromApi();
                   });
                   Navigator.pop(context);
                 },
@@ -385,8 +365,12 @@ class _StudentEducationRecordPageState
                 title: Text(unit),
                 onTap: () {
                   setState(() {
+                    _unit = units.indexOf(unit) + 1;
+                    _subunit = null;
+                    _difficulty = null;
                     _selectedUnit = unit;
                     _selectedSubUnit = null;
+                    _dataFuture = _fetchDataFromApi();
                   });
                   Navigator.pop(context);
                 },
@@ -432,7 +416,10 @@ class _StudentEducationRecordPageState
                 title: Text(subUnit),
                 onTap: () {
                   setState(() {
+                    _subunit = selectedSubUnits.indexOf(subUnit) + 1;
+                    _difficulty = null;
                     _selectedSubUnit = subUnit;
+                    _dataFuture = _fetchDataFromApi();
                   });
                   Navigator.pop(context);
                 },
@@ -457,7 +444,9 @@ class _StudentEducationRecordPageState
                 title: Text(difficulty),
                 onTap: () {
                   setState(() {
+                    _difficulty = ['상', '중', '하'].indexOf(difficulty) + 1;
                     _selectedDifficulty = difficulty;
+                    _dataFuture = _fetchDataFromApi();
                   });
                   Navigator.pop(context);
                 },
@@ -472,9 +461,14 @@ class _StudentEducationRecordPageState
   Future<List<Question>> _fetchDataFromApi() async {
     try {
       di.Response response = await dio.post(
-        "$apiUrl/question/random",
+        "$apiUrl/question/search",
         options: di.Options(contentType: "application/json"),
-        data: {"term": term},
+        data: {
+          "term": _term,
+          "unit": _unit,
+          "subunit": _subunit,
+          "difficulty": _difficulty
+        },
       );
 
       List<dynamic> jsonList = response.data;

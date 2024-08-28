@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:dalgeurak/data/Question.dart';
+import 'package:dalgeurak/data/question.dart';
+import 'package:dalgeurak/utils/toast.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:dio/dio.dart' as di;
 
@@ -18,9 +20,10 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  final List<Offset?> _points = [];
-  Offset? _lastPosition;
+  final List<DrawnLine> _lines = []; // 그려진 선을 저장하는 리스트
   final GlobalKey _repaintKey = GlobalKey();
+  bool _isEraserMode = false;  // 지우개 모드 여부를 나타내는 상태 변수
+  DrawnLine? _currentLine; // 현재 그리는 선
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
         builder: (context, constraints) {
           return Stack(
             children: [
-              // 상단에 위치한 이미지
               Positioned(
                 top: 0,
                 left: 0,
@@ -62,54 +64,59 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   ),
                 ),
               ),
-              // 그림판을 그릴 공간
               Positioned.fill(
                 child: RepaintBoundary(
                   key: _repaintKey,
-                  child: Stack(
-                    children: [
-                      Listener(
-                        onPointerMove: (event) {
-                          setState(() {
-                            RenderBox renderBox =
-                            context.findRenderObject() as RenderBox;
-                            Offset localPosition =
-                            renderBox.globalToLocal(event.position);
-                            if (_lastPosition != null &&
-                                (localPosition - _lastPosition!).distance > 1.0) {
-                              _points.add(localPosition);
-                            }
-                            _lastPosition = localPosition;
-                          });
-                        },
-                        onPointerUp: (event) {
-                          setState(() {
-                            _points.add(null);
-                            _lastPosition = null;
-                          });
-                        },
-                        child: CustomPaint(
-                          painter: DrawingPainter(_points),
-                          child: Container(),
-                        ),
-                      ),
-                    ],
+                  child: GestureDetector(
+                    onPanStart: (details) {
+                      setState(() {
+                        if (_isEraserMode) {
+                          // 지우개 모드에서는 선을 지움
+                          _eraseLine(details.localPosition);
+                        } else {
+                          // 그리기 모드에서는 새로운 선을 그림
+                          _currentLine = DrawnLine(
+                            points: [details.localPosition],
+                            color: Colors.black,
+                            strokeWidth: 5.0,
+                          );
+                          _lines.add(_currentLine!);
+                        }
+                      });
+                    },
+                    onPanUpdate: (details) {
+                      setState(() {
+                        if (!_isEraserMode && _currentLine != null) {
+                          _currentLine!.points.add(details.localPosition);
+                        } else if (_isEraserMode) {
+                          _eraseLine(details.localPosition);
+                        }
+                      });
+                    },
+                    onPanEnd: (details) {
+                      setState(() {
+                        _currentLine = null;
+                      });
+                    },
+                    child: CustomPaint(
+                      painter: DrawingPainter(_lines),
+                      child: Container(),
+                    ),
                   ),
                 ),
               ),
-              // 제출 버튼
               Positioned(
                 bottom: 16,
                 right: 16,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // 이미지 저장 호출
                     await _sendDrawing();
+                    Get.back();
+                    showToast("답안 제출이 완료되었습니다.");
                   },
                   child: const Text('제출'),
                 ),
               ),
-              // Undo 버튼
               Positioned(
                 bottom: 16,
                 left: 16,
@@ -119,7 +126,19 @@ class _DrawingScreenState extends State<DrawingScreen> {
                       _undo();
                     });
                   },
-                  child: const Text('Undo'),
+                  child: const Text('되돌리기'),
+                ),
+              ),
+              Positioned(
+                bottom: 16,
+                left: 116,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEraserMode = !_isEraserMode;
+                    });
+                  },
+                  child: Text(_isEraserMode ? '펜 모드' : '지우개 모드'),
                 ),
               ),
             ],
@@ -129,12 +148,19 @@ class _DrawingScreenState extends State<DrawingScreen> {
     );
   }
 
-  // Undo 메서드
   void _undo() {
-    if (_points.isNotEmpty) {
-      _points.removeLast();
+    if (_lines.isNotEmpty) {
+      _lines.removeLast();
       setState(() {});
     }
+  }
+
+  void _eraseLine(Offset position) {
+    setState(() {
+      _lines.removeWhere((line) => line.points.any((point) {
+        return (point - position).distance <= 20.0; // 선의 두께나 범위에 따라 조정 가능
+      }));
+    });
   }
 
   Future<void> _sendDrawing() async {
@@ -152,7 +178,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
     }
   }
 
-  // 그린 그림을 JPEG로 저장
   Future<String?> encodeImageToBase64() async {
     try {
       RenderRepaintBoundary boundary = _repaintKey.currentContext
@@ -162,22 +187,17 @@ class _DrawingScreenState extends State<DrawingScreen> {
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
 
       if (byteData != null) {
-        // Get image dimensions
         int width = image.width;
         int height = image.height;
 
-        // Create a white background image
         img.Image whiteBackground = img.Image(width, height);
-        img.fill(whiteBackground, img.getColor(255, 255, 255)); // Fill with white color
+        img.fill(whiteBackground, img.getColor(255, 255, 255));
 
-        // Convert ui.Image to img.Image
         Uint8List rgbaBytes = byteData.buffer.asUint8List();
         img.Image drawingImage = img.Image.fromBytes(width, height, rgbaBytes, format: img.Format.rgba);
 
-        // Composite images: white background and drawing
         img.drawImage(whiteBackground, drawingImage);
 
-        // Encode final image as JPEG
         Uint8List jpegBytes = Uint8List.fromList(img.encodeJpg(whiteBackground));
         String base64String = base64Encode(jpegBytes);
 
@@ -190,21 +210,35 @@ class _DrawingScreenState extends State<DrawingScreen> {
   }
 }
 
-class DrawingPainter extends CustomPainter {
-  final List<Offset?> points;
+class DrawnLine {
+  List<Offset> points;
+  Color color;
+  double strokeWidth;
 
-  DrawingPainter(this.points);
+  DrawnLine({
+    required this.points,
+    required this.color,
+    required this.strokeWidth,
+  });
+}
+
+class DrawingPainter extends CustomPainter {
+  final List<DrawnLine> lines;
+
+  DrawingPainter(this.lines);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 5.0;
+    for (var line in lines) {
+      final paint = Paint()
+        ..color = line.color
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = line.strokeWidth;
 
-    for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i]!, points[i + 1]!, paint);
+      for (int i = 0; i < line.points.length - 1; i++) {
+        if (line.points[i] != null && line.points[i + 1] != null) {
+          canvas.drawLine(line.points[i], line.points[i + 1], paint);
+        }
       }
     }
   }
