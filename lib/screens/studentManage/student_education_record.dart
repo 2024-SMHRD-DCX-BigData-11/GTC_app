@@ -38,6 +38,19 @@ class _StudentEducationRecordPageState
 
   @override
   Widget build(BuildContext context) {
+    // 화면의 너비를 가져옵니다.
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // 기본 폰트 크기를 설정합니다.
+    double baseFontSize = 14.0;
+
+    // 화면 너비에 따른 폰트 크기를 조절합니다.
+    double responsiveFontSize = baseFontSize * (screenWidth / 600);
+
+    if (responsiveFontSize > 14) {
+      responsiveFontSize = 14;
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -113,52 +126,7 @@ class _StudentEducationRecordPageState
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            if (_selectedSemester != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '선택된 학년/과: $_selectedSemester',
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ),
-              ),
-            if (_selectedUnit != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '선택된 대단원: $_selectedUnit',
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ),
-              ),
-            if (_selectedSubUnit != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '선택된 중단원: $_selectedSubUnit',
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ),
-              ),
-            if (_selectedDifficulty != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '선택된 난이도: $_selectedDifficulty',
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
@@ -229,7 +197,29 @@ class _StudentEducationRecordPageState
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 const SizedBox(height: 10),
-                                Text(question.name),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 598, // 이미지의 최대 너비와 동일하게 설정
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "난이도 : ${"★" * question.difficulty}${"☆" * (3 - question.difficulty)}",
+                                        style: TextStyle(
+                                          fontSize: responsiveFontSize,
+                                        ),
+                                      ),
+                                      Text(
+                                        "초5 > ${question.term}학기 > ${question.sector1} > ${question.sector2}",
+                                        style: TextStyle(
+                                          fontSize: responsiveFontSize,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 const SizedBox(height: 10),
                                 Image.network(
                                   "$apiUrl/save/${question.name}",
@@ -486,6 +476,7 @@ void main() {
   runApp(MaterialApp(
     home: const StudentEducationRecordPage(),
     theme: ThemeData(
+      fontFamily: 'NotoSansKR',
       primarySwatch: Colors.blue,
     ),
   ));

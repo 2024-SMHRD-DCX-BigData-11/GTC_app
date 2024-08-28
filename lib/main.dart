@@ -87,6 +87,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: "달그락",
           theme: ThemeData(
+            fontFamily: 'NotoSansKR',
             accentColor: yellowFive,
             scrollbarTheme: ScrollbarThemeData(
               isAlwaysShown: true,
