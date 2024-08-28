@@ -434,7 +434,7 @@ class _StudentEducationRecordPageState
                 title: Text(difficulty),
                 onTap: () {
                   setState(() {
-                    _difficulty = ['상', '중', '하'].indexOf(difficulty) + 1;
+                    _difficulty = 3 - ['상', '중', '하'].indexOf(difficulty);
                     _selectedDifficulty = difficulty;
                     _dataFuture = _fetchDataFromApi();
                   });
