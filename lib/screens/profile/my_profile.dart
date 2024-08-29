@@ -6,6 +6,7 @@ import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/EducationRecord.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
+import 'package:dalgeurak/screens/studentManage/friendslist.dart';
 import 'package:dalgeurak/screens/studentManage/qrcode_scan.dart';
 import 'package:dalgeurak/screens/studentManage/student_manage_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
@@ -234,7 +235,7 @@ class MyProfile extends GetWidget<UserController> {
                                         title: "이번 주 랭킹",
                                         subTitle: "친구 추가/삭제",
                                         clickAction: () =>
-                                            Get.to(StudentRankingPage()),
+                                            Get.to(FriendsList()),
                                       ),
                                       MediumMenuButton(
                                         iconName: "cancel",
