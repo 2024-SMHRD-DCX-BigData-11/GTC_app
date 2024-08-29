@@ -217,9 +217,9 @@ class DalgeurakDialog {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("E-mail", style: inquiryDialogEmailTitle),
+                  Text("Phone Number", style: inquiryDialogEmailTitle),
                   SizedBox(width: 4),
-                  Text("dimigoin2022@dimigo.hs.kr", style: inquiryDialogEmailAddress)
+                  Text("양건열/010-3599-3664", style: inquiryDialogEmailAddress)
                 ],
               ),
             ),

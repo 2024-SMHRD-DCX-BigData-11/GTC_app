@@ -3,6 +3,7 @@ import 'package:dalgeurak/controllers/qrcode_controller.dart';
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/dialogs/class_dialog.dart';
 import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
+import 'package:dalgeurak/screens/studentManage/EducationRecord.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
 import 'package:dalgeurak/screens/studentManage/qrcode_scan.dart';
@@ -240,7 +241,7 @@ class MyProfile extends GetWidget<UserController> {
                                         title: "교육 기록 보기",
                                         subTitle: "조회하기",
                                         clickAction: () => Get.to(
-                                            StudentEducationRecordPage()),
+                                            EducationRecord()),
                                       ),
                                     ],
                                   ),
@@ -265,7 +266,7 @@ class MyProfile extends GetWidget<UserController> {
                         children: [
                           ...getTeacherMenu(),
                           SimpleListButton(
-                              title: "교육 기록 보기",
+                              title: "스마트인재개발원",
                               iconName: "page",
                               clickAction: () => _launchURL(
                                   Get.find<RemoteConfigService>()
@@ -275,10 +276,10 @@ class MyProfile extends GetWidget<UserController> {
                               iconName: "headset",
                               clickAction: () => dalgeurakDialog.showInquiry()),
                           SimpleListButton(
-                              title: "이번 주 랭킹",
+                              title: "인스타문의",
                               iconName: "instagram",
                               clickAction: () => _launchURL(
-                                  "https://www.instagram.com/ara__dmigo/")),
+                                  "https://www.instagram.com/se0k_juju/")),
                           SimpleListButton(
                               title: "앱 정보",
                               iconName: "info",

@@ -15,7 +15,7 @@ class RemoteConfigService extends GetxService {
         minimumFetchInterval: Duration(seconds: 0),
       ),
     );
-    await _remoteConfig.setDefaults({"dienenManualUrl": "https://dimigo.in", "minAppVersion": "2.0.4"});
+    await _remoteConfig.setDefaults({"dienenManualUrl": "https://smhrd.or.kr/", "minAppVersion": "2.0.4"});
     await _remoteConfig.activate();
     await Future.delayed(const Duration(milliseconds: 250));
     await _remoteConfig.fetch();
