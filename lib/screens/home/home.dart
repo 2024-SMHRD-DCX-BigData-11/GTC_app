@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dalgeurak/screens/studentManage/EducationRecord.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -253,7 +254,7 @@ class _HomeState extends State<Home> {
                   buttonWidth,
                   buttonHeight,
                   Colors.greenAccent,
-                  () => Get.to(StudentEducationRecordPage())),
+                  () => Get.to(EducationRecord())),
               _buildShortcutButton(
                   "이번 주 시간표 보기",
                   'assets/home/timetable.png',
