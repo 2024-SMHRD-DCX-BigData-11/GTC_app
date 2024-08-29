@@ -22,7 +22,8 @@ class DrawingScreen extends StatefulWidget {
 class _DrawingScreenState extends State<DrawingScreen> {
   final List<DrawnLine> _lines = []; // 그려진 선을 저장하는 리스트
   final GlobalKey _repaintKey = GlobalKey();
-  bool _isEraserMode = false;  // 지우개 모드 여부를 나타내는 상태 변수
+  bool _isEraserMode = false; // 지우개 모드 여부를 나타내는 상태 변수
+  bool _isRedPenMode = false; // 빨간 펜 모드 여부를 나타내는 상태 변수
   DrawnLine? _currentLine; // 현재 그리는 선
 
   @override
@@ -67,35 +68,42 @@ class _DrawingScreenState extends State<DrawingScreen> {
               Positioned.fill(
                 child: RepaintBoundary(
                   key: _repaintKey,
-                  child: GestureDetector(
-                    onPanStart: (details) {
+                  child: Listener(
+                    onPointerDown: (event) {
                       setState(() {
                         if (_isEraserMode) {
                           // 지우개 모드에서는 선을 지움
-                          _eraseLine(details.localPosition);
+                          _eraseLine(event.localPosition);
                         } else {
+                          // 새로운 빨간 펜 라인을 그리기 전에 기존 빨간 펜 라인을 삭제
+                          if (_isRedPenMode) {
+                            _removeRedLines();
+                          }
                           // 그리기 모드에서는 새로운 선을 그림
                           _currentLine = DrawnLine(
-                            points: [details.localPosition],
-                            color: Colors.black,
+                            points: [event.localPosition],
+                            color: _isRedPenMode ? Colors.red : Colors.black,
                             strokeWidth: 5.0,
                           );
                           _lines.add(_currentLine!);
                         }
                       });
                     },
-                    onPanUpdate: (details) {
+                    onPointerMove: (event) {
                       setState(() {
                         if (!_isEraserMode && _currentLine != null) {
-                          _currentLine!.points.add(details.localPosition);
+                          _currentLine!.points.add(event.localPosition);
                         } else if (_isEraserMode) {
-                          _eraseLine(details.localPosition);
+                          _eraseLine(event.localPosition);
                         }
                       });
                     },
-                    onPanEnd: (details) {
+                    onPointerUp: (event) {
                       setState(() {
                         _currentLine = null;
+                        if (_isRedPenMode) {
+                          _detectCircle(); // 동그라미 인식 로직 추가
+                        }
                       });
                     },
                     child: CustomPaint(
@@ -141,11 +149,27 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   child: Text(_isEraserMode ? '펜 모드' : '지우개 모드'),
                 ),
               ),
+              Positioned(
+                bottom: 16,
+                left: 216,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isRedPenMode = !_isRedPenMode;
+                    });
+                  },
+                  child: Text(_isRedPenMode ? '검정 펜' : '빨간 펜'),
+                ),
+              ),
             ],
           );
         },
       ),
     );
+  }
+
+  void _removeRedLines() {
+    _lines.removeWhere((line) => line.color == Colors.red);
   }
 
   void _undo() {
@@ -184,7 +208,8 @@ class _DrawingScreenState extends State<DrawingScreen> {
           ?.findRenderObject() as RenderRepaintBoundary;
 
       ui.Image image = await boundary.toImage();
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+      ByteData? byteData =
+      await image.toByteData(format: ui.ImageByteFormat.rawRgba);
 
       if (byteData != null) {
         int width = image.width;
@@ -194,11 +219,13 @@ class _DrawingScreenState extends State<DrawingScreen> {
         img.fill(whiteBackground, img.getColor(255, 255, 255));
 
         Uint8List rgbaBytes = byteData.buffer.asUint8List();
-        img.Image drawingImage = img.Image.fromBytes(width, height, rgbaBytes, format: img.Format.rgba);
+        img.Image drawingImage = img.Image.fromBytes(width, height, rgbaBytes,
+            format: img.Format.rgba);
 
         img.drawImage(whiteBackground, drawingImage);
 
-        Uint8List jpegBytes = Uint8List.fromList(img.encodeJpg(whiteBackground));
+        Uint8List jpegBytes =
+        Uint8List.fromList(img.encodeJpg(whiteBackground));
         String base64String = base64Encode(jpegBytes);
 
         return base64String;
@@ -207,6 +234,46 @@ class _DrawingScreenState extends State<DrawingScreen> {
       print('Error encoding image to base64: $e');
     }
     return null;
+  }
+
+  // 동그라미 인식 로직 추가
+  void _detectCircle() {
+    double minLassoRadius = 20.0; // 올가미로 인식하는 최소 반지름
+    double maxAllowedGap = 30.0; // 올가미가 감싸는 선 사이의 최대 허용 간격
+
+    for (var line in _lines) {
+      if (line.color == Colors.red && line.points.isNotEmpty) {
+        double minX =
+        line.points.map((p) => p.dx).reduce((a, b) => a < b ? a : b);
+        double maxX =
+        line.points.map((p) => p.dx).reduce((a, b) => a > b ? a : b);
+        double minY =
+        line.points.map((p) => p.dy).reduce((a, b) => a < b ? a : b);
+        double maxY =
+        line.points.map((p) => p.dy).reduce((a, b) => a > b ? a : b);
+
+        double width = maxX - minX;
+        double height = maxY - minY;
+
+        // 올가미의 최소 크기를 충족하는지 확인
+        if (width >= minLassoRadius * 2 && height >= minLassoRadius * 2) {
+          bool isLasso = true;
+
+          // 모든 점 사이의 거리가 특정 임계값 이하인지 확인
+          for (int i = 0; i < line.points.length - 1; i++) {
+            if ((line.points[i] - line.points[i + 1]).distance >
+                maxAllowedGap) {
+              isLasso = false;
+              break;
+            }
+          }
+
+          if (isLasso) {
+            showToast("올가미가 인식되었습니다!");
+          }
+        }
+      }
+    }
   }
 }
 
