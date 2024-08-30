@@ -21,18 +21,21 @@ class FriendPage extends StatefulWidget {
 
 class _FriendPageState extends State<FriendPage>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
   late Future<List<Friend>> friendsList;
   final TextEditingController _nicknameController = TextEditingController();
+  final ValueNotifier<bool> isButtonEnabled = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    friendsList = _loadFriends();
+    friendsList = loadFriends();
+
+    _nicknameController.addListener(() {
+      isButtonEnabled.value = _nicknameController.text.isNotEmpty;
+    });
   }
 
-  Future<List<Friend>> _loadFriends() async {
+  Future<List<Friend>> loadFriends() async {
     try {
       di.Response response = await dio.post(
         "$apiUrl/friend/list",
@@ -49,42 +52,85 @@ class _FriendPageState extends State<FriendPage>
     }
   }
 
-  Future<void> _addFriend(String nickname) async {
+  Future<void> _addFriend(String username) async {
     try {
       di.Response response = await dio.post("$apiUrl/friend/add",
           options: di.Options(contentType: "application/json"),
           data: {
-            'username': nickname,
+            'username': username,
           });
 
-      if (response.statusCode == 200) {
-        print('친구 추가 성공: ${response.data}');
-        _loadFriends();
-      } else {
-        print('친구 추가 실패: ${response.statusCode}');
-      }
+      setState(() {
+        friendsList = loadFriends();
+      });
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }
   }
 
-  Future<void> _removeFriend(String nickname) async {
+  Future<void> _removeFriend(int userId) async {
     try {
       di.Response response = await dio.post("$apiUrl/friend/remove",
           options: di.Options(contentType: "application/json"),
           data: {
-            'username': nickname,
+            'user_id': userId,
           });
 
-      if (response.statusCode == 200) {
-        print('친구 추가 성공: ${response.data}');
-        _loadFriends();
-      } else {
-        print('친구 추가 실패: ${response.statusCode}');
-      }
+      setState(() {
+        friendsList = loadFriends();
+      });
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }
+  }
+
+  void _showAddFriendDialog() {
+    _nicknameController.clear();
+    isButtonEnabled.value = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('친구 추가'),
+          content: TextField(
+            controller: _nicknameController,
+            decoration: const InputDecoration(labelText: '친구 아이디'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+              child: const Text('취소'),
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: isButtonEnabled,
+              builder: (context, isEnabled, child) {
+                return ElevatedButton(
+                  onPressed: isEnabled
+                      ? () {
+                          String username = _nicknameController.text;
+                          // 친구 추가 로직을 여기에 작성
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                          _addFriend(username);
+                          // 예시: 친구 추가 후 리스트 갱신
+                          // setState(() {
+                          //   (friendsList as Future<List<Friend>>).then((friends) {
+                          //     friends.add(
+                          //         Friend(friendId, DateTime.now().toString()));
+                          //   });
+                          // });
+                        }
+                      : null, // 비활성화 시 null
+                  child: const Text('확인'),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -93,78 +139,76 @@ class _FriendPageState extends State<FriendPage>
       appBar: AppBar(
         title: const Text('친구 관리'),
         backgroundColor: Colors.blueAccent,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: '목록'),
-            Tab(text: '친구 추가'),
-          ],
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          FutureBuilder<List<Friend>>(
-            future: friendsList,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                List<Friend> friends = snapshot.data!;
+      body: FutureBuilder<List<Friend>>(
+        future: friendsList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            List<Friend> friends = snapshot.data!;
 
-                return ListView.builder(
-                  itemCount: friends.length,
-                  itemBuilder: (context, index) {
-                    final friend = friends[index];
+            return ListView.builder(
+              itemCount: friends.length,
+              itemBuilder: (context, index) {
+                final friend = friends[index];
 
-                    return ListTile(
-                      leading: const CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://your-image-url.com'), // Placeholder for user image
-                      ),
-                      title: Text(friend.name),
-                      subtitle: Text("마지막 활동일 : ${friend.updatedAt}"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _removeFriend(friend.name);
-                        },
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return const Center(child: Text('No Data Available'));
-              }
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _nicknameController,
-                  decoration: const InputDecoration(
-                    labelText: '닉네임 입력',
-                    border: OutlineInputBorder(),
+                return ListTile(
+                  leading: const CircleAvatar(
+                    backgroundImage: AssetImage(
+                      "assets/images/default_profile_image.png",
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_nicknameController.text.isNotEmpty) {
-                      _addFriend(_nicknameController.text);
-                    }
-                  },
-                  child: const Text('친구 추가'),
-                ),
-              ],
-            ),
-          ),
-        ],
+                  title: Text(friend.name),
+                  subtitle: Text("마지막 활동일 : ${friend.updatedAt}"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      _showRemoveDialog(context, friend.id);
+                    },
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Center(child: Text('No Data Available'));
+          }
+        },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddFriendDialog,
+        backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  void _showRemoveDialog(BuildContext context, int id) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('친구 삭제'),
+          content: const Text('삭제하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _removeFriend(id);
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+              child: const Text('삭제'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+              child: const Text('취소'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
