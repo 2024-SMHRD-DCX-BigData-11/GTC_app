@@ -3,7 +3,7 @@ import 'package:dalgeurak/controllers/qrcode_controller.dart';
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/dialogs/class_dialog.dart';
 import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
-import 'package:dalgeurak/screens/studentManage/EducationRecord.dart';
+import 'package:dalgeurak/screens/studentManage/education_record.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
 import 'package:dalgeurak/screens/studentManage/friendslist.dart';

@@ -39,8 +39,8 @@ class _MainScreenState extends State<MainScreen> {
     };
 
     List pages = [
-      Home(),
-      StudentEducationRecordPage(),
+      const Home(),
+      const StudentEducationRecordPage(),
       const ChatRoomListScreen(),
       MyProfile()
     ];
