@@ -3,8 +3,8 @@ import 'package:dalgeurak/data/question.dart';
 class QuestionHistory {
   final int id;
   final String uuid;
-  final double accuracy;
-  final bool isCorrect;
+  final double? accuracy;
+  final bool? isCorrect;
   final String solvedAt;
   final Question question;
 

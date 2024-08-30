@@ -6,6 +6,7 @@ import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/education_record.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
+import 'package:dalgeurak/screens/studentManage/friend_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/friendslist.dart';
 import 'package:dalgeurak/screens/studentManage/qrcode_scan.dart';
 import 'package:dalgeurak/screens/studentManage/student_manage_dialog.dart';
@@ -232,10 +233,10 @@ class MyProfile extends GetWidget<UserController> {
                                     children: [
                                       MediumMenuButton(
                                         iconName: "twoTicket",
-                                        title: "이번 주 랭킹",
-                                        subTitle: "친구 추가/삭제",
+                                        title: "친구 관리",
+                                        subTitle: "추가 / 삭제",
                                         clickAction: () =>
-                                            Get.to(FriendsList()),
+                                            Get.to(FriendPage()),
                                       ),
                                       MediumMenuButton(
                                         iconName: "cancel",

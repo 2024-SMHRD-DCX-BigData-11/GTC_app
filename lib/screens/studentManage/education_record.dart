@@ -61,6 +61,9 @@ class _EducationRecord extends State<EducationRecord> {
                 itemCount: questions.length,
                 itemBuilder: (context, index) {
                   var question = questions[index];
+                  if (question.accuracy == null || question.isCorrect == null) {
+                    return Column();
+                  }
                   return Column(
                     children: [
                       const SizedBox(height: 30),
@@ -130,7 +133,7 @@ class _EducationRecord extends State<EducationRecord> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "정답 여부 : ${question.isCorrect ? "정답" : "오답"}  |  유사도 : ${question.accuracy * 100}%",
+                                    "정답 여부 : ${question.isCorrect! ? "정답" : "오답"}  |  유사도 : ${question.accuracy! * 100}%",
                                     style: TextStyle(
                                       fontSize: responsiveFontSize * 0.9,
                                       color: Colors.grey[600],

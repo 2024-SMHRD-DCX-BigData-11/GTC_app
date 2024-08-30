@@ -1,16 +1,17 @@
+import 'package:dalgeurak/data/friend.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:dio/dio.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
+import 'package:dio/dio.dart' as di;
 
 class FriendPage extends StatefulWidget {
-  final String nickname;
-  final bool isFriend;
-  final VoidCallback onAction;
+  // final String nickname;
+  // final bool isFriend;
+  // final VoidCallback onAction;
 
-  FriendPage({
-    required this.nickname,
-    required this.isFriend,
-    required this.onAction,
+  const FriendPage({
+    // required this.nickname,
+    // required this.isFriend,
+    // required this.onAction,
     Key? key,
   }) : super(key: key);
 
@@ -18,85 +19,71 @@ class FriendPage extends StatefulWidget {
   _FriendPageState createState() => _FriendPageState();
 }
 
-class _FriendPageState extends State<FriendPage> with SingleTickerProviderStateMixin {
+class _FriendPageState extends State<FriendPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<Map<String, dynamic>> friendsList = [];
-  bool isLoading = true;
+  late Future<List<Friend>> friendsList;
   final TextEditingController _nicknameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _loadFriends();
+    friendsList = _loadFriends();
   }
 
-  Future<void> _loadFriends() async {
-    final Dio dio = Dio();
-    const String apiUrl = 'http://your-server-url/api';
-
+  Future<List<Friend>> _loadFriends() async {
     try {
-      final response = await dio.get('$apiUrl/friends');
-      if (response.statusCode == 200 && response.data.isNotEmpty) {
-        setState(() {
-          friendsList = List<Map<String, dynamic>>.from(response.data);
-        });
-      } else {
-        print('친구 목록을 불러오는 데 실패했습니다.');
-      }
+      di.Response response = await dio.post(
+        "$apiUrl/friend/list",
+        options: di.Options(contentType: "application/json"),
+      );
+
+      List<dynamic> jsonList = response.data;
+      List<Friend> friends =
+          jsonList.map((json) => Friend.fromJson(json)).toList();
+
+      return friends;
     } catch (e) {
-      print('친구 목록을 불러오는 중 오류 발생: $e');
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
+      throw Exception('Failed to load data: $e');
     }
   }
 
   Future<void> _addFriend(String nickname) async {
-    final Dio dio = Dio();
-    const String apiUrl = 'http://your-server-url/api';
-
     try {
-      final userResponse = await dio.get('$apiUrl/user', queryParameters: {'nickname': nickname});
-      if (userResponse.statusCode == 200 && userResponse.data.isNotEmpty) {
-        final user = userResponse.data[0];
+      di.Response response = await dio.post("$apiUrl/friend/add",
+          options: di.Options(contentType: "application/json"),
+          data: {
+            'username': nickname,
+          });
 
-        final response = await dio.post('$apiUrl/friend/add', data: {
-          'username': user['username'],
-          'nickname': user['nickname'],
-          'class_id': user['class_id'],
-        });
-
-        if (response.statusCode == 200) {
-          print('친구 추가 성공: ${response.data}');
-          _loadFriends();
-        } else {
-          print('친구 추가 실패: ${response.statusCode}');
-        }
+      if (response.statusCode == 200) {
+        print('친구 추가 성공: ${response.data}');
+        _loadFriends();
       } else {
-        print('사용자를 찾을 수 없습니다.');
+        print('친구 추가 실패: ${response.statusCode}');
       }
     } catch (e) {
-      print('친구 추가 중 오류 발생: $e');
+      throw Exception('Failed to load data: $e');
     }
   }
 
   Future<void> _removeFriend(String nickname) async {
-    final Dio dio = Dio();
-    const String apiUrl = 'http://your-server-url/api';
-
     try {
-      final response = await dio.post('$apiUrl/friend/remove', data: {'nickname': nickname});
+      di.Response response = await dio.post("$apiUrl/friend/remove",
+          options: di.Options(contentType: "application/json"),
+          data: {
+            'username': nickname,
+          });
 
       if (response.statusCode == 200) {
-        print('친구 삭제 성공: ${response.data}');
+        print('친구 추가 성공: ${response.data}');
         _loadFriends();
       } else {
-        print('친구 삭제 실패: ${response.statusCode}');
+        print('친구 추가 실패: ${response.statusCode}');
       }
     } catch (e) {
-      print('친구 삭제 중 오류 발생: $e');
+      throw Exception('Failed to load data: $e');
     }
   }
 
@@ -104,11 +91,11 @@ class _FriendPageState extends State<FriendPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('친구 관리'),
+        title: const Text('친구 관리'),
         backgroundColor: Colors.blueAccent,
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: '목록'),
             Tab(text: '친구 추가'),
           ],
@@ -117,26 +104,40 @@ class _FriendPageState extends State<FriendPage> with SingleTickerProviderStateM
       body: TabBarView(
         controller: _tabController,
         children: [
-          isLoading
-              ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-            itemCount: friendsList.length,
-            itemBuilder: (context, index) {
-              final friend = friendsList[index];
-              final String nickname = friend['nickname'];
+          FutureBuilder<List<Friend>>(
+            future: friendsList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData) {
+                List<Friend> friends = snapshot.data!;
 
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage('https://your-image-url.com'), // Placeholder for user image
-                ),
-                title: Text(nickname),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    _removeFriend(nickname);
+                return ListView.builder(
+                  itemCount: friends.length,
+                  itemBuilder: (context, index) {
+                    final friend = friends[index];
+
+                    return ListTile(
+                      leading: const CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://your-image-url.com'), // Placeholder for user image
+                      ),
+                      title: Text(friend.name),
+                      subtitle: Text("마지막 활동일 : ${friend.updatedAt}"),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _removeFriend(friend.name);
+                        },
+                      ),
+                    );
                   },
-                ),
-              );
+                );
+              } else {
+                return const Center(child: Text('No Data Available'));
+              }
             },
           ),
           Padding(
@@ -145,19 +146,19 @@ class _FriendPageState extends State<FriendPage> with SingleTickerProviderStateM
               children: [
                 TextField(
                   controller: _nicknameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: '닉네임 입력',
                     border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     if (_nicknameController.text.isNotEmpty) {
                       _addFriend(_nicknameController.text);
                     }
                   },
-                  child: Text('친구 추가'),
+                  child: const Text('친구 추가'),
                 ),
               ],
             ),
