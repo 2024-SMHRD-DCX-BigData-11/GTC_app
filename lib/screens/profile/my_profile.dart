@@ -281,7 +281,7 @@ class MyProfile extends GetWidget<UserController> {
                               title: "인스타문의",
                               iconName: "instagram",
                               clickAction: () => _launchURL(
-                                  "https://www.instagram.com/se0k_juju/")),
+                                  "https://www.instagram.com/yanggeonyeol/")),
                           SimpleListButton(
                               title: "앱 정보",
                               iconName: "info",
