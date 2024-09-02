@@ -156,10 +156,12 @@ class _FriendPageState extends State<FriendPage>
                 final friend = friends[index];
 
                 return ListTile(
-                  leading: const CircleAvatar(
-                    backgroundImage: AssetImage(
-                      "assets/images/default_profile_image.png",
-                    ),
+                  leading: CircleAvatar(
+                    backgroundImage: friend.profileImageURL == null
+                        ? const AssetImage(
+                                "assets/images/default_profile_image.png")
+                            as ImageProvider
+                        : NetworkImage(friend.profileImageURL!),
                   ),
                   title: Text(friend.name),
                   subtitle: Text("마지막 활동일 : ${friend.updatedAt}"),

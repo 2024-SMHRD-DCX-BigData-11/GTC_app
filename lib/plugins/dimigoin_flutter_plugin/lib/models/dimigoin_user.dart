@@ -282,6 +282,7 @@ class DimigoinUser {
   bool? _isConvenienceBlack;
   bool? _isExceptionBlack;
   int? _classId;
+  bool? _isOwner;
 
   int? get id => _id;
 
@@ -335,6 +336,12 @@ class DimigoinUser {
     _classId = value;
   }
 
+  bool? get isOwner => _isOwner;
+
+  set setOwner(bool? value) {
+    _isOwner = value;
+  }
+
   DimigoinUser({
     required int id,
     required String userId,
@@ -357,6 +364,7 @@ class DimigoinUser {
     required bool isConvenienceBlack,
     required bool isExceptionBlack,
     required int classId,
+    required bool isOwner,
   }) {
     _id = id;
     _userId = userId;
@@ -379,6 +387,7 @@ class DimigoinUser {
     _isConvenienceBlack = isConvenienceBlack;
     _isExceptionBlack = isExceptionBlack;
     _classId = classId;
+    _isOwner = isOwner;
   }
 
   DimigoinUser.fromJson(dynamic json) {
@@ -415,6 +424,7 @@ class DimigoinUser {
     _isConvenienceBlack = json['convenienceBlack'];
     _isExceptionBlack = json['exceptionBlack'];
     _classId = json['classId'];
+    _isOwner = json['is_owner'];
   }
 
   Map<String, dynamic> toJson() {
@@ -444,6 +454,7 @@ class DimigoinUser {
     map['convenienceBlack'] = _isConvenienceBlack;
     map['exceptionBlack'] = _isExceptionBlack;
     map['classId'] = _classId;
+    map['is_owner'] = _isOwner;
     return map;
   }
 }

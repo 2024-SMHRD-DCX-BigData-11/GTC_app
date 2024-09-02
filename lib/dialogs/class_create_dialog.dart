@@ -3,14 +3,14 @@ import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/color_them
 import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/themes/text_theme.dart';
 import 'package:dalgeurak/utils/toast.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
-import 'package:dalgeurak/themes/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as di;
 
 class ClassCreateDialog extends StatefulWidget {
+  const ClassCreateDialog({Key? key}) : super(key: key);
+
   @override
   _ClassCreateDialogState createState() => _ClassCreateDialogState();
 }
@@ -62,7 +62,7 @@ class _ClassCreateDialogState extends State<ClassCreateDialog> {
                   value: selectedGrade,
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedGrade = newValue;  // 선택된 값을 업데이트합니다.
+                      selectedGrade = newValue; // 선택된 값을 업데이트합니다.
                       _selectedIndex = grades.indexOf(newValue!) + 1;
                     });
                   },
@@ -139,7 +139,8 @@ class _ClassCreateDialogState extends State<ClassCreateDialog> {
       options: di.Options(contentType: "application/json"),
       data: {"name": name, "grade": grade},
     );
-    // userController.user?.setClassId = cid;
+    userController.user?.setClassId = response.data['class_id'];
+    userController.user?.setOwner = true; // 선생님
     Get.back();
     showToast("반 생성이 완료되었습니다.");
     return response.data;

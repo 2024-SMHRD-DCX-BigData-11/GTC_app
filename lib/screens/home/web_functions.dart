@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:html' as html;
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
+import 'package:dio/dio.dart' as di;
 import 'package:flutter/foundation.dart'; // 웹 환경에서만 사용
 
 Future<void> getPhotoLibraryImage(String userId) async {
@@ -31,20 +31,14 @@ Future<void> uploadImage(html.File file, String userId) async {
     final reader = html.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onLoadEnd.listen((e) async {
-      final bytes = reader.result as Uint8List;
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('profile_images')
-          .child(file.name);
-
-      await storageRef.putData(bytes);
-      final downloadUrl = await storageRef.getDownloadURL();
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .update({
-        'profileImageUrl': downloadUrl,
-      });
+      final fileBytes = reader.result as Uint8List;
+      String base64Image = base64Encode(fileBytes);
+      // HTTP 요청에 사용될 MultipartRequest
+      di.Response response = await dio.post(
+        "$apiUrl/upload/profile",
+        options: di.Options(contentType: "application/json"),
+        data: {"file": base64Image, "fileName": file.name},
+      );
     });
   } catch (e) {
     print('Error uploading image: $e');

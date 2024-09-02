@@ -1,20 +1,15 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
-import 'package:dalgeurak/controllers/qrcode_controller.dart';
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/dialogs/class_dialog.dart';
+import 'package:dalgeurak/dialogs/class_manage_dialog.dart';
 import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/education_record.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
 import 'package:dalgeurak/screens/studentManage/friend_dialog.dart';
-import 'package:dalgeurak/screens/studentManage/friendslist.dart';
-import 'package:dalgeurak/screens/studentManage/qrcode_scan.dart';
 import 'package:dalgeurak/screens/studentManage/student_manage_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
-import 'package:dalgeurak/screens/studentManage/student_meal_plan.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
-import 'package:dalgeurak/screens/studentManage/student_ranking.dart';
-import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
 import 'package:dalgeurak/services/remote_config.dart';
 import 'package:dalgeurak_widget_package/widgets/dialog.dart';
 import 'package:dalgeurak_widget_package/widgets/window_title.dart';
@@ -169,19 +164,13 @@ class MyProfile extends GetWidget<UserController> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Obx(() {
-                                        int warningAmount =
-                                            controller.warningList.length;
-
-                                        return MediumMenuButton(
-                                          iconName: "noticeCircle",
-                                          title: "프로필 수정",
-                                          subTitle: "개인 정보 변경",
-                                          clickAction: () => studentManageDialog
-                                              .showProfileEditDialog(
-                                                  controller),
-                                        );
-                                      }),
+                                      MediumMenuButton(
+                                        iconName: "noticeCircle",
+                                        title: "프로필 수정",
+                                        subTitle: "개인 정보 변경",
+                                        clickAction: () => studentManageDialog
+                                            .showProfileEditDialog(controller),
+                                      ),
                                       MediumMenuButton(
                                         iconName: "foodBucket",
                                         title: "이번주 시간표",
@@ -200,12 +189,14 @@ class MyProfile extends GetWidget<UserController> {
                                     children: [
                                       if (controller.user?.classId != null)
                                         MediumMenuButton(
-                                            iconName: "class",
-                                            title: "반 어쩌고",
-                                            subTitle: "저쩌고",
-                                            clickAction: () => {}
-                                            // Get.to(QrCodeScan()),
-                                            )
+                                          iconName: "class",
+                                          title: "반 어쩌고",
+                                          subTitle: "저쩌고",
+                                          clickAction: () => {
+                                            Get.dialog(
+                                                const ClassManageDialog()),
+                                          },
+                                        )
                                       else
                                         MediumMenuButton(
                                           iconName: "class",
@@ -235,15 +226,14 @@ class MyProfile extends GetWidget<UserController> {
                                         iconName: "twoTicket",
                                         title: "친구 관리",
                                         subTitle: "추가 / 삭제",
-                                        clickAction: () =>
-                                            Get.to(FriendPage()),
+                                        clickAction: () => Get.to(const FriendPage()),
                                       ),
                                       MediumMenuButton(
                                         iconName: "cancel",
                                         title: "교육 기록 보기",
                                         subTitle: "조회하기",
-                                        clickAction: () => Get.to(
-                                            EducationRecord()),
+                                        clickAction: () =>
+                                            Get.to(const EducationRecord()),
                                       ),
                                     ],
                                   ),
@@ -342,7 +332,13 @@ class MyProfile extends GetWidget<UserController> {
     }
   }
 
-  void _launchURL(String _url) async => await canLaunch(_url)
-      ? await launch(_url)
-      : throw 'Could not launch $_url';
+  void _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

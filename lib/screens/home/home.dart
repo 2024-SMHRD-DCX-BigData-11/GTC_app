@@ -424,7 +424,7 @@ class _HomeState extends State<Home> {
 
   Future<void> _getCameraImage() async {
     if (kIsWeb) {
-      userController.showToast("PC 환경에서는 사용할 수 없는 기능입니다.");
+      userController.showToast("웹 환경에서는 사용할 수 없는 기능입니다.");
       return;
     }
     final pickedFile =
