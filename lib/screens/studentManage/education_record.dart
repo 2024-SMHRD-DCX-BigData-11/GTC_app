@@ -24,6 +24,7 @@ class _EducationRecord extends State<EducationRecord> {
   Widget build(BuildContext context) {
     // 화면의 너비를 가져옵니다.
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeigth = MediaQuery.of(context).size.height;
 
     // 기본 폰트 크기를 설정합니다.
     double baseFontSize = 14.0;
@@ -85,7 +86,7 @@ class _EducationRecord extends State<EducationRecord> {
                           children: [
                             // 제출 시간 텍스트
                             Text(
-                              "제출 시간 : ${question.solvedAt}",
+                              "제출 일시 : ${question.solvedAt}",
                               style: TextStyle(
                                 fontSize: responsiveFontSize * 0.9,
                                 color: Colors.grey[600],
@@ -147,14 +148,16 @@ class _EducationRecord extends State<EducationRecord> {
                                   children: [
                                     OutlinedButton(
                                       onPressed: () {
-                                        _showDialog(question, false);
+                                        _showDialog(question, false,
+                                            screenWidth, screenHeigth);
                                       },
                                       child: const Text('나의 풀이'),
                                     ),
                                     const SizedBox(width: 8),
                                     OutlinedButton(
                                       onPressed: () {
-                                        _showDialog(question, true);
+                                        _showDialog(question, true, screenWidth,
+                                            screenHeigth);
                                       },
                                       child: const Text('모범 답안'),
                                     ),
@@ -195,7 +198,8 @@ class _EducationRecord extends State<EducationRecord> {
     }
   }
 
-  void _showDialog(QuestionHistory q, bool isSampleAnswer) {
+  void _showDialog(QuestionHistory q, bool isSampleAnswer, double screenWidth,
+      double screenHeigth) {
     showDialog(
       context: context,
       builder: (context) {
@@ -218,11 +222,17 @@ class _EducationRecord extends State<EducationRecord> {
                             const TextStyle(color: Colors.blue), // 제목 텍스트 색상 설정
                       ),
                       const SizedBox(height: 16),
-                      Image.network(
-                        isSampleAnswer
-                            ? "$apiUrl/sampleAnswer/${q.question.name}".replaceAll(".png", "_A.png")
-                            : "$apiUrl/history/${q.uuid}_solve.jpeg",
-                      ),
+                      SizedBox(
+                        width: isSampleAnswer ? null : screenWidth * 0.6, // 원하는 너비 설정
+                        height: isSampleAnswer ? null : screenHeigth * 0.6, // 원하는 높이 설정
+                        child: Image.network(
+                          isSampleAnswer
+                              ? "$apiUrl/sampleAnswer/${q.question.name}"
+                                  .replaceAll(".png", "_A.png")
+                              : "$apiUrl/history/${q.uuid}_solve.jpeg",
+                          fit: BoxFit.cover, // 이미지가 영역을 가득 채우도록 함
+                        ),
+                      )
                     ],
                   ),
                 ),

@@ -283,6 +283,7 @@ class DimigoinUser {
   bool? _isExceptionBlack;
   int? _classId;
   bool? _isOwner;
+  String? _imageUrl;
 
   int? get id => _id;
 
@@ -328,13 +329,18 @@ class DimigoinUser {
 
   bool? get isExceptionBlack => _isExceptionBlack;
 
-  String? imageUrl; // 선택된 프로필 이미지를 저장하기 위한 변수
+  String? get imageUrl => _imageUrl;
+
+  set setImageUrl(String? value) {
+    _imageUrl = value;
+  }
 
   int? get classId => _classId;
 
   set setClassId(int? value) {
     _classId = value;
   }
+
 
   bool? get isOwner => _isOwner;
 
@@ -365,6 +371,7 @@ class DimigoinUser {
     required bool isExceptionBlack,
     required int classId,
     required bool isOwner,
+    required String imageUrl,
   }) {
     _id = id;
     _userId = userId;
@@ -388,6 +395,7 @@ class DimigoinUser {
     _isExceptionBlack = isExceptionBlack;
     _classId = classId;
     _isOwner = isOwner;
+    _imageUrl = imageUrl;
   }
 
   DimigoinUser.fromJson(dynamic json) {
@@ -425,6 +433,7 @@ class DimigoinUser {
     _isExceptionBlack = json['exceptionBlack'];
     _classId = json['classId'];
     _isOwner = json['is_owner'];
+    _imageUrl = json['image_url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -455,6 +464,7 @@ class DimigoinUser {
     map['exceptionBlack'] = _isExceptionBlack;
     map['classId'] = _classId;
     map['is_owner'] = _isOwner;
+    map['image_url'] = _imageUrl;
     return map;
   }
 }

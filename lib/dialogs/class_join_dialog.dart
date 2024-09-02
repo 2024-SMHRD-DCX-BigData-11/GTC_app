@@ -131,7 +131,7 @@ class ClassJoinDialog extends GetxController {
       options: di.Options(contentType: "application/json"),
       data: {"id": cid},
     );
-    userController.user?.setClassId = cid;
+    userController.updateClassId(cid);
     Get.back();
     _showToast("가입되었습니다.");
     return response.data;

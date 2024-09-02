@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dio/dio.dart' as di;
 
-Future<void> getPhotoLibraryImage() async {
+Future<void> getPhotoLibraryImage(Function onComplete) async {
   final pickedFile =
   await ImagePicker().pickImage(source: ImageSource.gallery);
   if (pickedFile != null) {

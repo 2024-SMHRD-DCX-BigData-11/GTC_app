@@ -151,7 +151,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
               ),
               Positioned(
                 bottom: 16,
-                left: 216,
+                left: 236,
                 child: ElevatedButton(
                   onPressed: () {
                     setState(() {

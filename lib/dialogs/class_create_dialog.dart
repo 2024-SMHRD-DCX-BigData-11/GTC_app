@@ -139,7 +139,7 @@ class _ClassCreateDialogState extends State<ClassCreateDialog> {
       options: di.Options(contentType: "application/json"),
       data: {"name": name, "grade": grade},
     );
-    userController.user?.setClassId = response.data['class_id'];
+    userController.updateClassId(response.data['class_id']);
     userController.user?.setOwner = true; // 선생님
     Get.back();
     showToast("반 생성이 완료되었습니다.");

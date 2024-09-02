@@ -187,25 +187,29 @@ class MyProfile extends GetWidget<UserController> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      if (controller.user?.classId != null)
-                                        MediumMenuButton(
-                                          iconName: "class",
-                                          title: "반 어쩌고",
-                                          subTitle: "저쩌고",
-                                          clickAction: () => {
-                                            Get.dialog(
-                                                const ClassManageDialog()),
-                                          },
-                                        )
-                                      else
-                                        MediumMenuButton(
-                                          iconName: "class",
-                                          title: "반 설정",
-                                          subTitle: "생성 / 가입",
-                                          clickAction: () =>
-                                              classDialog.showDialog(),
-                                          // Get.to(QrCodeScan()),
-                                        ),
+                                      Obx(() {
+                                        if (controller.user?.classId != null) {
+                                          return MediumMenuButton(
+                                            iconName: "class",
+                                            title: "반 구성",
+                                            subTitle: "조회",
+                                            clickAction: () {
+                                              Get.dialog(
+                                                  const ClassManageDialog());
+                                            },
+                                          );
+                                        } else {
+                                          return MediumMenuButton(
+                                            iconName: "class",
+                                            title: "반 설정",
+                                            subTitle: "생성 / 가입",
+                                            clickAction: () {
+                                              classDialog.showDialog();
+                                              // Get.to(QrCodeScan());
+                                            },
+                                          );
+                                        }
+                                      }),
                                       MediumMenuButton(
                                         iconName: "signDocu",
                                         title: "마일리지 상점",
@@ -226,7 +230,8 @@ class MyProfile extends GetWidget<UserController> {
                                         iconName: "twoTicket",
                                         title: "친구 관리",
                                         subTitle: "추가 / 삭제",
-                                        clickAction: () => Get.to(const FriendPage()),
+                                        clickAction: () =>
+                                            Get.to(const FriendPage()),
                                       ),
                                       MediumMenuButton(
                                         iconName: "cancel",

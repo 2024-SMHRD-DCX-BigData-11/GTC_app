@@ -26,6 +26,16 @@ class UserController extends GetxController {
     _dimigoinUser.bindStream(_dimigoinAccount.userChangeStream);
   }
 
+  void updateClassId(int? newClassId) {
+    _dimigoinUser.update((user) {
+      if (user != null) {
+        user.setClassId = newClassId; // 이 줄에서 직접 속성을 수정합니다.
+      }
+    });
+  }
+
+
+
   dynamic getProfileWidget(double _width) {
     if (user?.photos == null || user?.photos?.length == 0) {
       return Icon(Icons.person_rounded, size: _width * 0.12);

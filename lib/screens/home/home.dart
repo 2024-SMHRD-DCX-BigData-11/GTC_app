@@ -382,7 +382,7 @@ class _HomeState extends State<Home> {
         .doc(userController.user?.userId)
         .get();
     setState(() {
-      userController.user?.imageUrl = snapshot['profileImageUrl'];
+      userController.user?.setImageUrl = snapshot['profileImageUrl'];
       print("userController.user?.imageUrl : ${userController.user?.imageUrl}");
     });
   }
@@ -457,7 +457,7 @@ class _HomeState extends State<Home> {
     );
 
     setState(() {
-      userController.user?.imageUrl = null;
+      userController.user?.setImageUrl = null;
     });
 
     Navigator.of(context).pop(); // BottomSheet 닫기
