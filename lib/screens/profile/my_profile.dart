@@ -43,7 +43,7 @@ class MyProfile extends GetWidget<UserController> {
     final MyProfileBottomSheet myProfileBottomSheet = MyProfileBottomSheet();
     final DalgeurakDialog dalgeurakDialog = DalgeurakDialog();
     final StudentManageDialog studentManageDialog = StudentManageDialog();
-    const ClassDialog classDialog = ClassDialog();
+    ClassDialog classDialog = ClassDialog();
 
     controller.getUserWarningList();
 

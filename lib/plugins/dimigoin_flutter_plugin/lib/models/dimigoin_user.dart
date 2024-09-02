@@ -291,6 +291,10 @@ class DimigoinUser {
 
   DimigoinUserType? get userType => _userType;
 
+  set setUserType(DimigoinUserType value) {
+    _userType = value;
+  }
+
   String? get gender => _gender;
 
   String? get createdAt => _createdAt;

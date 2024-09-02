@@ -1,8 +1,6 @@
 import 'package:dalgeurak/controllers/auth_controller.dart';
-import 'package:dalgeurak/plugins/dalgeurak-widget-package/lib/widgets/toast.dart';
-import 'package:dalgeurak/screens/main_screen.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/screens/widgets/custum_button.dart';
-import 'package:dalgeurak/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,14 +12,11 @@ class Join extends GetWidget<AuthController> {
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordContorller = TextEditingController();
   final TextEditingController _confirmPasswordContorller = TextEditingController();
-  final DalgeurakToast _dalgeurakToast = DalgeurakToast();
 
-  // User type (teacher or student)
-  String _userType = "학생"; // 기본값은 "학생"
+  final Rx<DimigoinUserType> _userType = DimigoinUserType.student.obs; // 기본값은 "학생"
 
   @override
   Widget build(BuildContext context) {
@@ -123,32 +118,35 @@ class Join extends GetWidget<AuthController> {
                         children: [
                           const Text(
                             "사용자 유형",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
                           ),
-                          Row(
-                            children: [
-                              Radio<String>(
-                                value: "학생",
-                                groupValue: _userType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _userType = value!;
-                                  });
-                                },
-                              ),
-                              const Text("학생"),
-                              Radio<String>(
-                                value: "선생",
-                                groupValue: _userType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _userType = value!;
-                                  });
-                                },
-                              ),
-                              const Text("선생"),
-                            ],
-                          ),
+                          Obx(() {
+                            return Row(
+                              children: [
+                                Radio<DimigoinUserType>(
+                                  value: DimigoinUserType.student,
+                                  groupValue: _userType.value,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      _userType.value = value;
+                                    }
+                                  },
+                                ),
+                                const Text("학생"),
+                                Radio<DimigoinUserType>(
+                                  value: DimigoinUserType.teacher,
+                                  groupValue: _userType.value,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      _userType.value = value;
+                                    }
+                                  },
+                                ),
+                                const Text("선생"),
+                              ],
+                            );
+                          }),
                         ],
                       ),
                       const SizedBox(
@@ -182,7 +180,7 @@ class Join extends GetWidget<AuthController> {
                         controller: _confirmPasswordContorller,
                         obscureText: true,
                         validator: (value) {
-                          if (value!.isEmpty)  {
+                          if (value!.isEmpty) {
                             return "비밀번호를 입력하세요";
                           } else if (value != _passwordContorller.text) {
                             return "비밀번호가 일치하지 않습니다.";
@@ -213,19 +211,21 @@ class Join extends GetWidget<AuthController> {
                             // Form is valid, process data
                             String username = _usernameController.text;
                             String password = _passwordContorller.text;
-                            String confirmPassword = _confirmPasswordContorller.text;
+                            String confirmPassword = _confirmPasswordContorller
+                                .text;
+                            String name = _nameController.text;
+                            String phone = _phoneController.text;
 
                             if (password != confirmPassword) {
                               controller.showToast("비밀번호가 일치하지 않습니다.");
                               return;
                             }
                             controller.join(
-                                _usernameController.text,
-                                _passwordContorller.text,
-                                _nameController.text,
-                                _nicknameController.text,
-                                _phoneController.text,
-                                //_userType // 사용자 유형 전달
+                              username,
+                              password,
+                              name,
+                              phone,
+                              //_userType // 사용자 유형 전달
                             );
                           }
                         },
