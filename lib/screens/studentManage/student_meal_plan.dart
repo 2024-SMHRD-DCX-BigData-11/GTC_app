@@ -5,7 +5,7 @@ class StudentMealPlanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('2024년 8월 식단표'),
+        title: Text('2024년 9월 식단표'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -14,15 +14,15 @@ class StudentMealPlanPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset('assets/emoticons/emoticon1.jpg', height: 50),
+                //Image.asset('assets/emoticons/emoticon1.jpg', height: 50),
                 Text(
-                  '2024년 8월 식단표',
+                  '2024년 9월 식단표',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Image.asset('assets/emoticons/emoticon2.jpg', height: 50),
+                //Image.asset('assets/emoticons/emoticon2.jpg', height: 50),
               ],
             ),
             SizedBox(height: 16),
@@ -37,7 +37,7 @@ class StudentMealPlanPage extends StatelessWidget {
                     '5일\n하이라이스덮밥\n순두부찌개\n치즈까스/머스터드\n오이/깍두기\n배추김치',
                     '6일\n비빔밥\n감자된장국\n어묵볶음\n배추김치\n체리뽕',
                     '7일\n차조소밥\n돼지갈비찜\n우엉조림\n양상추샐러드\n깍두기/송편',
-                    '8일\n개설기념일',
+                    '8일\n개교기념일',
                   ]),
                   _buildTableRow([
                     '11일\n차조소밥\n대지갈비찜\n두부부침/구이\n배추김치\n브로콜리/초장',
