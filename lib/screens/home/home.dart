@@ -9,12 +9,13 @@ import 'package:intl/intl.dart';
 import '../../controllers/meal_controller.dart';
 import '../../controllers/user_controller.dart';
 import 'package:dalgeurak/screens/studentManage/contact_teacher.dart';
-import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
 import 'package:dalgeurak/screens/studentManage/student_meal_plan.dart';
 import 'package:dalgeurak/screens/studentManage/student_ranking.dart';
 import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
 import 'web_functions.dart' if (dart.library.io) 'mobile_functions.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
+import 'package:dio/dio.dart' as di;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -24,19 +25,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late MealController mealController;
-  late UserController userController;
+  final MealController mealController = Get.find<MealController>();
+  final UserController userController = Get.find<UserController>();
   late double _height, _width;
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfileImage(); // 프로필 불러오기
+  }
 
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
-
-    mealController = Get.find<MealController>();
-    userController = Get.find<UserController>();
-
-    loadProfileImage(); // 프로필 불러오기
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -381,6 +383,7 @@ class _HomeState extends State<Home> {
         .get();
     setState(() {
       userController.user?.imageUrl = snapshot['profileImageUrl'];
+      print("userController.user?.imageUrl : ${userController.user?.imageUrl}");
     });
   }
 
@@ -430,7 +433,7 @@ class _HomeState extends State<Home> {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      await uploadImageA(pickedFile.path, (userController.user?.userId)!);
+      await uploadImageA(pickedFile.path);
     } else {
       if (kDebugMode) {
         print('이미지 선택안함');
@@ -441,18 +444,17 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _getPhotoLibraryImage() async {
-    getPhotoLibraryImage((userController.user?.userId)!);
-    await loadProfileImage();
-    Navigator.of(context).pop(); // BottomSheet 닫기
+    await getPhotoLibraryImage(() {
+      loadProfileImage();
+      Navigator.of(context).pop(); // BottomSheet 닫기
+    });
   }
 
   Future<void> _resetToDefaultImage() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc((userController.user?.userId)!)
-        .update({
-      'profileImageUrl': FieldValue.delete(),
-    });
+    di.Response response = await dio.post(
+      "$apiUrl/profile/reset",
+      options: di.Options(contentType: "application/json"),
+    );
 
     setState(() {
       userController.user?.imageUrl = null;

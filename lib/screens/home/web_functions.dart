@@ -4,7 +4,7 @@ import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:dio/dio.dart' as di;
 import 'package:flutter/foundation.dart'; // 웹 환경에서만 사용
 
-Future<void> getPhotoLibraryImage(String userId) async {
+Future<void> getPhotoLibraryImage(Function onComplete) async {
   final input = html.FileUploadInputElement();
   input.accept = 'image/*'; // Optional: filter to only image files
   input.click();
@@ -13,7 +13,8 @@ Future<void> getPhotoLibraryImage(String userId) async {
     final files = input.files;
     if (files != null && files.isNotEmpty) {
       final file = files[0];
-      await uploadImage(file, userId);
+      await uploadImage(file);
+      onComplete(); // 파일 업로드가 완료된 후 호출
     } else {
       if (kDebugMode) {
         print('이미지 선택안함');
@@ -22,11 +23,11 @@ Future<void> getPhotoLibraryImage(String userId) async {
   });
 }
 
-Future<void> uploadImageA(String path, String userId) async {
+Future<void> uploadImageA(String path) async {
   return;
 }
 
-Future<void> uploadImage(html.File file, String userId) async {
+Future<void> uploadImage(html.File file) async {
   try {
     final reader = html.FileReader();
     reader.readAsArrayBuffer(file);
@@ -35,7 +36,7 @@ Future<void> uploadImage(html.File file, String userId) async {
       String base64Image = base64Encode(fileBytes);
       // HTTP 요청에 사용될 MultipartRequest
       di.Response response = await dio.post(
-        "$apiUrl/upload/profile",
+        "$apiUrl/profile/upload",
         options: di.Options(contentType: "application/json"),
         data: {"file": base64Image, "fileName": file.name},
       );

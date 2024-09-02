@@ -6,7 +6,7 @@ import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/education_record.dart';
 import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
-import 'package:dalgeurak/screens/studentManage/friend_dialog.dart';
+import 'package:dalgeurak/screens/friend/friend_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/student_manage_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';

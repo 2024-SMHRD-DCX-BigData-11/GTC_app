@@ -111,16 +111,8 @@ class _FriendPageState extends State<FriendPage>
                   onPressed: isEnabled
                       ? () {
                           String username = _nicknameController.text;
-                          // 친구 추가 로직을 여기에 작성
                           Navigator.of(context).pop(); // 다이얼로그 닫기
                           _addFriend(username);
-                          // 예시: 친구 추가 후 리스트 갱신
-                          // setState(() {
-                          //   (friendsList as Future<List<Friend>>).then((friends) {
-                          //     friends.add(
-                          //         Friend(friendId, DateTime.now().toString()));
-                          //   });
-                          // });
                         }
                       : null, // 비활성화 시 null
                   child: const Text('확인'),
