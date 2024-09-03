@@ -23,8 +23,8 @@
     </queries>
 
    <application
-        android:label="달그락"
-        android:icon="@drawable/logo">
+        android:label="GTC"
+        android:icon="@drawable/logo2-removebg">
 
        <meta-data
            android:name="com.google.firebase.messaging.default_notification_channel_id"
