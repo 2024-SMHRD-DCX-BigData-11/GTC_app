@@ -25,6 +25,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
   bool _isEraserMode = false; // 지우개 모드 여부를 나타내는 상태 변수
   bool _isRedPenMode = false; // 빨간 펜 모드 여부를 나타내는 상태 변수
   DrawnLine? _currentLine; // 현재 그리는 선
+  bool _isLasso = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +119,17 @@ class _DrawingScreenState extends State<DrawingScreen> {
                 right: 16,
                 child: ElevatedButton(
                   onPressed: () async {
-                    await _sendDrawing();
-                    Get.back();
-                    showToast("답안 제출이 완료되었습니다.");
+                    if (_lines.length < 3) {
+                      showToast("풀이가 너무 부족합니다.");
+                      return;
+                    }
+                    if (_isLasso) {
+                      await _sendDrawing();
+                      Get.back(result: true);
+                      showToast("답안 제출이 완료되었습니다.");
+                    } else {
+                      showToast("빨간 펜으로 정답을 지정해주세요.");
+                    }
                   },
                   child: const Text('제출'),
                 ),
@@ -170,11 +179,15 @@ class _DrawingScreenState extends State<DrawingScreen> {
 
   void _removeRedLines() {
     _lines.removeWhere((line) => line.color == Colors.red);
+    _isLasso = false;
   }
 
   void _undo() {
     if (_lines.isNotEmpty) {
       _lines.removeLast();
+      if (_lines.last.color == Colors.red) {
+        _isLasso = false;
+      }
       setState(() {});
     }
   }
@@ -271,13 +284,13 @@ class _DrawingScreenState extends State<DrawingScreen> {
 
     // 이미지 크롭
     img.Image croppedImage =
-    img.copyCrop(whiteBackground, cropX, cropY, cropWidth, cropHeight);
+        img.copyCrop(whiteBackground, cropX, cropY, cropWidth, cropHeight);
 
     // JPEG로 인코딩
-    Uint8List crop_jpegBytes = Uint8List.fromList(img.encodeJpg(croppedImage));
-    String crop_base64String = base64Encode(crop_jpegBytes);
+    Uint8List jpegBytes = Uint8List.fromList(img.encodeJpg(croppedImage));
+    String base64String = base64Encode(jpegBytes);
 
-    return crop_base64String;
+    return base64String;
   }
 
   img.Image _removeRedLinesFromImage(img.Image originalImage) {
@@ -320,19 +333,19 @@ class _DrawingScreenState extends State<DrawingScreen> {
 
         // 올가미의 최소 크기를 충족하는지 확인
         if (width >= minLassoRadius * 2 && height >= minLassoRadius * 2) {
-          bool isLasso = true;
+          _isLasso = true;
 
           // 모든 점 사이의 거리가 특정 임계값 이하인지 확인
           for (int i = 0; i < line.points.length - 1; i++) {
             if ((line.points[i] - line.points[i + 1]).distance >
                 maxAllowedGap) {
-              isLasso = false;
+              _isLasso = false;
               break;
             }
           }
 
-          if (isLasso) {
-            showToast("올가미가 인식되었습니다!");
+          if (_isLasso) {
+            showToast("정답 범위가 인식되었습니다.");
             _lassoBounds = Rect.fromLTRB(minX, minY, maxX, maxY);
             return;
           }

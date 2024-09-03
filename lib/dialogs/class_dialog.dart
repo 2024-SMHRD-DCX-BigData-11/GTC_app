@@ -1,12 +1,17 @@
+import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/dialogs/class_create_dialog.dart';
+import 'package:dalgeurak/plugins/dimigoin_flutter_plugin/lib/dimigoin_flutter_plugin.dart';
 import 'package:dalgeurak/screens/studentManage/qrcode_scan.dart';
 import 'package:dalgeurak/screens/widgets/medium_menu_button.dart';
+import 'package:dalgeurak/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'class_management_page.dart';
 
 class ClassDialog extends StatelessWidget {
   ClassDialog({Key? key}) : super(key: key);
+
+  final UserController userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +58,12 @@ class ClassDialog extends StatelessWidget {
                                 title: "반 만들기",
                                 subTitle: "생성",
                                 clickAction: () => {
-                                  Get.back(),
-                                  Get.dialog(ClassCreateDialog()),
+                                  if (userController.user?.userType != DimigoinUserType.teacher) {
+                                    showToast("반은 선생님만 만들 수 있습니다."),
+                                  } else {
+                                    Get.back(),
+                                    Get.dialog(const ClassCreateDialog()),
+                                  }
                                 },
                               ),
                             ),

@@ -1,12 +1,12 @@
 import 'package:dalgeurak/controllers/user_controller.dart';
 import 'package:dalgeurak/screens/calendar/calendar_page.dart';
 import 'package:dalgeurak/screens/chatting/ChatRoomListScreen.dart';
-import 'package:dalgeurak/screens/game/game_selection_screen.dart';
 import 'package:dalgeurak/screens/profile/my_profile.dart';
 import 'package:dalgeurak/screens/home/home.dart';
 import 'package:dalgeurak/screens/studentManage/admin_page.dart';
 import 'package:dalgeurak/screens/studentManage/student_education_record.dart';
 import 'package:dalgeurak/themes/color_theme.dart';
+import 'package:dalgeurak/utils/toast.dart';
 import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     DimigoinUserType? userGroup = Get.find<UserController>().user?.userType;
     List<DimigoinPermissionType>? userPermission = Get.find<UserController>().user?.permissions;
+    final UserController userController = Get.find<UserController>();
 
     Map pageIcon = {
       '홈': 'home',
@@ -73,14 +74,14 @@ class _MainScreenState extends State<MainScreen> {
       ));
     }
 
-    if ((userGroup != null && userGroup == DimigoinUserType.teacher)) {
-      pages.insert(2, CalendarPage());
-
-      bottomNavigatorItem.insert(2, BottomNavigationBarItem(
-        label: "일정",
-        icon: SvgPicture.asset('assets/images/icons/calendar2_unselect.svg'),
-      ));
-    }
+    // if ((userGroup != null && userGroup == DimigoinUserType.teacher)) {
+    //   pages.insert(2, CalendarPage());
+    //
+    //   bottomNavigatorItem.insert(2, BottomNavigationBarItem(
+    //     label: "일정",
+    //     icon: SvgPicture.asset('assets/images/icons/calendar2_unselect.svg'),
+    //   ));
+    // }
 
     for (int i=0; i<pages.length; i++) {
       String? label = bottomNavigatorItem[i].label;
@@ -104,6 +105,10 @@ class _MainScreenState extends State<MainScreen> {
             unselectedLabelStyle: homeBottomNavigationBarLabel,
             currentIndex: _selectIndex,
             onTap: (int index) {
+              if (index == 1 && userController.user?.classId == null) {
+                showToast("반에 가입한 후 사용할 수 있는 기능입니다.");
+                return;
+              }
               setState(() {
                 _selectIndex = index;
               });

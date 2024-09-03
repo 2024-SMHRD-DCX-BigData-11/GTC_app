@@ -72,6 +72,10 @@ class UserController extends GetxController {
     isAllowAlert.value = isAllow;
   }
 
+  void updateInfo() async {
+    await _dimigoinAccount.storeUserData();
+  }
+
   void updateProfile(String name, int grade, int _class) async {
     Map joinResult = await _dimigoinAccount.update(name, grade, _class);
 

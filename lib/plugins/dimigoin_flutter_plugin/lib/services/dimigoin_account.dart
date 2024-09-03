@@ -2,9 +2,10 @@ part of dimigoin_flutter_plugin;
 
 /// 디미고인 로그인 클래스
 class DimigoinAccount {
-
   DimigoinUser get currentUser => _currentUser;
+
   Stream<DimigoinUser?> get userChangeStream => _userChangeController.stream;
+
   bool get isLogin => _isLogin;
 
   /// 디미고인 계정에 로그인을 진행하는 함수입니다.
@@ -13,7 +14,8 @@ class DimigoinAccount {
   /// @param [username] 사용자의 디미고인 계정 아이디 string형 변수입니다.
   /// @param [password] 사용자의 디미고인 계정 비밀번호 string형 변수입니다.
   /// @returns 로그인에 성공할 경우 true, 실패할 경우 false를 반환합니다.
-  Future<Map> login(String userName, String password, bool isDalgeurakService) async {
+  Future<Map> login(
+      String userName, String password, bool isDalgeurakService) async {
     try {
       Response authResponse = await dio.post(
         '$apiUrl/auth/login',
@@ -22,20 +24,19 @@ class DimigoinAccount {
         data: {"username": userName, "password": password},
       );
 
-
       _accessToken = authResponse.data['accessToken'];
-      await _storage.write(key: "dimigoinAccount_accessToken", value: authResponse.data['accessToken']);
+      await _storage.write(
+          key: "dimigoinAccount_accessToken",
+          value: authResponse.data['accessToken']);
       // await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
       await storeUserData();
 
-      return {
-        "success": true,
-        "content": authResponse.data
-      };
+      return {"success": true, "content": authResponse.data};
     } catch (e) {
       return {
         "success": false,
-        "content": "로그인 중 오류가 발생 하였습니다.\n계정 정보를 정확히 입력했는지, 인터넷 연결이 불안정하지 않은지 등을 확인해주세요."
+        "content":
+            "로그인 중 오류가 발생 하였습니다.\n계정 정보를 정확히 입력했는지, 인터넷 연결이 불안정하지 않은지 등을 확인해주세요."
       };
     }
   }
@@ -65,7 +66,8 @@ class DimigoinAccount {
   /// @param [username] 사용자의 디미고인 계정 아이디 string형 변수입니다.
   /// @param [password] 사용자의 디미고인 계정 비밀번호 string형 변수입니다.
   /// @returns 로그인에 성공할 경우 true, 실패할 경우 false를 반환합니다.
-  Future<Map> join(String userName, String password, String name, String phone) async {
+  Future<Map> join(String userName, String password, String name, String phone,
+      bool isTeacher) async {
     try {
       Response authResponse = await dio.post(
         '$apiUrl/auth/join',
@@ -74,24 +76,34 @@ class DimigoinAccount {
           "username": userName,
           "password": password,
           "name": name,
-          "phone": phone
+          "phone": phone,
+          "teacher": isTeacher,
         },
       );
 
+      if (authResponse.data['error_message'] != null) {
+        return {
+          "success": false,
+          "content": authResponse.data['error_message']
+        };
+      }
 
       _accessToken = authResponse.data['accessToken'];
-      await _storage.write(key: "dimigoinAccount_accessToken", value: authResponse.data['accessToken']);
-      await _storage.write(key: "dimigoinAccount_refreshToken", value: authResponse.data['refreshToken']);
+      await _storage.write(
+          key: "dimigoinAccount_accessToken",
+          value: authResponse.data['accessToken']);
+      await _storage.write(
+          key: "dimigoinAccount_refreshToken",
+          value: authResponse.data['refreshToken']);
       await storeUserData();
 
-      return {
-        "success": true,
-        "content": authResponse.data
-      };
+      return {"success": true, "content": authResponse.data};
     } catch (e) {
       return {
         "success": false,
-        "content": "로그인 중 오류가 발생 하였습니다.\n계정 정보를 정확히 입력했는지, 인터넷 연결이 불안정하지 않은지 등을 확인해주세요."
+        "content": "회원가입에 실패하였습니다. 다시 시도해주세요.",
+        // "content":
+        //     "로그인 중 오류가 발생 하였습니다.\n계정 정보를 정확히 입력했는지, 인터넷 연결이 불안정하지 않은지 등을 확인해주세요."
       };
     }
   }
@@ -100,7 +112,8 @@ class DimigoinAccount {
   ///
   /// @returns 유효기간이 남아있을 경우 true, 기간이 만료되었을 경우 false를 반환합니다.
   validateAccessToken() async {
-    String? accessToken = await _storage.read(key: "dimigoinAccount_accessToken");
+    String? accessToken =
+        await _storage.read(key: "dimigoinAccount_accessToken");
     try {
       await dio.post(
         "$apiUrl/user/me",
@@ -129,9 +142,12 @@ class DimigoinAccount {
       );
 
       _accessToken = response.data['accessToken'];
-      await _storage.write(key: "dimigoinAccount_accessToken", value: response.data['accessToken']);
-      await _storage.write(key: "dimigoinAccount_refreshToken", value: response.data['refreshToken']);
-
+      await _storage.write(
+          key: "dimigoinAccount_accessToken",
+          value: response.data['accessToken']);
+      await _storage.write(
+          key: "dimigoinAccount_refreshToken",
+          value: response.data['refreshToken']);
 
       return true;
     } catch (e) {
@@ -142,7 +158,8 @@ class DimigoinAccount {
   /// 현재 서비스에 로그인되어 있는 경우, 저장되어있는 AccessToken을 불러오는 함수입니다.
   ///
   /// @returns 저장되어있는 AccessToken을 반환합니다.
-  loadSavedToken() async => await _storage.read(key: "dimigoinAccount_accessToken");
+  loadSavedToken() async =>
+      await _storage.read(key: "dimigoinAccount_accessToken");
 
   /// 디미고인 서버에 저장되어있는 계정의 정보를 불러와 로컬 Storage에 저장합니다.
   ///
@@ -151,12 +168,15 @@ class DimigoinAccount {
     try {
       Response infoResponse = await dio.post(
         "$apiUrl/user/me",
-        options: Options(contentType: "application/json",
+        options: Options(
+            contentType: "application/json",
             headers: {'Authorization': 'Bearer $_accessToken'}),
-          // headers: {'Authorization': _accessToken}),
+        // headers: {'Authorization': _accessToken}),
       );
 
-      await _storage.write(key: "dimigoinAccount_userInfo", value: json.encode(infoResponse.data['identity']));
+      await _storage.write(
+          key: "dimigoinAccount_userInfo",
+          value: json.encode(infoResponse.data['identity']));
       _currentUser = DimigoinUser.fromJson(infoResponse.data['identity']);
       _userChangeController.add(_currentUser);
       _isLogin = true;
@@ -169,32 +189,47 @@ class DimigoinAccount {
 
   /// 현재 서비스에 로그인되어 있는 경우, 디미고인 API에서 받아온 최신 데이터로 패치를 진행하는 함수입니다.
   fetchAccountData() async {
-    if (!(await validateAccessToken())) { await refreshAccessToken(); }
+    if (!(await validateAccessToken())) {
+      await refreshAccessToken();
+    }
 
     bool isSuccessStoreData = await storeUserData();
-    if (!isSuccessStoreData) { _currentUser = DimigoinUser.fromJson(json.decode((await _storage.read(key: "dimigoinAccount_userInfo"))!)); _userChangeController.add(_currentUser); }
+    if (!isSuccessStoreData) {
+      _currentUser = DimigoinUser.fromJson(
+          json.decode((await _storage.read(key: "dimigoinAccount_userInfo"))!));
+      _userChangeController.add(_currentUser);
+    }
   }
-
 
   Future<Map> update(String name, int grade, int _class) async {
     try {
       Response authResponse = await dio.post(
         '$apiUrl/user/update',
         options: Options(contentType: "application/json"),
-        data: {"name": name, "grade": grade, "_class" : _class},
+        data: {"name": name, "grade": grade, "_class": _class},
       );
 
       await storeUserData();
 
-      return {
-        "success": true,
-        "content": authResponse.data
-      };
+      return {"success": true, "content": authResponse.data};
     } catch (e) {
-      return {
-        "success": false,
-        "content": "오류."
-      };
+      return {"success": false, "content": "오류."};
+    }
+  }
+
+  Future<Map> update_() async {
+    try {
+      Response authResponse = await dio.post(
+        '$apiUrl/user/reload',
+        options: Options(contentType: "application/json"),
+        data: {},
+      );
+
+      await storeUserData();
+
+      return {"success": true, "content": authResponse.data};
+    } catch (e) {
+      return {"success": false, "content": "오류."};
     }
   }
 }

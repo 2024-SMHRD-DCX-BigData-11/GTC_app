@@ -225,6 +225,7 @@ class Join extends GetWidget<AuthController> {
                               password,
                               name,
                               phone,
+                              _userType.value == DimigoinUserType.teacher,
                               //_userType // 사용자 유형 전달
                             );
                           }

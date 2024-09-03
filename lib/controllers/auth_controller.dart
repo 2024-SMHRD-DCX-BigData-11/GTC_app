@@ -62,9 +62,9 @@ class AuthController extends GetxController {
   }
 
   void join(String id, String password, String name,
-      String phone) async {
+      String phone, bool isTeacher) async {
     Map joinResult =
-        await _dimigoinAccount.join(id, password, name, phone);
+        await _dimigoinAccount.join(id, password, name, phone, isTeacher);
 
     if (joinResult['success']) {
       // await _dalgeurakService.registerFCMToken(await _notificationController.getFCMToken());
@@ -74,7 +74,7 @@ class AuthController extends GetxController {
         Get.to(LoginSuccess());
       }
     } else {
-      _dalgeurakToast.show("회원가입에 실패하였습니다. 다시 시도해주세요.");
+      _dalgeurakToast.show(joinResult['content']);
     }
   }
 

@@ -23,7 +23,7 @@ class StudentSchedulePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              '1학년 4반 1학기 시간표',
+              '1학기 시간표',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

@@ -17,48 +17,53 @@ class Login extends GetWidget<AuthController> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              "assets/images/logo2.png",
-              width: 500,
-              height: 250,
-            ),
-            // SizedBox(height: _height * 0.08),
-            getInputTextField("아이디", controller.userIdTextController),
-            SizedBox(height: _height * 0.0075),
-            getInputTextField("비밀번호", controller.passwordTextController),
-            SizedBox(height: _height * 0.022),
-            GestureDetector(
-              onTap: () => Get.to(Join()),
-              child: Text("처음이신가요? 회원가입", style: loginPageMealPlanner),
-            ),
-            SizedBox(height: _height * 0.145),
-            Obx(() {
-              bool isEmpty = controller.isTextFieldsEmpty['username'] || controller.isTextFieldsEmpty['password'];
-
-              return GestureDetector(
-                onTap: () => {controller.logInWithDimigoinAccount()},
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: _width * 0.858,
-                  height: _height * 0.06,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      width: 1,
-                      color: dalgeurakBlueOne,
-                    ),
-                    color: isEmpty ? Colors.white : dalgeurakBlueOne,
-                  ),
-                  child: Center(child: Text("로그인", style: isEmpty ? btnTitle1 : btnTitle1.copyWith(color: Colors.white))),
+      resizeToAvoidBottomInset: true,  // 키보드가 올라올 때 화면 조정
+      body: SingleChildScrollView(  // 스크롤 가능하도록 변경
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: _height * 0.1),  // 화면이 너무 밀리지 않도록 상단에 패딩 추가
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/images/logo2.png",
+                  width: 500,
+                  height: 250,
                 ),
-              );
-            }),
-          ],
+                getInputTextField("아이디", controller.userIdTextController),
+                SizedBox(height: _height * 0.0075),
+                getInputTextField("비밀번호", controller.passwordTextController),
+                SizedBox(height: _height * 0.022),
+                GestureDetector(
+                  onTap: () => Get.to(Join()),
+                  child: Text("처음이신가요? 회원가입", style: loginPageMealPlanner),
+                ),
+                SizedBox(height: _height * 0.145),
+                Obx(() {
+                  bool isEmpty = controller.isTextFieldsEmpty['username'] || controller.isTextFieldsEmpty['password'];
+
+                  return GestureDetector(
+                    onTap: () => {controller.logInWithDimigoinAccount()},
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: _width * 0.858,
+                      height: _height * 0.06,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          width: 1,
+                          color: dalgeurakBlueOne,
+                        ),
+                        color: isEmpty ? Colors.white : dalgeurakBlueOne,
+                      ),
+                      child: Center(child: Text("로그인", style: isEmpty ? btnTitle1 : btnTitle1.copyWith(color: Colors.white))),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
         ),
       ),
     );

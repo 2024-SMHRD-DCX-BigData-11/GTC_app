@@ -78,39 +78,58 @@ class MyApp extends StatelessWidget {
       statusBarIconBrightness: Brightness.dark,
     ));
 
+    DateTime? _lastPressedAt; // 마지막으로 뒤로가기 버튼을 누른 시간
+
     return FlutterWebFrame(
       builder: (context) => FGBGNotifier(
         onEvent: (event) {
           notiController.serviceWorkType.value = event;
         },
-        child: GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: "달그락",
-          theme: ThemeData(
-            fontFamily: 'NotoSansKR',
-            accentColor: yellowFive,
-            scrollbarTheme: ScrollbarThemeData(
-              isAlwaysShown: true,
-              thickness: MaterialStateProperty.all(6),
-              thumbColor: MaterialStateProperty.all(yellowOne.withOpacity(0.8)),
-              radius: const Radius.circular(10),
-              minThumbLength: 60,
+        child: WillPopScope(
+          onWillPop: () async {
+            DateTime now = DateTime.now();
+            if (_lastPressedAt == null ||
+                now.difference(_lastPressedAt!) > Duration(seconds: 2)) {
+              _lastPressedAt = now;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("뒤로가기 버튼을 한 번 더 누르면 종료됩니다."),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              return false; // 앱 종료하지 않음
+            }
+            return true; // 2초 이내로 다시 누르면 앱 종료
+          },
+          child: GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: "달그락",
+            theme: ThemeData(
+              fontFamily: 'NotoSansKR',
+              accentColor: yellowFive,
+              scrollbarTheme: ScrollbarThemeData(
+                isAlwaysShown: true,
+                thickness: MaterialStateProperty.all(6),
+                thumbColor: MaterialStateProperty.all(yellowOne.withOpacity(0.8)),
+                radius: const Radius.circular(10),
+                minThumbLength: 60,
+              ),
             ),
-          ),
-          builder: (context, child) => Scaffold(
-            body: GestureDetector(
-              onTap: () {
-                hideKeyboard(context);
-              },
-              child: child,
+            builder: (context, child) => Scaffold(
+              body: GestureDetector(
+                onTap: () {
+                  hideKeyboard(context);
+                },
+                child: child,
+              ),
             ),
+            navigatorObservers: [
+              FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+            ],
+            initialBinding: MainBinding(), // MainBinding을 여기서 사용합니다.
+            getPages: DalgeurakMealApplicationPages.pages,
+            home: Root(notiController: notiController),
           ),
-          navigatorObservers: [
-            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-          ],
-          initialBinding: MainBinding(), // MainBinding을 여기서 사용합니다.
-          getPages: DalgeurakMealApplicationPages.pages,
-          home: Root(notiController: notiController),
         ),
       ),
       maximumSize: const Size(475.0, 812.0),

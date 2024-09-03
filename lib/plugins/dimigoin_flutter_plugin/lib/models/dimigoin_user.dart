@@ -190,12 +190,6 @@ extension DimigoinAccountTypeExtension on String {
         return DimigoinUserType.student;
       case "T":
         return DimigoinUserType.teacher;
-      case "O":
-        return DimigoinUserType.outdate;
-      case "P":
-        return DimigoinUserType.parent;
-      case "D":
-        return DimigoinUserType.dormitoryTeacher;
       default:
         return DimigoinUserType.none;
     }
@@ -284,6 +278,7 @@ class DimigoinUser {
   int? _classId;
   bool? _isOwner;
   String? _imageUrl;
+  int? _mileage;
 
   int? get id => _id;
 
@@ -348,6 +343,8 @@ class DimigoinUser {
     _isOwner = value;
   }
 
+  int? get mileage => _mileage;
+
   DimigoinUser({
     required int id,
     required String userId,
@@ -372,6 +369,7 @@ class DimigoinUser {
     required int classId,
     required bool isOwner,
     required String imageUrl,
+    required int mileage,
   }) {
     _id = id;
     _userId = userId;
@@ -396,6 +394,7 @@ class DimigoinUser {
     _classId = classId;
     _isOwner = isOwner;
     _imageUrl = imageUrl;
+    _mileage = mileage;
   }
 
   DimigoinUser.fromJson(dynamic json) {
@@ -434,6 +433,7 @@ class DimigoinUser {
     _classId = json['classId'];
     _isOwner = json['is_owner'];
     _imageUrl = json['image_url'];
+    _mileage = json['mileage'];
   }
 
   Map<String, dynamic> toJson() {
@@ -465,6 +465,7 @@ class DimigoinUser {
     map['classId'] = _classId;
     map['is_owner'] = _isOwner;
     map['image_url'] = _imageUrl;
+    map['mileage'] = _mileage;
     return map;
   }
 }

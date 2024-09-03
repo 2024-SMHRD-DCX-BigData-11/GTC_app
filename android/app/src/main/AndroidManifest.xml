@@ -24,7 +24,7 @@
 
    <application
         android:label="GTC"
-        android:icon="@drawable/logo2-removebg">
+        android:icon="@drawable/logo2">
 
        <meta-data
            android:name="com.google.firebase.messaging.default_notification_channel_id"

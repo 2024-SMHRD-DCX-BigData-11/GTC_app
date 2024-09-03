@@ -1,4 +1,4 @@
-import 'package:dalgeurak/plugins/dimigoin_flutter_plugin/lib/dimigoin_flutter_plugin.dart';
+import 'package:dimigoin_flutter_plugin/dimigoin_flutter_plugin.dart';
 
 class ClassInfo {
   final int id;

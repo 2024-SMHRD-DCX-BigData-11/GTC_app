@@ -4,13 +4,13 @@ import 'package:dalgeurak/dialogs/class_dialog.dart';
 import 'package:dalgeurak/dialogs/class_manage_dialog.dart';
 import 'package:dalgeurak/screens/profile/myprofile_bottomsheet.dart';
 import 'package:dalgeurak/screens/studentManage/education_record.dart';
-import 'package:dalgeurak/screens/studentManage/application_blacklist.dart';
 import 'package:dalgeurak/screens/studentManage/application_status.dart';
 import 'package:dalgeurak/screens/friend/friend_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/student_manage_dialog.dart';
 import 'package:dalgeurak/screens/studentManage/student_schedule.dart';
 import 'package:dalgeurak/screens/studentManage/student_mileage_store.dart';
 import 'package:dalgeurak/services/remote_config.dart';
+import 'package:dalgeurak/utils/toast.dart';
 import 'package:dalgeurak_widget_package/widgets/dialog.dart';
 import 'package:dalgeurak_widget_package/widgets/window_title.dart';
 import 'package:dalgeurak/screens/widgets/medium_menu_button.dart';
@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart' as di;
 
 class MyProfile extends GetWidget<UserController> {
   MyProfile({Key? key}) : super(key: key);
@@ -61,10 +62,11 @@ class MyProfile extends GetWidget<UserController> {
                       return WindowTitle(
                         subTitle: controller.user?.userType !=
                                 DimigoinUserType.teacher
-                            ? "${controller.user?.gradeNum}학년 ${controller.user?.classNum}반"
-                            : (controller.user?.teacherRole ?? "등록 부서 없음"),
-                        title:
-                            "${controller.user?.name}${controller.user?.userType != DimigoinUserType.teacher ? "" : " 선생님"}",
+                            ? controller.user?.classId != null
+                                ? "5학년"
+                                : "반에 가입해주세요."
+                            : "선생님",
+                        title: (controller.user?.name)!,
                       );
                     }),
                   ),
@@ -143,116 +145,133 @@ class MyProfile extends GetWidget<UserController> {
                       ),
                     ),
                   ),
-                  (controller.user?.userType! != DimigoinUserType.teacher
-                      ? Container(
-                          width: _width * 0.897,
-                          height: 240,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15)),
-                          margin: const EdgeInsets.only(bottom: 15),
-                          child: Center(
-                              child: SizedBox(
-                            width: _width * 0.68,
-                            child: Row(
+                  Container(
+                    width: _width * 0.897,
+                    height: 240,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Center(
+                        child: SizedBox(
+                      width: _width * 0.68,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 200,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  height: 200,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      MediumMenuButton(
-                                        iconName: "noticeCircle",
-                                        title: "프로필 수정",
-                                        subTitle: "개인 정보 변경",
-                                        clickAction: () => studentManageDialog
-                                            .showProfileEditDialog(controller),
-                                      ),
-                                      MediumMenuButton(
-                                        iconName: "foodBucket",
-                                        title: "이번주 시간표",
-                                        subTitle: "확인하기",
-                                        clickAction: () =>
-                                            Get.to(StudentSchedulePage()),
-                                      ),
-                                    ],
-                                  ),
+                                MediumMenuButton(
+                                  iconName: "noticeCircle",
+                                  title: "프로필 수정",
+                                  subTitle: "개인 정보 변경",
+                                  clickAction: () => studentManageDialog
+                                      .showProfileEditDialog(controller),
                                 ),
-                                SizedBox(
-                                  height: 200,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Obx(() {
-                                        if (controller.user?.classId != null) {
-                                          return MediumMenuButton(
-                                            iconName: "class",
-                                            title: "반 구성",
-                                            subTitle: "조회",
-                                            clickAction: () {
-                                              Get.dialog(
-                                                  const ClassManageDialog());
-                                            },
-                                          );
-                                        } else {
-                                          return MediumMenuButton(
-                                            iconName: "class",
-                                            title: "반 설정",
-                                            subTitle: "생성 / 가입",
-                                            clickAction: () {
-                                              classDialog.showDialog();
-                                              // Get.to(QrCodeScan());
-                                            },
-                                          );
-                                        }
-                                      }),
-                                      MediumMenuButton(
-                                        iconName: "signDocu",
-                                        title: "마일리지 상점",
-                                        subTitle: "이용하기",
-                                        clickAction: () => Get.to(
-                                            const StudentMileageStorePage()),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 200,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      MediumMenuButton(
-                                        iconName: "twoTicket",
-                                        title: "친구 관리",
-                                        subTitle: "추가 / 삭제",
-                                        clickAction: () =>
-                                            Get.to(const FriendPage()),
-                                      ),
-                                      MediumMenuButton(
-                                        iconName: "cancel",
-                                        title: "교육 기록 보기",
-                                        subTitle: "조회하기",
-                                        clickAction: () =>
-                                            Get.to(const EducationRecord()),
-                                      ),
-                                    ],
-                                  ),
+                                MediumMenuButton(
+                                  iconName: "foodBucket",
+                                  title: "이번주 시간표",
+                                  subTitle: "확인하기",
+                                  clickAction: () => {
+                                    if (controller.user?.classId != null)
+                                      {
+                                        Get.to(StudentSchedulePage()),
+                                      }
+                                    else
+                                      {
+                                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                                      }
+                                  },
                                 ),
                               ],
                             ),
-                          )),
-                        )
-                      : const SizedBox()),
+                          ),
+                          SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Obx(() {
+                                  if (controller.user?.classId != null) {
+                                    return MediumMenuButton(
+                                      iconName: "class",
+                                      title: "반 구성",
+                                      subTitle: "조회",
+                                      clickAction: () {
+                                        _handleClassManageDialog();
+                                      },
+                                    );
+                                  } else {
+                                    return MediumMenuButton(
+                                      iconName: "class",
+                                      title: "반 설정",
+                                      subTitle: "생성 / 가입",
+                                      clickAction: () {
+                                        classDialog.showDialog();
+                                        // Get.to(QrCodeScan());
+                                      },
+                                    );
+                                  }
+                                }),
+                                MediumMenuButton(
+                                  iconName: "signDocu",
+                                  title: "마일리지 상점",
+                                  subTitle: "이용하기",
+                                  clickAction: () => {
+                                    if (controller.user?.classId != null)
+                                      {
+                                        Get.to(const StudentMileageStorePage()),
+                                      }
+                                    else
+                                      {
+                                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                                      }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                MediumMenuButton(
+                                  iconName: "twoTicket",
+                                  title: "친구 관리",
+                                  subTitle: "추가 / 삭제",
+                                  clickAction: () => Get.to(const FriendPage()),
+                                ),
+                                MediumMenuButton(
+                                  iconName: "cancel",
+                                  title: "교육 기록 보기",
+                                  subTitle: "조회하기",
+                                  clickAction: () => {
+                                    if (controller.user?.classId != null)
+                                      {
+                                        Get.to(const EducationRecord()),
+                                      }
+                                    else
+                                      {
+                                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                                      }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                  ),
                   Container(
                       width: _width * 0.897,
-                      height: (getTeacherMenu().length +
-                              getStudentMenu().length +
-                              5) *
+                      height: (
+                              // getTeacherMenu().length +
+                              getStudentMenu().length + 5) *
                           50,
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -261,7 +280,7 @@ class MyProfile extends GetWidget<UserController> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ...getTeacherMenu(),
+                          // ...getTeacherMenu(),
                           SimpleListButton(
                               title: "스마트인재개발원",
                               iconName: "page",
@@ -273,7 +292,7 @@ class MyProfile extends GetWidget<UserController> {
                               iconName: "headset",
                               clickAction: () => dalgeurakDialog.showInquiry()),
                           SimpleListButton(
-                              title: "인스타문의",
+                              title: "인스타그램",
                               iconName: "instagram",
                               clickAction: () => _launchURL(
                                   "https://www.instagram.com/yanggeonyeol/")),
@@ -298,31 +317,31 @@ class MyProfile extends GetWidget<UserController> {
     );
   }
 
-  List<Widget> getTeacherMenu() {
-    if (controller.user?.userType! == DimigoinUserType.teacher) {
-      return [
-        SimpleListButton(
-            title: "차주 간편식, 선후밥 신청 현황",
-            iconName: "foodBucket",
-            clickAction: () => Get.to(ApplicationStatus())),
-        SimpleListButton(
-            title: "학생 식사 여부 통계",
-            iconName: "graph",
-            clickAction: () => print("onClick")),
-        SimpleListButton(
-            title: "학생 신청 금지 설정",
-            iconName: "setting",
-            clickAction: () => showSearch(
-                context: Get.context!, delegate: ApplicationBlackList())),
-        SimpleListButton(
-            title: "학생 급식비 납부금",
-            iconName: "coin",
-            clickAction: () => print("onClick")),
-      ];
-    } else {
-      return [];
-    }
-  }
+  // List<Widget> getTeacherMenu() {
+  //   if (controller.user?.userType! == DimigoinUserType.teacher) {
+  //     return [
+  //       SimpleListButton(
+  //           title: "차주 간편식, 선후밥 신청 현황",
+  //           iconName: "foodBucket",
+  //           clickAction: () => Get.to(ApplicationStatus())),
+  //       SimpleListButton(
+  //           title: "학생 식사 여부 통계",
+  //           iconName: "graph",
+  //           clickAction: () => print("onClick")),
+  //       SimpleListButton(
+  //           title: "학생 신청 금지 설정",
+  //           iconName: "setting",
+  //           clickAction: () => showSearch(
+  //               context: Get.context!, delegate: ApplicationBlackList())),
+  //       SimpleListButton(
+  //           title: "학생 급식비 납부금",
+  //           iconName: "coin",
+  //           clickAction: () => print("onClick")),
+  //     ];
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
   List<Widget> getStudentMenu() {
     if (controller.user?.userType! == DimigoinUserType.student) {
@@ -345,5 +364,22 @@ class MyProfile extends GetWidget<UserController> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<void> _handleClassManageDialog() async {
+    bool isSuccess = await check(); // 비동기 작업이 완료될 때까지 기다림
+    if (isSuccess) {
+      Get.dialog(const ClassManageDialog());
+    } else {
+      controller.updateInfo();
+    }
+  }
+
+  Future<bool> check() async {
+    di.Response response = await dio.post(
+      "$apiUrl/class/check",
+      options: di.Options(contentType: "application/json"),
+    );
+    return response.data["success"];
   }
 }

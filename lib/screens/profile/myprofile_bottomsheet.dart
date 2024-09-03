@@ -97,17 +97,17 @@ class MyProfileBottomSheet {
                     text: "GTC",
                     style: myProfile_appInfo_content.copyWith(fontWeight: FontWeight.w600)
                   ),
-                  TextSpan(
-                    text: "는\n스마트 인재 개발원 순천점의 인트라넷 개발 팀\n"
+                  const TextSpan(
+                    text: "는\n스마트 인재 개발원 순천점의 A반 2조 팀 GTC\n"
                   ),
                   TextSpan(
                       text: "양건열 ",
                       style: myProfile_appInfo_content.copyWith(fontWeight: FontWeight.w600)
                   ),
-                  TextSpan(
+                  const TextSpan(
                       text: "소속 팀원이 제작하였습니다.\n\n"
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: "본 서비스를 로그인하여 사용하는 것은\n"
                   ),
                   TextSpan(
@@ -119,7 +119,7 @@ class MyProfileBottomSheet {
                         _launchURL(url);
                       },
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: "과 "
                   ),
                   TextSpan(
@@ -131,7 +131,7 @@ class MyProfileBottomSheet {
                         _launchURL(url);
                       },
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: "에\n동의하는 것으로 간주합니다."
                   )
                 ],
@@ -140,25 +140,25 @@ class MyProfileBottomSheet {
               style: myProfile_appInfo_content,
             ),
           ),
-          Positioned(
-            bottom: Get.height * 0.115,
-            left: Get.width * 0.06,
-            child: GestureDetector(
-              onTap: () => Get.to(LicensePage()),
-              child: Container(
-                color: Colors.transparent,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("사용한 오픈소스의 라이선스 보러가기", style: myProfile_appInfo_license),
-                    SizedBox(width: 2),
-                    Icon(Icons.chevron_right_sharp, color: dalgeurakBlueOne, size: 16)
-                  ],
-                ),
-              ),
-            ),
-          )
+          // Positioned(
+          //   bottom: Get.height * 0.1,
+          //   left: Get.width * 0.06,
+          //   child: GestureDetector(
+          //     onTap: () => Get.to(LicensePage()),
+          //     child: Container(
+          //       color: Colors.transparent,
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         crossAxisAlignment: CrossAxisAlignment.center,
+          //         children: [
+          //           Text("사용한 오픈소스의 라이선스 보러가기", style: myProfile_appInfo_license),
+          //           SizedBox(width: 2),
+          //           Icon(Icons.chevron_right_sharp, color: dalgeurakBlueOne, size: 16)
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       )
   );

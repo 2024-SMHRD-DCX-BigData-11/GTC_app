@@ -228,7 +228,7 @@ class _StudentEducationRecordPageState
                                 const SizedBox(height: 10),
                                 OutlinedButton(
                                   onPressed: () {
-                                    Get.to(DrawingScreen(question: question));
+                                    openDrawingScreen(question);
                                   },
                                   child: const Text('문제 풀기'),
                                 ),
@@ -285,7 +285,6 @@ class _StudentEducationRecordPageState
                     _term = 1;
                     _unit = null;
                     _subunit = null;
-                    _difficulty = null;
                     _selectedSemester = '5학년 1학기';
                     _selectedUnit = null;
                     _selectedSubUnit = null;
@@ -301,7 +300,6 @@ class _StudentEducationRecordPageState
                     _term = 2;
                     _unit = null;
                     _subunit = null;
-                    _difficulty = null;
                     _selectedSemester = '5학년 2학기';
                     _selectedUnit = null;
                     _selectedSubUnit = null;
@@ -357,7 +355,6 @@ class _StudentEducationRecordPageState
                   setState(() {
                     _unit = units.indexOf(unit) + 1;
                     _subunit = null;
-                    _difficulty = null;
                     _selectedUnit = unit;
                     _selectedSubUnit = null;
                     _dataFuture = _fetchDataFromApi();
@@ -407,7 +404,6 @@ class _StudentEducationRecordPageState
                 onTap: () {
                   setState(() {
                     _subunit = selectedSubUnits.indexOf(subUnit) + 1;
-                    _difficulty = null;
                     _selectedSubUnit = subUnit;
                     _dataFuture = _fetchDataFromApi();
                   });
@@ -470,14 +466,11 @@ class _StudentEducationRecordPageState
       throw Exception('Failed to load data: $e');
     }
   }
-}
 
-void main() {
-  runApp(MaterialApp(
-    home: const StudentEducationRecordPage(),
-    theme: ThemeData(
-      fontFamily: 'NotoSansKR',
-      primarySwatch: Colors.blue,
-    ),
-  ));
+  Future<void> openDrawingScreen(Question question) async {
+    final result = await Get.to(() => DrawingScreen(question: question));
+    if (result != null && result == true) {
+      await _fetchDataFromApi(); // 문제 갱신
+    }
+  }
 }

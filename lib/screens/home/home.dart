@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dalgeurak/screens/studentManage/education_record.dart';
+import 'package:dalgeurak/utils/toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -122,17 +123,18 @@ class _HomeState extends State<Home> {
           ),
           Row(
             children: [
-              GestureDetector(
-                onTap: _showBottomSheet,
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundImage: userController.user?.imageUrl == null
-                      ? const AssetImage(
-                              "assets/images/default_profile_image.png")
-                          as ImageProvider
-                      : NetworkImage((userController.user?.imageUrl)!),
-                ),
-              ),
+              Obx(() {
+                return GestureDetector(
+                  onTap: _showBottomSheet,
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: userController.user?.imageUrl == null
+                        ? const AssetImage("assets/images/default_profile_image.png")
+                    as ImageProvider
+                        : NetworkImage((userController.user?.imageUrl)!),
+                  ),
+                );
+              }),
               const SizedBox(width: 12),
               Text(
                 "${userController.user?.name}님 환영합니다",
@@ -193,15 +195,15 @@ class _HomeState extends State<Home> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   "현재 마일리지",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "150점",
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                  "${userController.user?.mileage}점",
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
                 ),
               ],
             ),
@@ -242,42 +244,101 @@ class _HomeState extends State<Home> {
                   buttonWidth,
                   buttonHeight,
                   Colors.pinkAccent,
-                  () => Get.to(const StudentMileageStorePage())),
+                  () => {
+                        if (userController.user?.classId != null)
+                          {
+                            Get.to(const StudentMileageStorePage()),
+                          }
+                        else
+                          {
+                            showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                          },
+                      }),
               _buildShortcutButton(
-                  "이번 주 랭킹",
-                  'assets/home/rank.png',
-                  buttonWidth,
-                  buttonHeight,
-                  Colors.cyanAccent,
-                  () => Get.to(StudentRankingPage())),
+                "이번 주 랭킹",
+                'assets/home/rank.png',
+                buttonWidth,
+                buttonHeight,
+                Colors.cyanAccent,
+                () => {
+                  if (userController.user?.classId != null)
+                    {
+                      Get.to(const StudentRankingPage()),
+                    }
+                  else
+                    {
+                      showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                    }
+                },
+              ),
               _buildShortcutButton(
-                  "교육 기록 보기",
-                  'assets/home/record.png',
-                  buttonWidth,
-                  buttonHeight,
-                  Colors.greenAccent,
-                  () => Get.to(const EducationRecord())),
+                "교육 기록 보기",
+                'assets/home/record.png',
+                buttonWidth,
+                buttonHeight,
+                Colors.greenAccent,
+                () => {
+                  if (userController.user?.classId != null)
+                    {
+                      Get.to(const EducationRecord()),
+                    }
+                  else
+                    {
+                      showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                    }
+                },
+              ),
               _buildShortcutButton(
                   "이번 주 시간표 보기",
                   'assets/home/timetable.png',
                   buttonWidth,
                   buttonHeight,
                   Colors.blueAccent,
-                  () => Get.to(StudentSchedulePage())),
+                  () => {
+                    if (userController.user?.classId != null)
+                      {
+                        Get.to(StudentSchedulePage()),
+                      }
+                    else
+                      {
+                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                      }
+                  },
+              ),
               _buildShortcutButton(
                   "식단표",
                   'assets/home/meal.png',
                   buttonWidth,
                   buttonHeight,
                   Colors.orangeAccent,
-                  () => Get.to(StudentMealPlanPage())),
+                  () => {
+                    if (userController.user?.classId != null)
+                      {
+                        Get.to(StudentMealPlanPage()),
+                      }
+                    else
+                      {
+                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                      }
+                  },
+              ),
               _buildShortcutButton(
                   "선생님께 문의하기",
                   'assets/home/inquiry.png',
                   buttonWidth,
                   buttonHeight,
                   Colors.purpleAccent,
-                  () => Get.to(ContactTeacherPage())),
+                  () => {
+                    if (userController.user?.classId != null)
+                      {
+                        Get.to(ContactTeacherPage()),
+                      }
+                    else
+                      {
+                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                      }
+                  },
+              ),
             ],
           );
         },
@@ -444,11 +505,13 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _getPhotoLibraryImage() async {
-    await getPhotoLibraryImage(() {
-      loadProfileImage();
+    await getPhotoLibraryImage(() async {
+      await Future.delayed(const Duration(milliseconds: 500)); // 10초 딜레이
+      userController.updateInfo();
       Navigator.of(context).pop(); // BottomSheet 닫기
     });
   }
+
 
   Future<void> _resetToDefaultImage() async {
     di.Response response = await dio.post(

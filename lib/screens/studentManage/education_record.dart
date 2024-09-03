@@ -134,7 +134,7 @@ class _EducationRecord extends State<EducationRecord> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "정답 여부 : ${question.isCorrect! ? "정답" : "오답"}  |  유사도 : ${question.accuracy! * 100}%",
+                                    "정답 여부 : ${question.isCorrect! ? "정답" : "오답"}  |  정확도 : ${(question.accuracy! * 100).toStringAsFixed(0)}%",
                                     style: TextStyle(
                                       fontSize: responsiveFontSize * 0.9,
                                       color: Colors.grey[600],
