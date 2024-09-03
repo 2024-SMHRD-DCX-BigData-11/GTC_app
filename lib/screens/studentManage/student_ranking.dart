@@ -39,7 +39,7 @@ class _StudentRankingPageState extends State<StudentRankingPage> {
           final rankingInfo = snapshot.data!;
           return Scaffold(
             appBar: AppBar(
-              title: const Text('월간 랭킹'),
+              title: const Text('주간 랭킹'),
               backgroundColor: Colors.blue,
             ),
             body: Padding(
