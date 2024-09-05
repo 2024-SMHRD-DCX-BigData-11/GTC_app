@@ -105,20 +105,28 @@ class _HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())}",
+                "오늘은 ${DateFormat('MM월 dd일 EEEE', 'ko_KR').format(DateTime.now())} 입니다",
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Text(
-                "오늘의 할 일 ${3}개입니다",
-                style: TextStyle(fontSize: 18, color: Colors.black87),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "담당 선생님: 정진용",
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
+              if (userController.user?.classId != null) ...[
+                const Text(
+                  "오늘의 할 일 3개가 있어요.",
+                  style: TextStyle(fontSize: 18, color: Colors.black87),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "담당 선생님: 신창섭",
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                ),
+              ] else ...[
+                const Text(
+                  "반에 가입해주세요.",
+                  style: TextStyle(fontSize: 18, color: Colors.black87),
+                ),
+                const SizedBox(height: 8),
+              ],
             ],
           ),
           Row(
@@ -129,8 +137,9 @@ class _HomeState extends State<Home> {
                   child: CircleAvatar(
                     radius: 30,
                     backgroundImage: userController.user?.imageUrl == null
-                        ? const AssetImage("assets/images/default_profile_image.png")
-                    as ImageProvider
+                        ? const AssetImage(
+                                "assets/images/default_profile_image.png")
+                            as ImageProvider
                         : NetworkImage((userController.user?.imageUrl)!),
                   ),
                 );
@@ -172,11 +181,15 @@ class _HomeState extends State<Home> {
           Expanded(
             child: ListView(
               children: [
-                _buildTimetableItem("1교시: 수학", Icons.calculate),
-                _buildTimetableItem("2교시: 영어", Icons.language),
-                _buildTimetableItem("3교시: 과학", Icons.science),
-                _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
-                _buildTimetableItem("5교시: 국어", Icons.book),
+                if (userController.user?.classId != null) ...[
+                  _buildTimetableItem("1교시: 수학", Icons.calculate),
+                  _buildTimetableItem("2교시: 영어", Icons.language),
+                  _buildTimetableItem("3교시: 과학", Icons.science),
+                  _buildTimetableItem("4교시: 체육", Icons.sports_soccer),
+                  _buildTimetableItem("5교시: 국어", Icons.book),
+                ] else ...[
+                  _buildTimetableItem("반에 가입해주세요.", Icons.warning),
+                ]
               ],
             ),
           ),
@@ -289,55 +302,55 @@ class _HomeState extends State<Home> {
                 },
               ),
               _buildShortcutButton(
-                  "이번 주 시간표 보기",
-                  'assets/home/timetable.png',
-                  buttonWidth,
-                  buttonHeight,
-                  Colors.blueAccent,
-                  () => {
-                    if (userController.user?.classId != null)
-                      {
-                        Get.to(StudentSchedulePage()),
-                      }
-                    else
-                      {
-                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
-                      }
-                  },
+                "이번 주 시간표 보기",
+                'assets/home/timetable.png',
+                buttonWidth,
+                buttonHeight,
+                Colors.blueAccent,
+                () => {
+                  if (userController.user?.classId != null)
+                    {
+                      Get.to(StudentSchedulePage()),
+                    }
+                  else
+                    {
+                      showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                    }
+                },
               ),
               _buildShortcutButton(
-                  "식단표",
-                  'assets/home/meal.png',
-                  buttonWidth,
-                  buttonHeight,
-                  Colors.orangeAccent,
-                  () => {
-                    if (userController.user?.classId != null)
-                      {
-                        Get.to(StudentMealPlanPage()),
-                      }
-                    else
-                      {
-                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
-                      }
-                  },
+                "식단표",
+                'assets/home/meal.png',
+                buttonWidth,
+                buttonHeight,
+                Colors.orangeAccent,
+                () => {
+                  if (userController.user?.classId != null)
+                    {
+                      Get.to(StudentMealPlanPage()),
+                    }
+                  else
+                    {
+                      showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                    }
+                },
               ),
               _buildShortcutButton(
-                  "선생님께 문의하기",
-                  'assets/home/inquiry.png',
-                  buttonWidth,
-                  buttonHeight,
-                  Colors.purpleAccent,
-                  () => {
-                    if (userController.user?.classId != null)
-                      {
-                        Get.to(ContactTeacherPage()),
-                      }
-                    else
-                      {
-                        showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
-                      }
-                  },
+                "선생님께 문의하기",
+                'assets/home/inquiry.png',
+                buttonWidth,
+                buttonHeight,
+                Colors.purpleAccent,
+                () => {
+                  if (userController.user?.classId != null)
+                    {
+                      Get.to(ContactTeacherPage()),
+                    }
+                  else
+                    {
+                      showToast("반에 가입한 후 사용할 수 있는 기능입니다."),
+                    }
+                },
               ),
             ],
           );
@@ -511,7 +524,6 @@ class _HomeState extends State<Home> {
       Navigator.of(context).pop(); // BottomSheet 닫기
     });
   }
-
 
   Future<void> _resetToDefaultImage() async {
     di.Response response = await dio.post(

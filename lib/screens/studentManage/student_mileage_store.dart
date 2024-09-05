@@ -110,6 +110,8 @@ class StudentMileageStorePage extends StatelessWidget {
               const Text("현재 이모티콘을 구매하시겠습니까?"),
               const SizedBox(height: 8),
               Text("가격: $price 마일리지"),
+              const SizedBox(height: 8),
+              Text("(현재 마일리지가 차감되지 않습니다.)"),
             ],
           ),
           actions: [

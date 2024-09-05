@@ -8,7 +8,7 @@ class ContactTeacherPage extends StatelessWidget {
         title: Text('선생님께 문의하기'),
       ),
       body: Center(
-        child: Text('선생님께 문의하기 페이지'),
+        child: Text('선생님께 문의하기 페이지(미구현)'),
       ),
     );
   }
