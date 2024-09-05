@@ -1,4 +1,5 @@
 # GTC
+(로고 넣기)
 Grow, Thrive, Cultivate
 
 ## 프로젝트 소개
@@ -36,5 +37,11 @@ Grow, Thrive, Cultivate
 <img alt="Html" src ="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20Web%20Tokens&logoColor=white"/>
 
 ## E-R 다이어그램
+
+## (이것저것 넣을거 1)
+
+## (이것저것 넣을거 2)
+
+## (이것저것 넣을거 3)
 
 ## 팀원 소개
